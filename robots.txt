@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://itachiuchiha976.github.io/technova/sitemap.xml
