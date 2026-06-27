@@ -159,10 +159,57 @@ function renderCart() {
   if (totEl)  totEl.textContent  = total.toFixed(2) + ' €';
 }
 
+/* ---------- VIP / Web3Forms lead capture ---------- */
+
+function initVipForms() {
+  document.querySelectorAll('.vip-form').forEach(form => {
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
+      const btn = form.querySelector('button[type="submit"]');
+      const label = btn ? btn.innerHTML : '';
+      if (btn) { btn.disabled = true; btn.innerHTML = 'Envoi…'; }
+      try {
+        const res = await fetch(form.action, {
+          method: 'POST',
+          headers: { 'Accept': 'application/json' },
+          body: new FormData(form)
+        });
+        const data = await res.json().catch(() => ({}));
+        if (res.ok && data.success) {
+          const wrap = form.closest('.vip-wrap') || form.parentNode;
+          wrap.innerHTML = '<p class="email-success">✅ Merci ! Tu es sur la liste VIP — tu recevras ton code -10 % dès l\'ouverture de la boutique.</p>';
+        } else {
+          throw new Error((data && data.message) || 'Erreur réseau');
+        }
+      } catch (err) {
+        if (btn) { btn.disabled = false; btn.innerHTML = label; }
+        showToast('Oups, un souci est survenu. Réessaie dans un instant.');
+      }
+    });
+  });
+}
+
+/* ---------- Bandeau cookies (Google Fonts) ---------- */
+
+function initCookieBanner() {
+  if (localStorage.getItem('technova_cookie_choice')) return;
+  const bar = document.createElement('div');
+  bar.className = 'cookie-banner';
+  bar.innerHTML = '<p>Ce site utilise des polices Google (CDN) pour l\'affichage. Aucune donnée n\'est revendue. <a href="cgv.html#rgpd" style="color:var(--indigo-light)">En savoir plus</a></p>'
+    + '<div class="cookie-actions"><button class="cookie-btn" data-c="refuse">Refuser</button><button class="cookie-btn primary" data-c="accept">Accepter</button></div>';
+  document.body.appendChild(bar);
+  bar.querySelectorAll('.cookie-btn').forEach(b => b.addEventListener('click', () => {
+    localStorage.setItem('technova_cookie_choice', b.dataset.c);
+    bar.remove();
+  }));
+}
+
 /* ---------- Init ---------- */
 
 document.addEventListener('DOMContentLoaded', () => {
   updateCartBadge();
+  initVipForms();
+  initCookieBanner();
 
   // Mobile menu
   const hamburger  = document.querySelector('.hamburger');
