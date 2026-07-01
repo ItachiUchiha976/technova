@@ -256,3 +256,17 @@ document.addEventListener('DOMContentLoaded', () => {
   // Cart page render
   if (document.querySelector('.cart-page')) renderCart();
 });
+
+/* BOS — expose panier pour checkout PayPal cross-page (fix isolation cart multi-boutique, 01/07/2026).
+   Le panier interne (CART_KEY='technova_cart_v1') est un OBJET {id:qty} ; le checkout PayPal
+   a besoin d'un TABLEAU [{id,name,price,qty}] -> on utilise le miroir 'technova_cart' deja
+   maintenu par syncPayPalCartMirror(). */
+try {
+  window.getCart = function () {
+    try {
+      var arr = JSON.parse(localStorage.getItem('technova_cart'));
+      return Array.isArray(arr) ? arr : [];
+    } catch (e) { return []; }
+  };
+  window.BOS_CART_KEY = 'technova_cart';
+} catch (e) {}

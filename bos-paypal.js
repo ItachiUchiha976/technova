@@ -5,6 +5,7 @@
   var BUSINESS='fredsoule976@gmail.com';
   function findCart(){
     try{ if(typeof window.getCart==='function'){ var c=window.getCart(); if(Array.isArray(c)) return c; } }catch(e){}
+    try{ if(window.BOS_CART_KEY){ var vv=JSON.parse(localStorage.getItem(window.BOS_CART_KEY)); if(Array.isArray(vv)) return vv; } }catch(e){}
     try{
       for(var i=0;i<localStorage.length;i++){
         var k=localStorage.key(i);
