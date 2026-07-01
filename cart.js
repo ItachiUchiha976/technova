@@ -49,6 +49,18 @@ function getCart() {
 function saveCart(cart) {
   localStorage.setItem(CART_KEY, JSON.stringify(cart));
   updateCartBadge();
+  syncPayPalCartMirror(cart);
+}
+
+/* Miroir panier au format tableau [{id,name,price,qty}] dans 'technova_cart' —
+   lu par bos-paypal.js (checkout PayPal) qui ne connait pas le format objet ci-dessus. */
+function syncPayPalCartMirror(cart) {
+  try {
+    const items = Object.entries(cart)
+      .filter(([id, qty]) => PRODUCTS[id] && qty > 0)
+      .map(([id, qty]) => ({ id, name: PRODUCTS[id].name, price: PRODUCTS[id].price, qty }));
+    localStorage.setItem('technova_cart', JSON.stringify(items));
+  } catch (e) { /* silencieux */ }
 }
 
 function addToCart(productId, qty = 1) {
@@ -208,6 +220,7 @@ function initCookieBanner() {
 
 document.addEventListener('DOMContentLoaded', () => {
   updateCartBadge();
+  syncPayPalCartMirror(getCart());
   initVipForms();
   initCookieBanner();
 

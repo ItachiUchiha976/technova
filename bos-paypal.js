@@ -1,0 +1,51 @@
+/* BOS — Checkout PayPal (Payments Standard, cart upload, 0 backend). Ajout 01/07/2026.
+   Encaisse vers le compte PayPal fredsoule976@gmail.com. Carte bancaire acceptee (pas besoin de compte PayPal cote acheteur). */
+(function(){
+  'use strict';
+  var BUSINESS='fredsoule976@gmail.com';
+  function findCart(){
+    try{ if(typeof window.getCart==='function'){ var c=window.getCart(); if(Array.isArray(c)) return c; } }catch(e){}
+    try{
+      for(var i=0;i<localStorage.length;i++){
+        var k=localStorage.key(i);
+        if(/_cart$|^cart$/i.test(k)){
+          try{ var v=JSON.parse(localStorage.getItem(k)); if(Array.isArray(v)&&v.length&&v[0]&&('price' in v[0])) return v; }catch(e){}
+        }
+      }
+    }catch(e){}
+    return [];
+  }
+  function merciUrl(){ return location.origin + location.pathname.replace(/[^\/]*$/,'merci.html'); }
+  function toast(m){ if(typeof window.showToast==='function') window.showToast(m); else alert(m); }
+  window.bosPayPalCheckout=function(){
+    var cart=findCart();
+    if(!cart.length){ toast('Ton panier est vide.'); return; }
+    var cgv=document.getElementById('cgv-check');
+    if(cgv && !cgv.checked){ toast('Merci d’accepter les CGV pour continuer.'); return; }
+    var f=document.createElement('form');
+    f.method='POST'; f.action='https://www.paypal.com/cgi-bin/webscr'; f.style.display='none'; f.target='_top';
+    function add(n,v){ var i=document.createElement('input'); i.type='hidden'; i.name=n; i.value=v; f.appendChild(i); }
+    add('cmd','_cart'); add('upload','1'); add('business',BUSINESS);
+    add('currency_code','EUR'); add('lc','FR'); add('no_note','1'); add('rm','2');
+    add('return',merciUrl()); add('cancel_return',location.href);
+    cart.forEach(function(it,idx){
+      var n=idx+1;
+      add('item_name_'+n,(it.name||('Article '+n)).toString().slice(0,120));
+      add('amount_'+n,Number(it.price||0).toFixed(2));
+      add('quantity_'+n,Math.max(1,parseInt(it.qty||1,10)));
+      if(it.id) add('item_number_'+n,String(it.id));
+    });
+    document.body.appendChild(f); f.submit();
+  };
+  // Bouton "Acheter maintenant" mono-produit (footperf mono-page ou fiches produit) : bosBuyNow(name, price, id?)
+  window.bosBuyNow=function(name, price, id){
+    var f=document.createElement('form');
+    f.method='POST'; f.action='https://www.paypal.com/cgi-bin/webscr'; f.style.display='none'; f.target='_top';
+    function add(n,v){ var i=document.createElement('input'); i.type='hidden'; i.name=n; i.value=v; f.appendChild(i); }
+    add('cmd','_xclick'); add('business',BUSINESS); add('currency_code','EUR'); add('lc','FR');
+    add('no_note','1'); add('rm','2'); add('return',merciUrl()); add('cancel_return',location.href);
+    add('item_name',(name||'Commande').toString().slice(0,120)); add('amount',Number(price||0).toFixed(2));
+    if(id) add('item_number',String(id));
+    document.body.appendChild(f); f.submit();
+  };
+})();

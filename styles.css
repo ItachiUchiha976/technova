@@ -619,6 +619,12 @@ section { padding:72px 0; }
 .checkout-btn:hover { box-shadow:0 8px 24px rgba(99,102,241,.45); }
 .checkout-note { font-size:.78rem; color:var(--text-light); text-align:center; margin-top:12px; line-height:1.5; }
 
+/* CGV checkbox (checkout PayPal) */
+.cgv-row { margin-top:18px; }
+.cgv-label { display:flex; align-items:flex-start; gap:8px; font-size:.82rem; color:var(--text-med); line-height:1.5; cursor:pointer; }
+.cgv-label input[type="checkbox"] { margin-top:3px; width:16px; height:16px; accent-color:var(--indigo); flex-shrink:0; cursor:pointer; }
+.cgv-label a { color:var(--indigo-light); }
+
 /* ===== CGV / A-PROPOS / LIVRAISON ===== */
 .legal-page { padding:56px 0; max-width:760px; margin:0 auto; }
 .legal-page h1 { font-family:var(--f-title); font-size:2rem; font-weight:800; color:var(--text); margin-bottom:12px; }

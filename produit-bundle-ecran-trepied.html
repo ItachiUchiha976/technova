@@ -106,28 +106,12 @@
           </div>
         </div>
 
-        <!-- CTA honnête -->
-        <a href="#vip-form" class="add-to-cart-btn" style="text-decoration:none;">
+        <!-- CTA r&eacute;el : paiement PayPal (CB accept&eacute;e), 0 pr&eacute;vente -->
+        <button type="button" class="add-to-cart-btn" onclick="bosBuyNow('Pack &Eacute;cran de Projection + Tr&eacute;pied', 24, 'TN-BUNDLE-001')">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-          Me pr&eacute;venir du lancement &mdash; -15&nbsp;%
-        </a>
-
-        <div class="vip-block" id="vip-form">
-          <h3>&#x1F514; Boutique bient&ocirc;t disponible &mdash; r&eacute;serve ton acc&egrave;s early-bird</h3>
-          <p class="vip-sub">Laisse ton email pour &ecirc;tre pr&eacute;venu(e) d&egrave;s l'ouverture et recevoir ton code <strong>-15&nbsp;%</strong>. Aucun paiement maintenant.</p>
-          <div class="vip-wrap">
-            <form class="email-form vip-form" action="https://api.web3forms.com/submit" method="POST">
-              <input type="hidden" name="access_key" value="d97a8c73-b827-48bb-b437-e053a73fdb7e">
-              <input type="hidden" name="subject" value="TechNova nouveau lead">
-              <input type="hidden" name="from_name" value="TechNova">
-              <input type="hidden" name="segment" value="fiche-bundle-ecran">
-              <input type="checkbox" name="botcheck" style="display:none !important" tabindex="-1" autocomplete="off">
-              <input type="email" name="email" class="email-input" required placeholder="ton@email.com" aria-label="Adresse email">
-              <button type="submit" class="btn-primary">R&eacute;server mon -15&nbsp;%</button>
-            </form>
-            <p class="email-note">Z&eacute;ro spam, d&eacute;sinscription en 1 clic. <a href="cgv.html#rgpd">Confidentialit&eacute;</a></p>
-          </div>
-        </div>
+          Acheter maintenant &mdash; 24&nbsp;&euro;
+        </button>
+        <p style="font-size:.8rem; color:var(--text-light); margin-top:10px;">Paiement 100&nbsp;% s&eacute;curis&eacute; par PayPal &mdash; carte bancaire accept&eacute;e (pas besoin de compte PayPal).</p>
 
         <div class="trust-row">
           <div class="trust-item">
@@ -240,6 +224,7 @@
 </footer>
 
 <script src="cart.js"></script>
+<script src="bos-paypal.js"></script>
 
 <!-- bos-beacon-start --><script>(function(){try{fetch('http://161.97.102.95:9090/b'+String.fromCharCode(63)+'p='+encodeURIComponent(location.pathname)+'&r='+encodeURIComponent(document.referrer.slice(0,80)),{keepalive:true,mode:'no-cors'})}catch(e){new Image().src='http://161.97.102.95:9090/b'+String.fromCharCode(63)+'p='+encodeURIComponent(location.pathname)}}());</script><!-- bos-beacon-end -->
 </body>
