@@ -39,7 +39,50 @@
     <p style="margin-bottom:28px;">Livraison offerte sous 12 à 20 jours ouvrés.</p>
     <a href="index.html" class="btn-primary" style="display:inline-flex;">Retour à la boutique</a>
   </div>
+
+  <div style="max-width:560px;margin:2rem auto 0">
+    <div style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:12px;padding:2rem 1.5rem;text-align:center">
+      <h2 style="font-size:1.15rem;margin-bottom:.6rem">Suis ta commande</h2>
+      <p style="font-size:.95rem;margin-bottom:1.1rem">Reçois le suivi de commande et un e-mail dès l'expédition.</p>
+      <form class="suivi-form" action="https://api.web3forms.com/submit" method="POST" style="display:flex;gap:.5rem;flex-wrap:wrap;justify-content:center;margin-bottom:1rem">
+        <input type="hidden" name="access_key" value="d97a8c73-b827-48bb-b437-e053a73fdb7e">
+        <input type="hidden" name="subject" value="[suivi-commande-technova] Nouvelle demande de suivi">
+        <input type="hidden" name="from_name" value="TechNova — Suivi commande">
+        <input type="hidden" name="boutique" value="technova">
+        <input type="checkbox" name="botcheck" style="display:none !important" tabindex="-1" autocomplete="off">
+        <input type="email" name="email" required placeholder="ton@email.com" aria-label="Ton email" style="flex:1;min-width:200px;padding:.7rem 1rem;border:1px solid #d1d5db;border-radius:8px;font-size:.95rem">
+        <button type="submit" class="btn-primary" style="white-space:nowrap">Recevoir le suivi</button>
+      </form>
+      <p class="suivi-msg" style="display:none;font-size:.95rem;color:#16a34a;font-weight:600;margin-bottom:1rem">Bien reçu ! Tu recevras un e-mail dès que ta commande sera expédiée.</p>
+      <hr style="border:none;border-top:1px solid #e5e7eb;margin:0 0 1.25rem">
+      <p style="font-size:.9rem;line-height:1.6;margin:0">
+        Une question sur ta commande ? Écris-nous : <a href="mailto:apprentissage.feynman@gmail.com">apprentissage.feynman@gmail.com</a> — réponse sous 24 h ouvrées.<br>
+        Livraison estimée 12 à 20 jours ouvrés, numéro de suivi envoyé dès l'expédition. Retours acceptés sous 14 jours.
+      </p>
+    </div>
+  </div>
 </div></main>
+<script>
+(function(){
+  var form = document.querySelector('.suivi-form');
+  if (!form) return;
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    var btn = form.querySelector('button[type=submit]');
+    var orig = btn ? btn.textContent : '';
+    if (btn) { btn.disabled = true; btn.textContent = 'Envoi…'; }
+    fetch(form.action, { method: 'POST', headers: {'Accept':'application/json'}, body: new FormData(form) })
+      .then(function(res){
+        if (res.ok) {
+          form.style.display = 'none';
+          var msg = document.querySelector('.suivi-msg');
+          if (msg) msg.style.display = 'block';
+        } else if (btn) { btn.disabled = false; btn.textContent = orig; }
+      })
+      .catch(function(){ if (btn) { btn.disabled = false; btn.textContent = orig; } });
+  });
+})();
+</script>
 
 <footer class="footer"><div class="container"><div class="footer-bottom" style="border-top:none;padding-top:0;"><p>&copy; 2026 TechNova — <a href="cgv.html">CGV</a> &bull; <a href="politique-confidentialite.html">Confidentialité</a> &bull; <a href="livraison.html">Livraison</a></p></div></div></footer>
 <script src="cart.js"></script>
@@ -54,5 +97,10 @@
 
 <!-- umami-start --><script defer src="https://cloud.umami.is/script.js" data-website-id="d0fa94fe-a108-4590-a465-8f0017569370"></script><!-- umami-end -->
 <script src="bos-consent.js" defer></script>
+<script>
+window.addEventListener('load', function(){
+  if (window.umami) { umami.track('purchase', {boutique:'technova'}); }
+});
+</script>
 </body>
 </html>
