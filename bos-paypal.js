@@ -24,6 +24,13 @@
   }
   function bosTrack(name, props){
     try{ if(window.umami && typeof umami.track==='function') umami.track(name, props); }catch(e){}
+    /* BOS — Pinterest tag (pintrk), consentement CNIL requis (bos-consent.js). Ajout 02/07/2026. */
+    try{
+      if(window.pintrk && (name==='checkout_paypal' || name==='buy_now_click')){
+        var val=props && (props.montant!==undefined ? props.montant : props.prix);
+        window.pintrk('track','checkout',{value:Number(val||0),currency:'EUR',order_quantity:1});
+      }
+    }catch(e){}
   }
   window.bosPayPalCheckout=function(){
     var cart=findCart();

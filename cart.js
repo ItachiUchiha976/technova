@@ -75,6 +75,13 @@ function addToCart(productId, qty = 1) {
       umami.track('add_to_cart', { produit: p ? p.name : productId, prix: p ? p.price : 0, boutique: 'technova' });
     }
   } catch (e) {}
+  /* BOS — Pinterest tag (pintrk), consentement CNIL requis (bos-consent.js). Ajout 02/07/2026. */
+  try {
+    if (window.pintrk) {
+      const p2 = PRODUCTS[productId];
+      window.pintrk('track', 'addtocart', { value: p2 ? p2.price : 0, currency: 'EUR', order_quantity: qty });
+    }
+  } catch (e) {}
 }
 
 function removeFromCart(productId) {
