@@ -18,11 +18,21 @@
   }
   function merciUrl(){ return location.origin + location.pathname.replace(/[^\/]*$/,'merci.html'); }
   function toast(m){ if(typeof window.showToast==='function') window.showToast(m); else alert(m); }
+  /* BOS — Umami events (funnel add_to_cart -> checkout_paypal/buy_now_click). Defensif, jamais bloquant. Ajout 02/07/2026. */
+  function bosBoutiqueSlug(){
+    try{ var p=location.pathname.split('/').filter(Boolean); return p[0]||location.hostname||'boutique'; }catch(e){ return 'boutique'; }
+  }
+  function bosTrack(name, props){
+    try{ if(window.umami && typeof umami.track==='function') umami.track(name, props); }catch(e){}
+  }
   window.bosPayPalCheckout=function(){
     var cart=findCart();
     if(!cart.length){ toast('Ton panier est vide.'); return; }
     var cgv=document.getElementById('cgv-check');
     if(cgv && !cgv.checked){ toast('Merci d’accepter les CGV pour continuer.'); return; }
+    var total=0;
+    cart.forEach(function(it){ total += Number(it.price||0)*Math.max(1,parseInt(it.qty||1,10)); });
+    bosTrack('checkout_paypal', {montant:Number(total.toFixed(2)), boutique:bosBoutiqueSlug()});
     var f=document.createElement('form');
     f.method='POST'; f.action='https://www.paypal.com/cgi-bin/webscr'; f.style.display='none'; f.target='_top';
     function add(n,v){ var i=document.createElement('input'); i.type='hidden'; i.name=n; i.value=v; f.appendChild(i); }
@@ -40,6 +50,7 @@
   };
   // Bouton "Acheter maintenant" mono-produit (footperf mono-page ou fiches produit) : bosBuyNow(name, price, id?)
   window.bosBuyNow=function(name, price, id){
+    bosTrack('buy_now_click', {produit:(name||'Commande').toString().slice(0,120), prix:Number(price||0), boutique:bosBoutiqueSlug()});
     var f=document.createElement('form');
     f.method='POST'; f.action='https://www.paypal.com/cgi-bin/webscr'; f.style.display='none'; f.target='_top';
     function add(n,v){ var i=document.createElement('input'); i.type='hidden'; i.name=n; i.value=v; f.appendChild(i); }

@@ -68,6 +68,13 @@ function addToCart(productId, qty = 1) {
   cart[productId] = (cart[productId] || 0) + qty;
   saveCart(cart);
   showToast('Produit ajouté au panier !');
+  /* BOS — Umami funnel event. Defensif, jamais bloquant. Ajout 02/07/2026. */
+  try {
+    if (window.umami && typeof umami.track === 'function') {
+      const p = PRODUCTS[productId];
+      umami.track('add_to_cart', { produit: p ? p.name : productId, prix: p ? p.price : 0, boutique: 'technova' });
+    }
+  } catch (e) {}
 }
 
 function removeFromCart(productId) {
