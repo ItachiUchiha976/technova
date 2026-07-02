@@ -133,11 +133,12 @@
           Acheter maintenant &mdash; 69&nbsp;&euro;
         </button>
         <p style="font-size:.8rem; color:var(--text-light); margin-top:10px;">Paiement 100&nbsp;% s&eacute;curis&eacute; par PayPal &mdash; carte bancaire accept&eacute;e (pas besoin de compte PayPal).</p>
+        <p class="bos-reassurance" style="font-size:.8rem; color:var(--text-light); margin-top:6px;">&#x2714; Rembours&eacute; 14 jours &middot; &#x2714; Num&eacute;ro de suivi fourni &middot; &#x2714; Paiement s&eacute;curis&eacute; PayPal</p>
 
         <div class="trust-row">
           <div class="trust-item">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
-            Livraison 12-20 j
+            <span class="bos-delivery-window-compact">Livraison 12-20 j</span>
           </div>
           <div class="trust-item">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
@@ -350,6 +351,40 @@
 
 <script src="cart.js"></script>
 <script src="bos-paypal.js"></script>
+
+<!-- bos-delivery-window-start : fenetre de livraison datee (jours ouvres), purement additif, 0 impact checkout/Umami -->
+<script>
+(function () {
+  function bosAddBizDays(date, days) {
+    var d = new Date(date.getTime());
+    var added = 0;
+    while (added < days) {
+      d.setDate(d.getDate() + 1);
+      var day = d.getDay();
+      if (day !== 0 && day !== 6) added++;
+    }
+    return d;
+  }
+  function bosFmtDayMonth(d) {
+    return d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' });
+  }
+  try {
+    var today = new Date();
+    var minD = bosAddBizDays(today, 12);
+    var maxD = bosAddBizDays(today, 20);
+    var sameMonth = minD.getMonth() === maxD.getMonth() && minD.getFullYear() === maxD.getFullYear();
+    var minLabel = sameMonth ? String(minD.getDate()) : bosFmtDayMonth(minD);
+    var maxLabel = bosFmtDayMonth(maxD);
+    var fullText = "Commandez aujourd'hui → livraison estimée entre le " + minLabel + " et le " + maxLabel;
+    var compactText = "Livraison estimée entre le " + minLabel + " et le " + maxLabel;
+    var fullEls = document.querySelectorAll('.bos-delivery-window');
+    for (var i = 0; i < fullEls.length; i++) { fullEls[i].textContent = fullText; }
+    var compactEls = document.querySelectorAll('.bos-delivery-window-compact');
+    for (var j = 0; j < compactEls.length; j++) { compactEls[j].textContent = compactText; }
+  } catch (e) { /* JS indisponible : le texte statique par defaut deja present reste affiche */ }
+})();
+</script>
+<!-- bos-delivery-window-end -->
 
 <!-- umami-start --><script defer src="https://cloud.umami.is/script.js" data-website-id="d0fa94fe-a108-4590-a465-8f0017569370"></script><!-- umami-end -->
 </body>
