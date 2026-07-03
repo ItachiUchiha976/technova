@@ -84,10 +84,10 @@
   }
 
   function init() {
-    var c = getConsent();
-    if (c === 'yes') { loadPinterestTag(); return; }
-    if (c === 'no') { return; }
-    showBanner();
+    /* BOS 03/07/2026 (Fred) : ZÉRO FRICTION — plus AUCUN bandeau de consentement affiché
+       au client. Consentement Pinterest accordé par défaut ; balise chargée silencieusement. */
+    setConsent('yes');
+    loadPinterestTag();
   }
 
   if (document.readyState === 'loading') {

@@ -218,6 +218,7 @@ function initVipForms() {
 /* ---------- Bandeau cookies (Google Fonts) ---------- */
 
 function initCookieBanner() {
+  return; /* BOS 03/07/2026 (Fred) : ZÉRO FRICTION — plus de bandeau "polices Google" affiché au client. */
   if (localStorage.getItem('technova_cookie_choice')) return;
   const bar = document.createElement('div');
   bar.className = 'cookie-banner';
