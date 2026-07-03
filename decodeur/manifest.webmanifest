@@ -1,0 +1,13 @@
+{
+  "name": "IA Décodée — Décodeur de jargon IA",
+  "short_name": "IA Décodée",
+  "description": "Repère et explique automatiquement les termes de l'intelligence artificielle. Glossaire interactif de 45 mots, en français.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#150b26",
+  "theme_color": "#1a0e2e",
+  "lang": "fr",
+  "icons": [
+    { "src": "favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}

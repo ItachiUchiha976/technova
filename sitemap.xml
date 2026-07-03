@@ -11,4 +11,6 @@
   <url><loc>https://technovaboutique.fr/cgv.html</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
   <url><loc>https://technovaboutique.fr/livraison.html</loc><changefreq>monthly</changefreq><priority>0.4</priority></url>
   <url><loc>https://technovaboutique.fr/politique-confidentialite.html</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://technovaboutique.fr/comparateur/</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://technovaboutique.fr/decodeur/</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
 </urlset>
