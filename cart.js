@@ -1,13 +1,21 @@
 /* ================================================
    TECHNOVA — Cart Manager (localStorage)
+   ------------------------------------------------
+   Modèle ARRAY canonique [{id,name,price,qty}] sous la clé 'technova_cart'
+   (identique à Curiosa/FocusLab + directement lisible par bos-paypal.js).
+   ⚠️ Refonte 03/07/2026 : l'ancien modèle OBJET {id:qty} sous 'technova_cart_v1'
+   était CASSÉ — l'override window.getCart (ajouté 01/07 pour le checkout PayPal
+   cross-page) écrasait le getCart interne → addToCart opérait sur le mauvais store
+   → quantité bloquée à 1 + badge "0[object Object]" (bug remonté par Fred :
+   "2× le même produit = un seul prix"). Un seul store array supprime le conflit.
    ================================================ */
 
-const CART_KEY = 'technova_cart_v1';
+const CART_KEY = 'technova_cart';
 
 const PRODUCTS = {
   'proj-wifi': {
     name: 'Mini Projecteur WiFi Portable',
-    price: 89,
+    price: 79,
     sku: 'TN-PROJ-001',
     visual: 'proj',
     emoji: '🎬',
@@ -39,77 +47,66 @@ const PRODUCTS = {
   }
 };
 
-/* ---------- Core ---------- */
+/* ---------- Core (modèle array [{id,name,price,qty}]) ---------- */
 
 function getCart() {
-  try { return JSON.parse(localStorage.getItem(CART_KEY)) || {}; }
-  catch { return {}; }
+  try {
+    const arr = JSON.parse(localStorage.getItem(CART_KEY));
+    return Array.isArray(arr) ? arr : [];
+  } catch (e) { return []; }
 }
 
 function saveCart(cart) {
   localStorage.setItem(CART_KEY, JSON.stringify(cart));
   updateCartBadge();
-  syncPayPalCartMirror(cart);
-}
-
-/* Miroir panier au format tableau [{id,name,price,qty}] dans 'technova_cart' —
-   lu par bos-paypal.js (checkout PayPal) qui ne connait pas le format objet ci-dessus. */
-function syncPayPalCartMirror(cart) {
-  try {
-    const items = Object.entries(cart)
-      .filter(([id, qty]) => PRODUCTS[id] && qty > 0)
-      .map(([id, qty]) => ({ id, name: PRODUCTS[id].name, price: PRODUCTS[id].price, qty }));
-    localStorage.setItem('technova_cart', JSON.stringify(items));
-  } catch (e) { /* silencieux */ }
 }
 
 function addToCart(productId, qty = 1) {
+  const p = PRODUCTS[productId];
+  if (!p) { /* produit hors catalogue : ne rien casser */ return; }
   const cart = getCart();
-  cart[productId] = (cart[productId] || 0) + qty;
+  const existing = cart.find(i => i.id === productId);
+  if (existing) { existing.qty += qty; }
+  else { cart.push({ id: productId, name: p.name, price: p.price, qty: qty }); }
   saveCart(cart);
   showToast('Produit ajouté au panier !');
-  /* BOS — Umami funnel event. Defensif, jamais bloquant. Ajout 02/07/2026. */
+  /* BOS — Umami funnel event. Defensif, jamais bloquant. */
   try {
     if (window.umami && typeof umami.track === 'function') {
-      const p = PRODUCTS[productId];
-      umami.track('add_to_cart', { produit: p ? p.name : productId, prix: p ? p.price : 0, boutique: 'technova' });
+      umami.track('add_to_cart', { produit: p.name, prix: p.price, boutique: 'technova' });
     }
   } catch (e) {}
-  /* BOS — Pinterest tag (pintrk), consentement CNIL requis (bos-consent.js). Ajout 02/07/2026. */
+  /* BOS — Pinterest tag (pintrk), consentement CNIL requis (bos-consent.js). */
   try {
     if (window.pintrk) {
-      const p2 = PRODUCTS[productId];
-      window.pintrk('track', 'addtocart', { value: p2 ? p2.price : 0, currency: 'EUR', order_quantity: qty });
+      window.pintrk('track', 'addtocart', { value: p.price, currency: 'EUR', order_quantity: qty });
     }
   } catch (e) {}
 }
 
 function removeFromCart(productId) {
-  const cart = getCart();
-  delete cart[productId];
-  saveCart(cart);
+  saveCart(getCart().filter(i => i.id !== productId));
   if (document.querySelector('.cart-page')) renderCart();
 }
 
 function setQty(productId, qty) {
-  const cart = getCart();
-  if (qty <= 0) { delete cart[productId]; }
-  else { cart[productId] = qty; }
+  let cart = getCart();
+  if (qty <= 0) {
+    cart = cart.filter(i => i.id !== productId);
+  } else {
+    const it = cart.find(i => i.id === productId);
+    if (it) it.qty = qty;
+  }
   saveCart(cart);
   if (document.querySelector('.cart-page')) renderCart();
 }
 
 function cartTotal() {
-  const cart = getCart();
-  return Object.entries(cart).reduce((sum, [id, qty]) => {
-    const p = PRODUCTS[id];
-    return sum + (p ? p.price * qty : 0);
-  }, 0);
+  return getCart().reduce((sum, i) => sum + (Number(i.price) || 0) * (i.qty || 0), 0);
 }
 
 function cartItemCount() {
-  const cart = getCart();
-  return Object.values(cart).reduce((s, q) => s + q, 0);
+  return getCart().reduce((s, i) => s + (i.qty || 0), 0);
 }
 
 /* ---------- UI ---------- */
@@ -133,42 +130,39 @@ function showToast(msg) {
 }
 
 function renderCart() {
-  const cart = getCart();
   const container = document.getElementById('cart-items');
   const summary   = document.getElementById('cart-summary');
   const emptyMsg  = document.getElementById('cart-empty');
-
   if (!container) return;
 
-  const keys = Object.keys(cart).filter(id => PRODUCTS[id] && cart[id] > 0);
+  const cart = getCart().filter(i => i.qty > 0);
 
-  if (keys.length === 0) {
+  if (cart.length === 0) {
     container.innerHTML = '';
-    if (summary)   summary.style.display   = 'none';
-    if (emptyMsg)  emptyMsg.style.display  = 'block';
+    if (summary)  summary.style.display  = 'none';
+    if (emptyMsg) emptyMsg.style.display = 'block';
     return;
   }
-  if (summary)   summary.style.display   = 'block';
-  if (emptyMsg)  emptyMsg.style.display  = 'none';
+  if (summary)  summary.style.display  = 'block';
+  if (emptyMsg) emptyMsg.style.display = 'none';
 
-  container.innerHTML = keys.map(id => {
-    const p   = PRODUCTS[id];
-    const qty = cart[id];
-    const tot = (p.price * qty).toFixed(2);
+  container.innerHTML = cart.map(it => {
+    const meta = PRODUCTS[it.id] || {};
+    const tot  = (it.price * it.qty).toFixed(2);
     return `
-      <div class="cart-item" data-id="${id}">
-        <div class="cart-item-visual ${p.visual}">${p.emoji}</div>
+      <div class="cart-item" data-id="${it.id}">
+        <div class="cart-item-visual ${meta.visual || ''}">${meta.emoji || '📦'}</div>
         <div class="cart-item-info">
-          <div class="cart-item-name">${p.name}</div>
-          <div class="cart-item-price">${p.price.toFixed(2)} € / unité</div>
+          <div class="cart-item-name">${it.name}</div>
+          <div class="cart-item-price">${it.price.toFixed(2)} € / unité</div>
         </div>
         <div class="cart-item-qty">
-          <button class="qty-btn" onclick="setQty('${id}', ${qty - 1})">−</button>
-          <span class="qty-val">${qty}</span>
-          <button class="qty-btn" onclick="setQty('${id}', ${qty + 1})">+</button>
+          <button class="qty-btn" onclick="setQty('${it.id}', ${it.qty - 1})">−</button>
+          <span class="qty-val">${it.qty}</span>
+          <button class="qty-btn" onclick="setQty('${it.id}', ${it.qty + 1})">+</button>
         </div>
         <div class="cart-item-total">${tot} €</div>
-        <button class="cart-remove" onclick="removeFromCart('${id}')" aria-label="Supprimer">✕</button>
+        <button class="cart-remove" onclick="removeFromCart('${it.id}')" aria-label="Supprimer">✕</button>
       </div>
     `;
   }).join('');
@@ -219,23 +213,12 @@ function initVipForms() {
 
 function initCookieBanner() {
   return; /* BOS 03/07/2026 (Fred) : ZÉRO FRICTION — plus de bandeau "polices Google" affiché au client. */
-  if (localStorage.getItem('technova_cookie_choice')) return;
-  const bar = document.createElement('div');
-  bar.className = 'cookie-banner';
-  bar.innerHTML = '<p>Ce site utilise des polices Google (CDN) pour l\'affichage. Aucune donnée n\'est revendue. <a href="cgv.html#rgpd" style="color:var(--indigo-light)">En savoir plus</a></p>'
-    + '<div class="cookie-actions"><button class="cookie-btn" data-c="refuse">Refuser</button><button class="cookie-btn primary" data-c="accept">Accepter</button></div>';
-  document.body.appendChild(bar);
-  bar.querySelectorAll('.cookie-btn').forEach(b => b.addEventListener('click', () => {
-    localStorage.setItem('technova_cookie_choice', b.dataset.c);
-    bar.remove();
-  }));
 }
 
 /* ---------- Init ---------- */
 
 document.addEventListener('DOMContentLoaded', () => {
   updateCartBadge();
-  syncPayPalCartMirror(getCart());
   initVipForms();
   initCookieBanner();
 
@@ -272,16 +255,10 @@ document.addEventListener('DOMContentLoaded', () => {
   if (document.querySelector('.cart-page')) renderCart();
 });
 
-/* BOS — expose panier pour checkout PayPal cross-page (fix isolation cart multi-boutique, 01/07/2026).
-   Le panier interne (CART_KEY='technova_cart_v1') est un OBJET {id:qty} ; le checkout PayPal
-   a besoin d'un TABLEAU [{id,name,price,qty}] -> on utilise le miroir 'technova_cart' deja
-   maintenu par syncPayPalCartMirror(). */
+/* BOS — expose panier pour checkout PayPal cross-page.
+   Le store canonique 'technova_cart' EST déjà un tableau [{id,name,price,qty}] :
+   window.getCart le renvoie directement (plus de conflit avec le getCart interne). */
 try {
-  window.getCart = function () {
-    try {
-      var arr = JSON.parse(localStorage.getItem('technova_cart'));
-      return Array.isArray(arr) ? arr : [];
-    } catch (e) { return []; }
-  };
-  window.BOS_CART_KEY = 'technova_cart';
+  window.getCart = getCart;
+  window.BOS_CART_KEY = CART_KEY;
 } catch (e) {}
