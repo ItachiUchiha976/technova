@@ -167,15 +167,18 @@ function renderCart() {
     `;
   }).join('');
 
+  /* BOS 04/07/2026 : livraison TOUJOURS offerte (aligné avec bos-paypal.js qui ne facture
+     jamais de frais de port) — plus de seuil 49 €, pour que l'affichage panier corresponde
+     exactement au montant réellement débité par PayPal. */
   const subtotal = cartTotal();
-  const shipping = subtotal >= 49 ? 0 : 4.99;
+  const shipping = 0;
   const total    = subtotal + shipping;
 
   const subEl = document.getElementById('summary-subtotal');
   const shipEl= document.getElementById('summary-shipping');
   const totEl = document.getElementById('summary-total');
   if (subEl)  subEl.textContent  = subtotal.toFixed(2) + ' €';
-  if (shipEl) shipEl.textContent = shipping === 0 ? 'Offerte' : shipping.toFixed(2) + ' €';
+  if (shipEl) shipEl.textContent = 'Offerte';
   if (totEl)  totEl.textContent  = total.toFixed(2) + ' €';
 }
 

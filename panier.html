@@ -11,7 +11,7 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<div class="topbar">Livraison offerte dès 49 € &nbsp;&middot;&nbsp; Livraison estimée 12 à 20 jours ouvrés &nbsp;&middot;&nbsp; Retours 14 jours</div>
+<div class="topbar">Livraison offerte &nbsp;&middot;&nbsp; Livraison estimée 12 à 20 jours ouvrés &nbsp;&middot;&nbsp; Retours 14 jours</div>
 <header class="header"><div class="container"><div class="header__inner">
   <a href="index.html" class="logo">Tech<em>Nova</em></a>
   <nav aria-label="Navigation principale"><ul class="nav-list">
@@ -28,13 +28,25 @@
     <button class="hamburger" aria-label="Menu" aria-expanded="false"><span></span><span></span><span></span></button>
   </div>
 </div></div></header>
-<nav class="mobile-menu"><button class="mobile-menu__close">&#x2715;</button><a href="index.html">Accueil</a></nav>
+<nav class="mobile-menu" aria-label="Menu mobile">
+  <button class="mobile-menu__close" aria-label="Fermer">&#x2715;</button>
+  <a href="index.html">Accueil</a>
+  <a href="produit-projecteur-wifi.html">Projecteur Portable</a>
+  <a href="produit-enceinte-levitation.html">Enceinte L&eacute;vitation Magn&eacute;tique</a>
+  <a href="produit-bundle-ecran-trepied.html">Pack &Eacute;cran + Tr&eacute;pied</a>
+  <a href="produit-micro-cravate.html">Micro-cravate Sans Fil</a>
+  <a href="produit-imprimante-thermique.html">Imprimante Thermique</a>
+  <a href="produit-lampe-bureau-3en1.html">Lampe de Bureau LED 3-en-1</a>
+  <a href="a-propos.html">&Agrave; propos</a>
+  <a href="cgv.html">CGV &amp; Mentions l&eacute;gales</a>
+  <a href="livraison.html">Livraison &amp; Retours</a>
+</nav>
 
 <main class="cart-page"><div class="container">
   <h1 class="cart-title">Mon panier</h1>
   <div id="cart-empty" class="cart-empty" style="display:none;">
     <h2>Votre panier est vide</h2>
-    <p style="margin-bottom:24px;">Découvrez notre sélection de gadgets smart home.</p>
+    <p style="margin-bottom:24px;">Découvrez notre sélection de gadgets tech.</p>
     <a href="index.html" class="btn-primary" style="display:inline-flex;">Voir les produits</a>
   </div>
   <div class="cart-layout">
@@ -51,7 +63,7 @@
         </label>
       </div>
       <button type="button" class="checkout-btn" onclick="bosPayPalCheckout()">Payer ma commande (PayPal · CB) &rarr;</button>
-      <p class="checkout-note">Paiement 100&nbsp;% sécurisé par PayPal — carte bancaire acceptée (pas besoin de compte PayPal). Livraison offerte dès 49&nbsp;€ · Satisfait ou remboursé sous 14 jours.</p>
+      <p class="checkout-note">Paiement 100&nbsp;% sécurisé par PayPal — carte bancaire acceptée (pas besoin de compte PayPal). Livraison offerte · Satisfait ou remboursé sous 14 jours.</p>
     </div>
   </div>
 </div></main>

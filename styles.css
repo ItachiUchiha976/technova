@@ -95,7 +95,7 @@ ul   { list-style:none; }
 .nav-list { display:flex; gap:4px; align-items:center; }
 .nav-link {
   font-size:.88rem; font-weight:500; padding:6px 12px; border-radius:6px;
-  color:var(--text-med); transition:all var(--t);
+  color:var(--text-med); transition:all var(--t); white-space:nowrap;
 }
 .nav-link:hover,
 .nav-link.active { color:var(--text); background:var(--dark4); }
@@ -782,4 +782,13 @@ section { padding:72px 0; }
   .features-grid  { grid-template-columns:1fr; }
   .hero-cta       { flex-direction:column; }
   .channel-cta    { flex-direction:column; text-align:center; }
+
+  /* BOS 04/07/2026 — fix débordement horizontal panier mobile (bouton ✕ hors écran) */
+  .cart-item        { flex-wrap:wrap; padding:14px; gap:10px; position:relative; }
+  .cart-item-visual { width:56px; height:56px; font-size:1.4rem; }
+  .cart-item-info   { min-width:0; padding-right:28px; }
+  .cart-item-name   { word-break:break-word; }
+  .cart-item-qty    { gap:6px; }
+  .cart-remove      { position:absolute; top:8px; right:8px; }
+  .cart-summary, .summary-row { max-width:100%; }
 }
