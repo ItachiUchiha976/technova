@@ -786,8 +786,8 @@ section { padding:72px 0; }
   /* BOS 04/07/2026 — fix débordement horizontal panier mobile (bouton ✕ hors écran) */
   .cart-item        { flex-wrap:wrap; padding:14px; gap:10px; position:relative; }
   .cart-item-visual { width:56px; height:56px; font-size:1.4rem; }
-  .cart-item-info   { min-width:0; padding-right:28px; }
-  .cart-item-name   { word-break:break-word; }
+  .cart-item-info   { min-width:100%; padding-right:28px; }
+  .cart-item-name   { word-break:normal; overflow-wrap:break-word; }
   .cart-item-qty    { gap:6px; }
   .cart-remove      { position:absolute; top:8px; right:8px; }
   .cart-summary, .summary-row { max-width:100%; }

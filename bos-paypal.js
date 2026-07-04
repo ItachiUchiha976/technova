@@ -39,7 +39,7 @@
     if(cgv && !cgv.checked){ toast('Merci d’accepter les CGV pour continuer.'); return; }
     var total=0;
     cart.forEach(function(it){ total += Number(it.price||0)*Math.max(1,parseInt(it.qty||1,10)); });
-    bosTrack('checkout_paypal', {montant:Number(total.toFixed(2)), boutique:bosBoutiqueSlug()});
+    bosTrack('checkout_paypal', {montant:Number(total.toFixed(2)), boutique:bosBoutiqueSlug(), page:location.pathname});
     var f=document.createElement('form');
     f.method='POST'; f.action='https://www.paypal.com/cgi-bin/webscr'; f.style.display='none'; f.target='_top';
     function add(n,v){ var i=document.createElement('input'); i.type='hidden'; i.name=n; i.value=v; f.appendChild(i); }
@@ -57,7 +57,7 @@
   };
   // Bouton "Acheter maintenant" mono-produit (footperf mono-page ou fiches produit) : bosBuyNow(name, price, id?)
   window.bosBuyNow=function(name, price, id){
-    bosTrack('buy_now_click', {produit:(name||'Commande').toString().slice(0,120), prix:Number(price||0), boutique:bosBoutiqueSlug()});
+    bosTrack('buy_now_click', {produit:(name||'Commande').toString().slice(0,120), prix:Number(price||0), boutique:bosBoutiqueSlug(), page:location.pathname});
     var f=document.createElement('form');
     f.method='POST'; f.action='https://www.paypal.com/cgi-bin/webscr'; f.style.display='none'; f.target='_top';
     function add(n,v){ var i=document.createElement('input'); i.type='hidden'; i.name=n; i.value=v; f.appendChild(i); }

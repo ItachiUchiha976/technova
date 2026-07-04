@@ -150,6 +150,20 @@ h2 { font-family: var(--font-title); font-size: clamp(1.5rem, 3.2vw, 2rem); font
 .cta-band .price { color: var(--accent); }
 .cta-band .btn-buy { margin: 0 auto; }
 
+/* LEAD CAPTURE */
+.lead-capture { background: var(--bg-card); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); text-align: center; }
+.lead-capture .lead { margin-left: auto; margin-right: auto; }
+.lc-form { display: flex; gap: 0.6rem; flex-wrap: wrap; max-width: 460px; margin: 0.5rem auto 0; justify-content: center; }
+.lc-form input[type=email] { flex: 1 1 220px; padding: 0.8rem 1rem; border: 1px solid var(--border); border-radius: 10px; font-size: 0.95rem; font-family: inherit; background: var(--bg-input); color: var(--text); }
+.lc-form input[type=email]::placeholder { color: var(--text-muted); }
+.lc-btn { white-space: nowrap; background: var(--accent); color: #06222b; border: none; border-radius: 10px; padding: 0.8rem 1.3rem; font-weight: 800; font-family: var(--font-title); font-size: 0.95rem; cursor: pointer; }
+.lc-btn:hover { background: var(--accent-dim); }
+.lc-btn:disabled { opacity: 0.6; cursor: default; }
+.lc-note { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.7rem; }
+.lc-success, .lc-error { display: none; margin-top: 0.9rem; font-size: 0.92rem; font-weight: 700; }
+.lc-success { color: var(--accent); }
+.lc-error { color: #f87171; }
+
 /* FAQ */
 .faq details { border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem 1.25rem; margin-bottom: 0.8rem; background: var(--bg-card); }
 .faq summary { font-weight: 700; cursor: pointer; font-size: 1rem; list-style: none; color: var(--text); }
@@ -288,7 +302,26 @@ footer.site-footer { background: var(--bg-card); color: var(--text-muted); paddi
   <button class="btn-buy" onclick="bosBuyNow(&quot;Ma&#238;triser l'IA en 2026 (PDF)&quot;, 13.00, 'maitriser-ia-2026')">
     Obtenir le guide — 13 €
   </button>
+  <div class="pay-reassure" style="justify-content:center;margin-top:0.9rem">🔒 Paiement sécurisé PayPal ou carte bancaire · aucun compte requis</div>
 </div>
+
+<!-- LEAD CAPTURE -->
+<section class="block lead-capture">
+  <div class="section-tag">Pas encore décidé(e) ?</div>
+  <h2>Reçois un extrait gratuit + nos conseils</h2>
+  <p class="lead">Laisse ton email : un extrait gratuit du guide + nos conseils pour mieux utiliser l'IA au quotidien, sans spam.</p>
+  <form class="lc-form lead-capture-form" action="https://api.web3forms.com/submit" method="POST">
+    <input type="hidden" name="access_key" value="d97a8c73-b827-48bb-b437-e053a73fdb7e">
+    <input type="hidden" name="subject" value="TechNova — lead gratuit (guide IA 2026)">
+    <input type="hidden" name="from_name" value="TechNova">
+    <input type="checkbox" name="botcheck" style="display:none !important" tabindex="-1" autocomplete="off">
+    <input type="email" name="email" required placeholder="ton@email.fr" aria-label="Adresse email">
+    <button type="submit" class="lc-btn">Recevoir l'extrait gratuit →</button>
+  </form>
+  <p class="lc-note">Zéro spam. Désinscription en 1 clic.</p>
+  <div class="lc-success">✅ Merci ! Tu vas recevoir l'extrait gratuit par email très vite.</div>
+  <div class="lc-error">Une erreur est survenue. Réessaie dans un instant.</div>
+</section>
 
 <!-- FAQ -->
 <section class="block faq">
@@ -336,5 +369,35 @@ footer.site-footer { background: var(--bg-card); color: var(--text-muted); paddi
 
 <!-- umami-start --><script defer src="https://cloud.umami.is/script.js" data-website-id="d0fa94fe-a108-4590-a465-8f0017569370"></script><!-- umami-end -->
 <script src="../bos-paypal.js"></script>
+<script>
+(function(){
+  var form = document.querySelector('.lead-capture-form');
+  if (!form) return;
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    var btn = form.querySelector('button[type="submit"]');
+    var orig = btn ? btn.textContent : '';
+    var wrap = form.closest('section') || form.parentElement;
+    var successEl = wrap ? wrap.querySelector('.lc-success') : null;
+    var errorEl = wrap ? wrap.querySelector('.lc-error') : null;
+    if (errorEl) errorEl.style.display = 'none';
+    if (btn) { btn.disabled = true; btn.textContent = 'Envoi…'; }
+    fetch(form.action, { method: 'POST', headers: { 'Accept': 'application/json' }, body: new FormData(form) })
+      .then(function(r){ return r.json(); })
+      .then(function(json){
+        if (json && json.success) {
+          form.style.display = 'none';
+          if (successEl) successEl.style.display = 'block';
+        } else {
+          throw new Error('error');
+        }
+      })
+      .catch(function(){
+        if (btn) { btn.disabled = false; btn.textContent = orig; }
+        if (errorEl) errorEl.style.display = 'block';
+      });
+  });
+})();
+</script>
 </body>
 </html>
