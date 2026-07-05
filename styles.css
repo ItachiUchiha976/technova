@@ -99,6 +99,8 @@ ul   { list-style:none; }
 }
 .nav-link:hover,
 .nav-link.active { color:var(--text); background:var(--dark4); }
+.nav-link--secondary { opacity:.72; }
+.nav-link--secondary:hover { opacity:1; }
 .header-actions { display:flex; align-items:center; gap:12px; }
 .cart-btn {
   display:flex; align-items:center; gap:6px;
