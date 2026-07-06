@@ -787,10 +787,13 @@ section { padding:72px 0; }
   .features-grid      { grid-template-columns:1fr 1fr; }
   .products-grid      { grid-template-columns:1fr 1fr; }
   .testimonials-grid  { grid-template-columns:1fr; }
-  .product-page-grid  { grid-template-columns:1fr; }
   .nav-list           { display:none; }
   .hamburger          { display:flex; }
   .footer-grid        { grid-template-columns:1fr; gap:28px; }
+}
+/* Le layout produit garde 2 colonnes jusqu'à 640px pour les écrans laptop */
+@media (max-width:640px) {
+  .product-page-grid  { grid-template-columns:1fr; }
 }
 @media (max-width:480px) {
   .products-grid  { grid-template-columns:1fr; }
