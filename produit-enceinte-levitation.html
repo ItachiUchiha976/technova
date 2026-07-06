@@ -81,15 +81,18 @@
 <div style="margin-top:14px;padding:12px 14px;background:var(--dark3);border:1px solid var(--border);border-radius:10px;font-size:.8rem;color:var(--text-light);">
           Photos du produit r&eacute;el. L&eacute;g&egrave;res variations de teinte possibles selon la lumi&egrave;re ambiante et la couleur LED s&eacute;lectionn&eacute;e sur l'appareil.
         </div>
-        <div class="thumbnails">
-          <div class="thumbnail active" style="display:inline-block;width:72px;height:72px;margin:4px;border-radius:10px;overflow:hidden;position:relative;">
-            <img src="img/technova_enceinte-levitation_enceinte_levitation_blanc_02.jpg" alt="Vue 2" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+        <div class="thumbnails" style="margin-top:.75rem;display:flex;flex-wrap:wrap;gap:8px">
+          <div class="thumbnail active" style="width:64px;height:64px;border-radius:8px;overflow:hidden;border:2px solid var(--accent);cursor:pointer" onclick="document.getElementById('main-product-img').src='img/enceinte-blanc-hero.jpg'">
+            <img src="img/enceinte-blanc-hero.jpg" alt="Enceinte blanche — vue héro" loading="lazy" style="width:100%;height:100%;object-fit:cover">
           </div>
-          <div class="thumbnail" style="display:inline-block;width:72px;height:72px;margin:4px;border-radius:10px;overflow:hidden;position:relative;">
-            <img src="img/technova_enceinte-levitation_enceinte_levitation_blanc_lowres.jpg" alt="Vue 3" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+          <div class="thumbnail" style="width:64px;height:64px;border-radius:8px;overflow:hidden;cursor:pointer;opacity:.7" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.7'" onclick="document.getElementById('main-product-img').src='img/enceinte-blanc-02.jpg'">
+            <img src="img/enceinte-blanc-02.jpg" alt="Enceinte blanche — vue 2" loading="lazy" style="width:100%;height:100%;object-fit:cover">
           </div>
-          <div class="thumbnail" style="display:inline-block;width:72px;height:72px;margin:4px;border-radius:10px;overflow:hidden;position:relative;">
-            <img src="img/technova_enceinte-levitation_enceinte_levitation_noir.jpg" alt="Vue 4" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+          <div class="thumbnail" style="width:64px;height:64px;border-radius:8px;overflow:hidden;cursor:pointer;opacity:.7" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.7'" onclick="document.getElementById('main-product-img').src='img/enceinte-blanc-lowres.jpg'">
+            <img src="img/enceinte-blanc-lowres.jpg" alt="Enceinte blanche — ambiance" loading="lazy" style="width:100%;height:100%;object-fit:cover">
+          </div>
+          <div class="thumbnail" style="width:64px;height:64px;border-radius:8px;overflow:hidden;cursor:pointer;opacity:.7" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.7'" onclick="document.getElementById('main-product-img').src='img/enceinte-noir.jpg'">
+            <img src="img/enceinte-noir.jpg" alt="Enceinte — version noire" loading="lazy" style="width:100%;height:100%;object-fit:cover">
           </div>
       </div></div>
 
