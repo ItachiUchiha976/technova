@@ -1,0 +1,17 @@
+# Screenshots Playwright
+*.png
+*.jpg
+*.jpeg
+
+# Fichiers temporaires
+*.tmp
+*.log
+*.bak
+Thumbs.db
+.DS_Store
+
+# Node
+node_modules/
+
+# OS
+Desktop.ini
