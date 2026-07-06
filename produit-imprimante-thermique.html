@@ -74,10 +74,7 @@
 
       <!-- Visuel -->
       <div>
-        <img id="main-product-img" src="img/imprimante-thermique-real.jpg" alt="Imprimante thermique portable sans fil TechNova — Bluetooth, format A4" style="width:100%;height:100%;object-fit:contain;display:block" loading="eager">
-        <div class="thumbnails">
-          <div class="thumbnail active plug"><img src="img/imprimante-thermique-real.jpg" alt="Imprimante thermique" style="width:100%;height:100%;object-fit:cover;border-radius:8px" loading="lazy"></div>
-        </div>
+        <img id="main-product-img" src="img/imprimante-thermique-real.jpg" alt="Imprimante thermique portable sans fil TechNova — Bluetooth, format A4" style="width:100%;height:100%;object-fit:contain;display:block" loading="eager"></div>
       </div>
 
       <!-- D&eacute;tails -->
@@ -231,26 +228,7 @@
 </footer>
 
 <script src="cart.js?v=3"></script>
-<script src="bos-paypal.js"></script>
-<script>
-(function(){
-  var thumbs = document.querySelectorAll('.thumbnail img');
-  var main = document.querySelector('.product-main-visual img') || document.querySelector('#main-product-img');
-  if (!main || thumbs.length < 2) return;
-  thumbs.forEach(function(t){
-    t.parentElement.addEventListener('click', function(){
-      var ns = t.src, ms = main.src;
-      if (ns === ms) return;
-      t.src = ms; main.src = ns;
-      document.querySelectorAll('.thumbnail').forEach(function(el){ el.classList.remove('active'); });
-      t.parentElement.classList.add('active');
-      main.style.opacity = '0.4'; main.style.transition = 'opacity .15s ease';
-      setTimeout(function(){ main.style.opacity = '1'; }, 150);
-    });
-  });
-})();
-</script>
-<!-- umami-start --><script defer src="https://cloud.umami.is/script.js" data-website-id="d0fa94fe-a108-4590-a465-8f0017569370"></script><!-- umami-end -->
+<script src="bos-paypal.js"></script><!-- umami-start --><script defer src="https://cloud.umami.is/script.js" data-website-id="d0fa94fe-a108-4590-a465-8f0017569370"></script><!-- umami-end -->
 <script src="bos-consent.js?v=3" defer></script>
 </body>
 </html>

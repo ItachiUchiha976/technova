@@ -74,10 +74,7 @@
 
       <!-- Visuel -->
       <div>
-        <img id="main-product-img" src="img/micro-cravate-real.jpg" alt="Micro-cravate sans fil TechNova — transmission 2,4 GHz, compatible iOS Android PC" style="width:100%;height:100%;object-fit:contain;display:block" loading="eager">
-        <div class="thumbnails">
-          <div class="thumbnail active cam"><img src="img/micro-cravate-real.jpg" alt="Micro-cravate" style="width:100%;height:100%;object-fit:cover;border-radius:8px" loading="lazy"></div>
-        </div>
+        <img id="main-product-img" src="img/micro-cravate-real.jpg" alt="Micro-cravate sans fil TechNova — transmission 2,4 GHz, compatible iOS Android PC" style="width:100%;height:100%;object-fit:contain;display:block" loading="eager"></div>
       </div>
 
       <!-- D&eacute;tails -->
@@ -231,33 +228,7 @@
 </footer>
 
 <script src="cart.js?v=3"></script>
-<script src="bos-paypal.js"></script>
-<script>
-// Thumbnail click — swap main image
-(function(){
-  const thumbs = document.querySelectorAll('.thumbnail img');
-  const mainImg = document.querySelector('.product-main-visual img') || document.querySelector('#main-product-img') || document.querySelector('.product-visual img, [class*="product-visual"] img');
-  if (!mainImg || thumbs.length < 2) return;
-  const mainSrc = mainImg.src;
-  thumbs.forEach(t => {
-    t.parentElement.addEventListener('click', () => {
-      const newSrc = t.src;
-      if (newSrc === mainImg.src) return;
-      // Swap
-      t.src = mainImg.src;
-      mainImg.src = newSrc;
-      // Active class
-      document.querySelectorAll('.thumbnail').forEach(el => el.classList.remove('active'));
-      t.parentElement.classList.add('active');
-      // Fade effect
-      mainImg.style.opacity = '0.5';
-      mainImg.style.transition = 'opacity .15s ease';
-      setTimeout(() => { mainImg.style.opacity = '1'; }, 150);
-    });
-  });
-})();
-</script>
-<!-- umami-start --><script defer src="https://cloud.umami.is/script.js" data-website-id="d0fa94fe-a108-4590-a465-8f0017569370"></script><!-- umami-end -->
+<script src="bos-paypal.js"></script><!-- umami-start --><script defer src="https://cloud.umami.is/script.js" data-website-id="d0fa94fe-a108-4590-a465-8f0017569370"></script><!-- umami-end -->
 <script src="bos-consent.js?v=3" defer></script>
 </body>
 </html>
