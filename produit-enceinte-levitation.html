@@ -76,16 +76,29 @@
       <!-- Visuel : vraies photos produit -->
       <div>
         <div class="product-main-visual" style="background:linear-gradient(135deg, #1a1040 0%, #2d1b69 100%); box-shadow:var(--glow-indigo); padding:0;">
-          <img id="mainVisual" src="img/enceinte-blanc-hero.jpg" alt="Enceinte Bluetooth &agrave; l&eacute;vitation magn&eacute;tique TechNova, orbe blanc flottant avec &eacute;clairage LED" loading="eager" style="width:100%;height:100%;object-fit:cover;border-radius:var(--r2);">
-        </div>
-        <div class="thumbnails">
-          <div class="thumbnail" style="padding:0;" onclick="swapVisual(this,'img/enceinte-blanc-02.jpg')"><img src="img/enceinte-blanc-02.jpg" alt="Orbe blanc, &eacute;clairage rose, vue rapproch&eacute;e" style="width:100%;height:100%;object-fit:cover;"></div>
-          <div class="thumbnail" style="padding:0;" onclick="swapVisual(this,'img/enceinte-noir.jpg')"><img src="img/enceinte-noir.jpg" alt="Variante noire, &eacute;clairage ambre" style="width:100%;height:100%;object-fit:cover;"></div>
+          <img id="mainVisual" id="main-product-img" src="img/enceinte-blanc-hero.jpg" alt="Enceinte Bluetooth &agrave; l&eacute;vitation magn&eacute;tique TechNova, orbe blanc flottant avec &eacute;clairage LED" loading="eager" style="width:100%;height:100%;object-fit:cover;border-radius:var(--r2);">
+        </div><div class="thumbnail" style="padding:0;" onclick="swapVisual(this,'img/enceinte-noir.jpg')"><img src="img/enceinte-noir.jpg" alt="Variante noire, &eacute;clairage ambre" style="width:100%;height:100%;object-fit:cover;"></div>
           <div class="thumbnail" style="padding:0;" onclick="swapVisual(this,'img/enceinte-blanc-lowres.jpg')"><img src="img/enceinte-blanc-lowres.jpg" alt="Orbe blanc, vue d'ensemble" style="width:100%;height:100%;object-fit:cover;"></div>
         </div>
         <div style="margin-top:14px;padding:12px 14px;background:var(--dark3);border:1px solid var(--border);border-radius:10px;font-size:.8rem;color:var(--text-light);">
           Photos du produit r&eacute;el. L&eacute;g&egrave;res variations de teinte possibles selon la lumi&egrave;re ambiante et la couleur LED s&eacute;lectionn&eacute;e sur l'appareil.
         </div>
+      
+        <div class="thumbnails">
+          <div class="thumbnail active" style="position:relative;overflow:hidden;border-radius:10px;display:inline-block;width:72px;height:72px;margin:4px;">
+            <img src="img/technova_enceinte-levitation_enceinte_levitation_blanc_02.jpg" alt="Photo 2" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+          </div>
+          <div class="thumbnail" style="position:relative;overflow:hidden;border-radius:10px;display:inline-block;width:72px;height:72px;margin:4px;">
+            <img src="img/technova_enceinte-levitation_enceinte_levitation_blanc_hero.jpg" alt="Photo 3" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+          </div>
+          <div class="thumbnail" style="position:relative;overflow:hidden;border-radius:10px;display:inline-block;width:72px;height:72px;margin:4px;">
+            <img src="img/technova_enceinte-levitation_enceinte_levitation_blanc_lowres.jpg" alt="Photo 4" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+          </div>
+          <div class="thumbnail" style="position:relative;overflow:hidden;border-radius:10px;display:inline-block;width:72px;height:72px;margin:4px;">
+            <img src="img/technova_enceinte-levitation_enceinte_levitation_noir.jpg" alt="Photo 5" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+          </div>
+        </div>
+
       </div>
 
       <!-- D&eacute;tails -->
@@ -324,19 +337,16 @@
 <script src="bos-paypal.js"></script>
 
 <!-- umami-start --><script defer src="https://cloud.umami.is/script.js" data-website-id="d0fa94fe-a108-4590-a465-8f0017569370"></script><!-- umami-end -->
-<script src="bos-consent.js?v=3" defer></script>
-<script>
-// Miniatures cliquables — swap image principale
+<script src="bos-consent.js?v=3" defer></script><script>
+// Miniatures cliquables
 (function(){
-  var main = document.querySelector('#main-product-img, .product-main-visual img, [class*="product-visual"] img, .product-gallery img');
+  var main = document.querySelector('#main-product-img, .product-main-visual img, [class*="product-visual"] img, .product-gallery img, [class*=gallery] img');
   var thumbs = document.querySelectorAll('.thumbnail img');
   if (!main || thumbs.length === 0) return;
   thumbs.forEach(function(t){
     t.style.cursor = 'pointer';
     t.parentElement.addEventListener('click', function(){
-      var tmp = main.src;
-      main.src = t.src;
-      t.src = tmp;
+      var tmp = main.src; main.src = t.src; t.src = tmp;
       document.querySelectorAll('.thumbnail').forEach(function(el){ el.classList.remove('active'); });
       t.parentElement.classList.add('active');
       main.style.opacity = '0.4'; main.style.transition = 'opacity .15s ease';
