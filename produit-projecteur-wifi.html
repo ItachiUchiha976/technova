@@ -78,6 +78,28 @@
         <div class="product-main-visual" style="background:linear-gradient(135deg, #1a1040 0%, #2d1b69 100%); box-shadow:var(--glow-indigo); padding:0;">
           <img id="main-product-img" src="img/mini-projecteur.jpg" alt="Mini projecteur portable autofocus TechNova, projection sur &eacute;cran en ext&eacute;rieur" loading="eager" style="width:100%;height:100%;object-fit:cover;border-radius:var(--r2);">
         </div>
+      
+        <div class="thumbnails">
+          <div class="thumbnail active" style="position:relative;overflow:hidden;border-radius:10px;display:inline-block;width:72px;height:72px;margin:4px;">
+            <img src="img/technova_real_06.jpg" alt="Vue 2" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+          </div>
+          <div class="thumbnail" style="position:relative;overflow:hidden;border-radius:10px;display:inline-block;width:72px;height:72px;margin:4px;">
+            <img src="img/technova_real_04.jpg" alt="Vue 3" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+          </div>
+          <div class="thumbnail" style="position:relative;overflow:hidden;border-radius:10px;display:inline-block;width:72px;height:72px;margin:4px;">
+            <img src="img/technova_real_01.jpg" alt="Vue 4" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+          </div>
+          <div class="thumbnail" style="position:relative;overflow:hidden;border-radius:10px;display:inline-block;width:72px;height:72px;margin:4px;">
+            <img src="img/technova_real_08.jpg" alt="Vue 5" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+          </div>
+          <div class="thumbnail" style="position:relative;overflow:hidden;border-radius:10px;display:inline-block;width:72px;height:72px;margin:4px;">
+            <img src="img/technova_real_18.jpg" alt="Vue 6" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+          </div>
+          <div class="thumbnail" style="position:relative;overflow:hidden;border-radius:10px;display:inline-block;width:72px;height:72px;margin:4px;">
+            <img src="img/micro-cravate-real.jpg" alt="Vue 7" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+          </div>
+        </div>
+
       </div>
 
       <!-- D&eacute;tails -->
@@ -320,5 +342,23 @@
 })();
 </script>
 <!-- bos-delivery-window-end --><!-- umami-start --><script defer src="https://cloud.umami.is/script.js" data-website-id="d0fa94fe-a108-4590-a465-8f0017569370"></script><!-- umami-end -->
-<script src="bos-consent.js?v=3" defer></script></body>
+<script src="bos-consent.js?v=3" defer></script><script>
+// Miniatures cliquables
+(function(){
+  var main = document.querySelector('#main-product-img, .product-main-visual img, [class*="product-visual"] img, .product-gallery img, [class*=gallery] img');
+  var thumbs = document.querySelectorAll('.thumbnail img');
+  if (!main || thumbs.length === 0) return;
+  thumbs.forEach(function(t){
+    t.style.cursor = 'pointer';
+    t.parentElement.addEventListener('click', function(){
+      var tmp = main.src; main.src = t.src; t.src = tmp;
+      document.querySelectorAll('.thumbnail').forEach(function(el){ el.classList.remove('active'); });
+      t.parentElement.classList.add('active');
+      main.style.opacity = '0.4'; main.style.transition = 'opacity .15s ease';
+      setTimeout(function(){ main.style.opacity = '1'; }, 150);
+    });
+  });
+})();
+</script>
+</body>
 </html>
