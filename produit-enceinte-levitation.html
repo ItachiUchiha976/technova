@@ -82,14 +82,11 @@
           Photos du produit r&eacute;el. L&eacute;g&egrave;res variations de teinte possibles selon la lumi&egrave;re ambiante et la couleur LED s&eacute;lectionn&eacute;e sur l'appareil.
         </div>
         <div class="thumbnails" style="margin-top:.75rem;display:flex;flex-wrap:wrap;gap:8px">
-          <div class="thumbnail" style="width:64px;height:64px;border-radius:8px;overflow:hidden;cursor:pointer;opacity:.7" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.7'" onclick="document.getElementById('main-product-img').src='img/enceinte-blanc-02.jpg'">
-            <img src="img/enceinte-blanc-02.jpg" alt="Enceinte blanche — vue 2" loading="lazy" style="width:100%;height:100%;object-fit:cover">
+          <div class="thumbnail active" style="width:64px;height:64px;border-radius:8px;overflow:hidden;cursor:pointer;border:2px solid var(--accent)" onclick="selectColor('blanc')">
+            <img src="img/enceinte-blanc-02.jpg" alt="Enceinte blanche" loading="lazy" style="width:100%;height:100%;object-fit:cover">
           </div>
-          <div class="thumbnail" style="width:64px;height:64px;border-radius:8px;overflow:hidden;cursor:pointer;opacity:.7" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.7'" onclick="document.getElementById('main-product-img').src='img/enceinte-blanc-lowres.jpg'">
-            <img src="img/enceinte-blanc-lowres.jpg" alt="Enceinte blanche — ambiance" loading="lazy" style="width:100%;height:100%;object-fit:cover">
-          </div>
-          <div class="thumbnail" style="width:64px;height:64px;border-radius:8px;overflow:hidden;cursor:pointer;opacity:.7" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.7'" onclick="document.getElementById('main-product-img').src='img/enceinte-noir.jpg'">
-            <img src="img/enceinte-noir.jpg" alt="Enceinte — version noire" loading="lazy" style="width:100%;height:100%;object-fit:cover">
+          <div class="thumbnail" style="width:64px;height:64px;border-radius:8px;overflow:hidden;cursor:pointer;border:2px solid transparent;opacity:.7" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.7'" onclick="selectColor('noir')">
+            <img src="img/enceinte-noir.jpg" alt="Enceinte noire" loading="lazy" style="width:100%;height:100%;object-fit:cover">
           </div>
       </div>
       </div>
@@ -308,12 +305,12 @@
     tnCurrentColor = color;
     document.getElementById('swatch-blanc').style.borderColor = (color === 'blanc') ? 'var(--indigo)' : 'var(--border)';
     document.getElementById('swatch-noir').style.borderColor = (color === 'noir') ? 'var(--indigo)' : 'var(--border)';
-    var main = document.getElementById('mainVisual');
+    var main = document.getElementById('main-product-img');
     if (main) { main.src = TN_COLORS[color].img; }
   }
 
   function swapVisual(el, src) {
-    document.getElementById('mainVisual').src = src;
+    document.getElementById('main-product-img').src = src;
     document.querySelectorAll('.thumbnail').forEach(function (t) { t.classList.remove('active'); });
     el.classList.add('active');
   }

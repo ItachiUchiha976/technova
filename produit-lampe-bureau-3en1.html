@@ -309,12 +309,12 @@
     tnLampColor = color;
     document.getElementById('swatch-noir').style.borderColor = (color === 'noir') ? 'var(--indigo)' : 'var(--border)';
     document.getElementById('swatch-blanc').style.borderColor = (color === 'blanc') ? 'var(--indigo)' : 'var(--border)';
-    var main = document.getElementById('mainVisual');
+    var main = document.getElementById('main-product-img');
     if (main) { main.src = TN_LAMP_COLORS[color].img; }
   }
 
   function swapVisual(el, src) {
-    document.getElementById('mainVisual').src = src;
+    document.getElementById('main-product-img').src = src;
     document.querySelectorAll('.thumbnail').forEach(function (t) { t.classList.remove('active'); });
     el.classList.add('active');
   }
