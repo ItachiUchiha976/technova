@@ -195,4 +195,5 @@
   } else {
     init();
   }
+window.initStripe = init;
 })();
