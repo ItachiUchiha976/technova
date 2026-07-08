@@ -85,11 +85,11 @@
     return null;
   }
 
-  // Ajouter le bouton Stripe a cote du PayPal
+  // Ajouter le bouton Stripe
   function addStripeButton(productKey) {
-    var link = STRIPE_LINKS[productKey] || null;
     var isCart = location.pathname.indexOf('panier') !== -1;
-    if (!link && !isCart) return;
+    var link = productKey ? (STRIPE_LINKS[productKey] || null) : CART_LINK;
+    if (!link) return;
 
     // Chercher un conteneur de checkout existant
     var container = document.querySelector('.checkout-stripe') ||
@@ -119,12 +119,20 @@
     btn.className = 'btn btn-stripe';
     btn.innerHTML = '<span style="display:flex;align-items:center;justify-content:center;gap:8px;">' +
       '<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 4.5c-2.5 0-4.5 2-4.5 4.5s2 4.5 4.5 4.5 4.5-2 4.5-4.5-2-4.5-4.5-4.5z"/><rect x="2" y="4" width="20" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>' +
-      '<span>Payer par carte</span></span>';
+      '<span>💳 Payer par carte</span></span>';
     btn.style.cssText = 'display:inline-block;padding:12px 32px;background:#635BFF;color:#fff;border-radius:8px;text-decoration:none;font-weight:600;font-size:16px;transition:background 0.2s;';
     btn.onmouseover = function(){ this.style.background = '#4F46E5'; };
     btn.onmouseout  = function(){ this.style.background = '#635BFF'; };
 
     container.appendChild(btn);
+
+    // Sur le panier : afficher le montant à entrer
+    if (isCart) {
+      var note = document.createElement('p');
+      note.style.cssText = 'font-size:12px;color:#6b7280;margin-top:6px;text-align:center;';
+      note.textContent = 'Tu seras redirigé(e) vers Stripe. Entre le montant affiché dans ton panier.';
+      container.appendChild(note);
+    }
 
     // Tracking Umami
     try {
@@ -134,18 +142,19 @@
     } catch(e) {}
   }
 
+  // Lien panier générique (montant personnalisable par le client)
+  var CART_LINK = 'https://buy.stripe.com/9B66oHaUXgXTgKKdV25Vu0J';
+
   // Init au chargement — toujours actif sur le panier
   function init() {
     var isCart = location.pathname.indexOf('panier') !== -1;
-    var key = findProductKey();
 
-    // Sur le panier sans produit trouvé : chercher dans le localStorage
-    if (isCart && !key) {
-      key = findCartProductKey();
-    }
-
-    if (isCart || key) {
-      addStripeButton(key || 'panier');
+    if (isCart) {
+      // Panier : toujours afficher, lien générique
+      addStripeButton(null);
+    } else {
+      var key = findProductKey();
+      if (key) addStripeButton(key);
     }
   }
 
