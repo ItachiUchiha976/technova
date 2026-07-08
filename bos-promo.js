@@ -56,7 +56,6 @@
         '<span style="font-size:14px;font-weight:600;">-' + DISCOUNT_PCT + '% sur le produit le + cher</span>' +
         '<span style="font-size:13px;opacity:0.9;">Appliqué automatiquement au panier</span>' +
         '<span id="bos-countdown-banner" style="font-size:14px;font-weight:700;min-width:80px;text-align:center;"></span>' +
-        '<button id="bos-banner-cta" style="background:#f59e0b;color:#000;border:none;padding:6px 14px;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;">🛍️ Catalogue</button>' +
         '<button id="bos-banner-close" aria-label="Fermer" style="background:none;border:1px solid rgba(255,255,255,0.4);color:#fff;padding:4px 8px;border-radius:4px;cursor:pointer;font-size:12px;">✕</button>' +
       '</div>';
     document.body.insertBefore(banner, document.body.firstChild);
@@ -145,11 +144,6 @@
     });
 
     overlay.addEventListener('click', function(e){ if (e.target === overlay) closePopup(); });
-
-    document.getElementById('bos-banner-cta').addEventListener('click', function(){
-      banner.style.display = 'none';
-      window.scrollTo({top:0,behavior:'smooth'});
-    });
 
     document.getElementById('bos-banner-close').addEventListener('click', function(){
       banner.style.display = 'none';
