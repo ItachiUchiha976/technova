@@ -282,3 +282,17 @@ try {
   window.getCart = getCart;
   window.BOS_CART_KEY = CART_KEY;
 } catch (e) {}
+
+// BOS — listener data-add-cart (toutes les pages produit)
+document.addEventListener("DOMContentLoaded", function() {
+  document.querySelectorAll("[data-add-cart]").forEach(function(btn) {
+    if (btn._bosBound) return;
+    btn._bosBound = true;
+    btn.addEventListener("click", function(e) {
+      e.preventDefault();
+      var id = this.dataset.id;
+      if (id) addToCart(id);
+    });
+  });
+});
+
