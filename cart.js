@@ -171,15 +171,32 @@ function renderCart() {
      jamais de frais de port) — plus de seuil 49 €, pour que l'affichage panier corresponde
      exactement au montant réellement débité par PayPal. */
   const subtotal = cartTotal();
+  // -10% automatique sur le produit le plus cher
+  const cart = getCart();
+  const maxPrice = cart.length > 0 ? Math.max(...cart.map(i => i.price)) : 0;
+  const discount = maxPrice * 0.10;
   const shipping = 0;
-  const total    = subtotal + shipping;
+  const total    = subtotal - discount + shipping;
 
   const subEl = document.getElementById('summary-subtotal');
   const shipEl= document.getElementById('summary-shipping');
   const totEl = document.getElementById('summary-total');
   if (subEl)  subEl.textContent  = subtotal.toFixed(2) + ' €';
   if (shipEl) shipEl.textContent = 'Offerte';
-  if (totEl)  totEl.textContent  = total.toFixed(2) + ' €';
+  if (discount > 0 && totEl) {
+    totEl.innerHTML = '<span style="text-decoration:line-through;color:#9ca3af;font-size:14px;margin-right:8px">' + subtotal.toFixed(2) + ' €</span><span style="color:#10b981">' + total.toFixed(2) + ' €</span>';
+    // Ajouter bannière promo si pas déjà présente
+    if (!document.getElementById('cart-promo')) {
+      const p = document.createElement('div');
+      p.id = 'cart-promo';
+      p.style.cssText = 'background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:6px 12px;margin-bottom:8px;text-align:center;font-size:13px;color:#166534;font-weight:600';
+      p.textContent = '🎉 -10% appliqué sur le produit le + cher';
+      const summary = document.getElementById('cart-summary');
+      if (summary) summary.insertBefore(p, summary.firstChild);
+    }
+  } else if (totEl) {
+    totEl.textContent = total.toFixed(2) + ' €';
+  }
 }
 
 /* ---------- VIP / Web3Forms lead capture ---------- */
