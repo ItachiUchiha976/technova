@@ -53,10 +53,10 @@
     banner.style.cssText = 'display:none;position:sticky;top:0;z-index:9999;background:linear-gradient(135deg,#6366f1 0%,#8b5cf6 50%,#a855f7 100%);color:#fff;text-align:center;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;box-shadow:0 2px 8px rgba(0,0,0,0.15);';
     banner.innerHTML =
       '<div style="max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px 12px;padding:10px 16px;">' +
-        '<span style="font-size:14px;font-weight:600;">-' + DISCOUNT_PCT + '% 1ère commande</span>' +
-        '<span style="font-size:13px;opacity:0.9;">Code <strong style="background:rgba(255,255,255,0.2);padding:2px 8px;border-radius:4px;">' + DISCOUNT_CODE + '</strong></span>' +
+        '<span style="font-size:14px;font-weight:600;">-' + DISCOUNT_PCT + '% sur le produit le + cher</span>' +
+        '<span style="font-size:13px;opacity:0.9;">Appliqué automatiquement au panier</span>' +
         '<span id="bos-countdown-banner" style="font-size:14px;font-weight:700;min-width:80px;text-align:center;"></span>' +
-        '<button id="bos-banner-cta" style="background:#f59e0b;color:#000;border:none;padding:6px 14px;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;">J\'en profite</button>' +
+        '<button id="bos-banner-cta" style="background:#f59e0b;color:#000;border:none;padding:6px 14px;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;">🛍️ Catalogue</button>' +
         '<button id="bos-banner-close" aria-label="Fermer" style="background:none;border:1px solid rgba(255,255,255,0.4);color:#fff;padding:4px 8px;border-radius:4px;cursor:pointer;font-size:12px;">✕</button>' +
       '</div>';
     document.body.insertBefore(banner, document.body.firstChild);
@@ -70,18 +70,15 @@
     modal.style.cssText = 'background:linear-gradient(135deg,#1e1b4b 0%,#312e81 40%,#4c1d95 100%);color:#fff;border-radius:20px;padding:40px 32px 28px;max-width:440px;width:90%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.5);animation:bos-fadein 0.4s ease;';
 
     modal.innerHTML =
-      '<div style="display:inline-block;background:#f59e0b;color:#000;font-size:12px;font-weight:800;padding:4px 12px;border-radius:20px;margin-bottom:16px;letter-spacing:1px;">OFFRE DE BIENVENUE</div>' +
-      '<p style="font-size:28px;font-weight:900;margin:0 0 8px;line-height:1.2;">-' + DISCOUNT_PCT + '% <span style="color:#f59e0b">sur ta 1ère commande</span></p>' +
-      '<p style="font-size:14px;opacity:0.8;margin:0 0 24px;">Profites-en, cette offre expire dans :</p>' +
+      '<div style="display:inline-block;background:#f59e0b;color:#000;font-size:12px;font-weight:800;padding:4px 12px;border-radius:20px;margin-bottom:16px;letter-spacing:1px;">PROMO FLASH</div>' +
+      '<p style="font-size:28px;font-weight:900;margin:0 0 8px;line-height:1.2;">-' + DISCOUNT_PCT + '% <span style="color:#f59e0b">sur le produit le + cher</span></p>' +
+      '<p style="font-size:14px;opacity:0.8;margin:0 0 24px;">Appliqué automatiquement au panier. Cette offre expire dans :</p>' +
       '<div style="background:rgba(0,0,0,0.3);border-radius:12px;padding:16px;margin:0 0 20px;">' +
         '<span id="bos-countdown-popup" style="font-size:42px;font-weight:900;letter-spacing:2px;color:#f59e0b;">--:--</span>' +
       '</div>' +
-      '<div style="background:rgba(255,255,255,0.1);border:1px dashed rgba(255,255,255,0.3);border-radius:12px;padding:12px;margin:0 0 24px;">' +
-        '<p style="font-size:12px;opacity:0.7;margin:0 0 4px;">Ton code promo</p>' +
-        '<p style="font-size:22px;font-weight:800;margin:0;letter-spacing:1px;">' + DISCOUNT_CODE + '</p>' +
-      '</div>' +
-      '<button id="bos-promo-cta" style="width:100%;background:#f59e0b;color:#000;border:none;padding:14px;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;">🎁 J\'en profite maintenant</button>' +
-      '<button id="bos-promo-close" style="background:none;border:none;color:rgba(255,255,255,0.4);font-size:12px;margin-top:12px;cursor:pointer;text-decoration:underline;">Non merci, je paierai le prix fort</button>';
+      '<p style="font-size:13px;opacity:0.7;margin:0 0 24px;">Ajoute tes articles au panier, la réduction se fait toute seule.</p>' +
+      '<button id="bos-promo-cta" style="width:100%;background:#f59e0b;color:#000;border:none;padding:14px;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;">🛍️ Voir le catalogue</button>' +
+      '<button id="bos-promo-close" style="background:none;border:none;color:rgba(255,255,255,0.4);font-size:12px;margin-top:12px;cursor:pointer;text-decoration:underline;">Fermer</button>';
 
     overlay.appendChild(modal);
     document.body.appendChild(overlay);
@@ -140,14 +137,7 @@
     document.getElementById('bos-promo-close').addEventListener('click', closePopup);
 
     document.getElementById('bos-promo-cta').addEventListener('click', function(){
-      localStorage.setItem('bos_promo_code', DISCOUNT_CODE);
-      var toast = document.createElement('div');
-      toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:999999;background:#10b981;color:#fff;padding:12px 24px;border-radius:12px;font-weight:700;font-size:15px;box-shadow:0 4px 20px rgba(0,0,0,0.3);animation:bos-fadein 0.3s ease;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;';
-      toast.textContent = '✅ Code ' + DISCOUNT_CODE + ' activé ! -' + DISCOUNT_PCT + '% sur le produit le + cher';
-      document.body.appendChild(toast);
-      setTimeout(function(){ toast.style.opacity = '0'; toast.style.transition = 'opacity 0.5s'; }, 3000);
-      setTimeout(function(){ toast.remove(); }, 3500);
-      // Accepter = tout fermer, pas de bannière
+      // Tout fermer, la réduction est automatique
       overlay.style.display = 'none';
       banner.style.display = 'none';
       document.cookie = 'bos_popup_closed=1;path=/;max-age=' + POPUP_COOLDOWN;
@@ -157,14 +147,7 @@
     overlay.addEventListener('click', function(e){ if (e.target === overlay) closePopup(); });
 
     document.getElementById('bos-banner-cta').addEventListener('click', function(){
-      localStorage.setItem('bos_promo_code', DISCOUNT_CODE);
       banner.style.display = 'none';
-      var toast = document.createElement('div');
-      toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:999999;background:#10b981;color:#fff;padding:12px 24px;border-radius:12px;font-weight:700;font-size:15px;box-shadow:0 4px 20px rgba(0,0,0,0.3);animation:bos-fadein 0.3s ease;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;';
-      toast.textContent = '✅ Code ' + DISCOUNT_CODE + ' activé ! -' + DISCOUNT_PCT + '% sur le produit le + cher';
-      document.body.appendChild(toast);
-      setTimeout(function(){ toast.style.opacity = '0'; toast.style.transition = 'opacity 0.5s'; }, 3000);
-      setTimeout(function(){ toast.remove(); }, 3500);
       window.scrollTo({top:0,behavior:'smooth'});
     });
 
