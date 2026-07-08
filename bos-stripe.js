@@ -97,6 +97,7 @@
     if (!container) {
       // Chercher un ancrage : priorité PayPal, sinon bouton add-cart, sinon h1
       var anchor = document.querySelector('.paypal-btn, #paypal-btn, [onclick*="bosPayPalCheckout"], button[onclick*="paypal"]') ||
+                   document.querySelector('.btn-checkout') ||  // bouton principal du panier
                    document.querySelector('.btn-addcart, [data-add-cart]') ||
                    document.querySelector('h1');
       if (anchor && anchor.parentNode) {
