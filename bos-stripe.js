@@ -117,7 +117,9 @@
     return 0;
   }
 
+  var _stripeDone = false;
   function addStripeButton(productKey) {
+    if (_stripeDone) return;
     var isCart = location.pathname.indexOf('panier') !== -1 || !!document.getElementById('cartFooter');
     var link = productKey ? (STRIPE_LINKS[productKey] || null) : null;
     if (!link && !isCart) return;
@@ -172,6 +174,7 @@
     }
 
     container.appendChild(btn);
+    _stripeDone = true;
 
     try {
       if (window.umami && typeof umami.track === 'function') {
