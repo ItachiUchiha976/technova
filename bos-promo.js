@@ -1,144 +1,154 @@
-/* BOS — Pop-up promotionnel 20% + compte à rebours 1h. Ajout 08/07/2026.
-   Overlay plein écran avec compte à rebours d'1h pour urgence.
-   Code promo BIENVENUE20. Cookie 7j après fermeture. */
+/* BOS — Promo -20% : pop-up plein écran PUIS bannière sticky avec chrono 1h.
+   Le pop-up s'affiche au 1er chargement. Une fois fermé, une bannière
+   discrète reste en haut avec le chrono et le code. Tant que le chrono
+   tourne, le visiteur peut en profiter. Chrono expiré → tout disparaît. */
 
 (function(){
   'use strict';
 
   var DISCOUNT_CODE = 'BIENVENUE20';
   var DISCOUNT_PCT = 20;
-  var COUNTDOWN_MINUTES = 60; // 1 heure
-  var VERSION = 3; // incrémente si changement → reset localStorage
+  var COUNTDOWN_MINUTES = 60;
+  var VERSION = 4; // incrémente → reset localStorage
 
   function init() {
-    // Pas de cookie : le pop-up s'affiche tant que le timer n'est pas écoulé.
-    // Si le timer est expiré → ne plus afficher.
+    // Si chrono expiré → ne rien afficher du tout
     var storedEnd = localStorage.getItem('bos_promo_end');
     if (storedEnd && parseInt(storedEnd, 10) < Date.now()) return;
 
-    // Versioning : reset si durée changée
+    // Reset si version changée
     var storedVer = localStorage.getItem('bos_promo_ver');
     if (storedVer !== String(VERSION)) {
       localStorage.removeItem('bos_promo_end');
       localStorage.setItem('bos_promo_ver', String(VERSION));
     }
 
-    // Compte à rebours
     var promoEnd = getEndTime();
-
     function getEndTime() {
-      var stored = localStorage.getItem('bos_promo_end');
-      if (stored) return parseInt(stored, 10);
-      var end = Date.now() + COUNTDOWN_MINUTES * 60 * 1000;
-      localStorage.setItem('bos_promo_end', end.toString());
-      return end;
+      var s = localStorage.getItem('bos_promo_end');
+      if (s) return parseInt(s, 10);
+      var e = Date.now() + COUNTDOWN_MINUTES * 60 * 1000;
+      localStorage.setItem('bos_promo_end', e.toString());
+      return e;
     }
 
     function formatTime(ms) {
-      if (ms <= 0) return "C'est fini !";
+      if (ms <= 0) return '00:00';
       var m = Math.floor(ms / 60000);
       var s = Math.floor((ms % 60000) / 1000);
       return String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
     }
 
-    // === OVERLAY ===
+    var ticking = true;
+    var popupVisible = true;
+
+    // === CSS animations ===
+    var style = document.createElement('style');
+    style.textContent = '@keyframes bos-fadein{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}} @keyframes bos-pulse{0%,100%{opacity:1}50%{opacity:0.5}}';
+    document.head.appendChild(style);
+
+    // ========== POP-UP PLEIN ÉCRAN ==========
     var overlay = document.createElement('div');
     overlay.id = 'bos-promo-overlay';
     overlay.style.cssText = 'position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;';
 
-    // === MODAL ===
     var modal = document.createElement('div');
-    modal.style.cssText = 'background:linear-gradient(135deg,#1e1b4b 0%,#312e81 40%,#4c1d95 100%);color:#fff;border-radius:20px;padding:40px 32px 28px;max-width:440px;width:90%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.5);position:relative;animation:bos-fadein 0.4s ease;';
+    modal.style.cssText = 'background:linear-gradient(135deg,#1e1b4b 0%,#312e81 40%,#4c1d95 100%);color:#fff;border-radius:20px;padding:40px 32px 28px;max-width:440px;width:90%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.5);animation:bos-fadein 0.4s ease;';
 
     modal.innerHTML =
-      // Badge
       '<div style="display:inline-block;background:#f59e0b;color:#000;font-size:12px;font-weight:800;padding:4px 12px;border-radius:20px;margin-bottom:16px;letter-spacing:1px;">OFFRE DE BIENVENUE</div>' +
-      // Titre
       '<p style="font-size:28px;font-weight:900;margin:0 0 8px;line-height:1.2;">-' + DISCOUNT_PCT + '% <span style="color:#f59e0b">sur ta 1ère commande</span></p>' +
-      // Sous-titre
       '<p style="font-size:14px;opacity:0.8;margin:0 0 24px;">Profites-en, cette offre expire dans :</p>' +
-      // Compte à rebours
       '<div style="background:rgba(0,0,0,0.3);border-radius:12px;padding:16px;margin:0 0 20px;">' +
-        '<span id="bos-countdown" style="font-size:42px;font-weight:900;letter-spacing:2px;color:#f59e0b;font-variant-numeric:tabular-nums;">--:--</span>' +
+        '<span id="bos-countdown-popup" style="font-size:42px;font-weight:900;letter-spacing:2px;color:#f59e0b;">--:--</span>' +
       '</div>' +
-      // Code
       '<div style="background:rgba(255,255,255,0.1);border:1px dashed rgba(255,255,255,0.3);border-radius:12px;padding:12px;margin:0 0 24px;">' +
         '<p style="font-size:12px;opacity:0.7;margin:0 0 4px;">Ton code promo</p>' +
-        '<p style="font-size:22px;font-weight:800;margin:0;letter-spacing:1px;font-variant-numeric:tabular-nums;">' + DISCOUNT_CODE + '</p>' +
+        '<p style="font-size:22px;font-weight:800;margin:0;letter-spacing:1px;">' + DISCOUNT_CODE + '</p>' +
       '</div>' +
-      // CTA
-      '<button id="bos-promo-cta" style="width:100%;background:#f59e0b;color:#000;border:none;padding:14px;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;transition:transform 0.15s;">🎁 J\'en profite maintenant</button>' +
-      // Lien discret
+      '<button id="bos-promo-cta" style="width:100%;background:#f59e0b;color:#000;border:none;padding:14px;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;">🎁 J\'en profite maintenant</button>' +
       '<button id="bos-promo-close" style="background:none;border:none;color:rgba(255,255,255,0.4);font-size:12px;margin-top:12px;cursor:pointer;text-decoration:underline;">Non merci, je paierai le prix fort</button>';
 
     overlay.appendChild(modal);
     document.body.appendChild(overlay);
 
-    // === ANIMATION CSS ===
-    var style = document.createElement('style');
-    style.textContent = '@keyframes bos-fadein{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}} @keyframes bos-pulse{0%,100%{opacity:1}50%{opacity:0.5}}';
-    document.head.appendChild(style);
+    // ========== BANNIÈRE STICKY (après fermeture pop-up) ==========
+    var banner = document.createElement('div');
+    banner.id = 'bos-promo-banner';
+    banner.style.cssText = 'display:none;position:sticky;top:0;z-index:9999;background:linear-gradient(135deg,#6366f1 0%,#8b5cf6 50%,#a855f7 100%);color:#fff;text-align:center;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;box-shadow:0 2px 8px rgba(0,0,0,0.15);';
+    banner.innerHTML =
+      '<div style="max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px 16px;padding:10px 16px;">' +
+        '<span style="font-size:14px;font-weight:600;">-' + DISCOUNT_PCT + '% 1ère commande</span>' +
+        '<span style="font-size:13px;opacity:0.9;">Code <strong style="background:rgba(255,255,255,0.2);padding:2px 8px;border-radius:4px;">' + DISCOUNT_CODE + '</strong></span>' +
+        '<span id="bos-countdown-banner" style="font-size:14px;font-weight:700;min-width:80px;text-align:center;"></span>' +
+        '<button id="bos-banner-close" aria-label="Fermer" style="background:none;border:1px solid rgba(255,255,255,0.4);color:#fff;padding:4px 10px;border-radius:4px;cursor:pointer;font-size:13px;">✕</button>' +
+      '</div>';
+    document.body.insertBefore(banner, document.body.firstChild);
 
-    // === COMPTE À REBOURS ===
-    var countdownEl = document.getElementById('bos-countdown');
-    function tick() {
+    // ========== COMPTE À REBOURS PARTAGÉ ==========
+    function tickAll() {
       var remaining = promoEnd - Date.now();
       if (remaining <= 0) {
-        countdownEl.textContent = "00:00";
-        countdownEl.style.color = '#ef4444';
-        countdownEl.style.animation = 'bos-pulse 0.8s infinite';
+        // Expiré → tout cacher
+        if (overlay) overlay.style.display = 'none';
+        if (banner) banner.style.display = 'none';
+        ticking = false;
         return;
       }
-      countdownEl.textContent = formatTime(remaining);
-      if (remaining < 300000) { // <5 min
-        countdownEl.style.color = '#ef4444';
-        countdownEl.style.animation = 'bos-pulse 0.5s infinite';
+      var timeStr = formatTime(remaining);
+      var urgent = remaining < 300000; // <5 min
+
+      // Pop-up
+      var cdPopup = document.getElementById('bos-countdown-popup');
+      if (cdPopup) {
+        cdPopup.textContent = timeStr;
+        if (urgent) { cdPopup.style.color = '#ef4444'; cdPopup.style.animation = 'bos-pulse 0.5s infinite'; }
+      }
+      // Bannière
+      var cdBanner = document.getElementById('bos-countdown-banner');
+      if (cdBanner) {
+        cdBanner.textContent = '⏳ ' + timeStr;
+        if (urgent) { cdBanner.style.color = '#fbbf24'; cdBanner.style.animation = 'bos-pulse 1s infinite'; }
       }
     }
-    tick();
-    setInterval(tick, 1000);
+    tickAll();
+    var timer = setInterval(function(){ if (ticking) tickAll(); else clearInterval(timer); }, 1000);
 
-    // === FERMER ===
-    function closePopup() {
+    // ========== FERMER POP-UP → AFFICHER BANNIÈRE ==========
+    function switchToBanner() {
       overlay.style.display = 'none';
+      banner.style.display = 'block';
+      popupVisible = false;
     }
-    document.getElementById('bos-promo-close').addEventListener('click', closePopup);
+
+    document.getElementById('bos-promo-close').addEventListener('click', switchToBanner);
     document.getElementById('bos-promo-cta').addEventListener('click', function(){
-      // Stocker le code pour que la page panier le récupère
       localStorage.setItem('bos_promo_code', DISCOUNT_CODE);
-      // Toast de confirmation
+      // Toast
       var toast = document.createElement('div');
       toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:999999;background:#10b981;color:#fff;padding:12px 24px;border-radius:12px;font-weight:700;font-size:15px;box-shadow:0 4px 20px rgba(0,0,0,0.3);animation:bos-fadein 0.3s ease;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;';
       toast.textContent = '✅ Code ' + DISCOUNT_CODE + ' activé ! -' + DISCOUNT_PCT + '% au panier';
       document.body.appendChild(toast);
       setTimeout(function(){ toast.style.opacity = '0'; toast.style.transition = 'opacity 0.5s'; }, 3000);
       setTimeout(function(){ toast.remove(); }, 3500);
-      closePopup();
+      switchToBanner();
       window.scrollTo({top:0,behavior:'smooth'});
     });
+    overlay.addEventListener('click', function(e){ if (e.target === overlay) switchToBanner(); });
 
-    // Fermer en cliquant hors de la modale
-    overlay.addEventListener('click', function(e){
-      if (e.target === overlay) closePopup();
+    // Fermer la bannière
+    document.getElementById('bos-banner-close').addEventListener('click', function(){
+      banner.style.display = 'none';
     });
 
-    // === APPLIQUER CODE PROMO ===
+    // Appliquer code promo dans le champ coupon
     var couponInput = document.querySelector('[name="coupon"], [name="discount"], .coupon-input, #coupon');
-    if (couponInput && !couponInput.value) {
-      couponInput.value = DISCOUNT_CODE;
-    }
+    if (couponInput && !couponInput.value) couponInput.value = DISCOUNT_CODE;
 
     // Tracking
-    try {
-      if (window.umami && typeof umami.track === 'function') {
-        umami.track('view_promo_popup', {discount: DISCOUNT_PCT, page: location.pathname});
-      }
-    } catch(e) {}
+    try { if (window.umami) umami.track('view_promo', {discount: DISCOUNT_PCT, page: location.pathname}); } catch(e) {}
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
-  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
 })();
