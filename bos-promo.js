@@ -142,11 +142,14 @@
       localStorage.setItem('bos_promo_code', DISCOUNT_CODE);
       var toast = document.createElement('div');
       toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:999999;background:#10b981;color:#fff;padding:12px 24px;border-radius:12px;font-weight:700;font-size:15px;box-shadow:0 4px 20px rgba(0,0,0,0.3);animation:bos-fadein 0.3s ease;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;';
-      toast.textContent = '✅ Code ' + DISCOUNT_CODE + ' activé ! -' + DISCOUNT_PCT + '% au panier';
+      toast.textContent = '✅ Code ' + DISCOUNT_CODE + ' activé ! -' + DISCOUNT_PCT + '% sur le produit le plus cher';
       document.body.appendChild(toast);
       setTimeout(function(){ toast.style.opacity = '0'; toast.style.transition = 'opacity 0.5s'; }, 3000);
       setTimeout(function(){ toast.remove(); }, 3500);
-      closePopup();
+      // Accepter = tout fermer, pas de bannière
+      overlay.style.display = 'none';
+      banner.style.display = 'none';
+      document.cookie = 'bos_popup_closed=1;path=/;max-age=' + POPUP_COOLDOWN;
       window.scrollTo({top:0,behavior:'smooth'});
     });
 
