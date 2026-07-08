@@ -136,14 +136,49 @@
 
   // Init au chargement — toujours actif sur le panier
   function init() {
-    // Forcer l'affichage sur la page panier (même sans produit spécifique)
     var isCart = location.pathname.indexOf('panier') !== -1;
     var key = findProductKey();
 
+    // Sur le panier sans produit trouvé : chercher dans le localStorage
+    if (isCart && !key) {
+      key = findCartProductKey();
+    }
+
     if (isCart || key) {
-      // Sur le panier : ancrer sous .btn-checkout avec ou sans lien produit
       addStripeButton(key || 'panier');
     }
+  }
+
+  // Mapping ID panier → clé Stripe
+  var CART_ID_TO_STRIPE = {
+    'lune-levitation-001': 'lampe-lune-3d',
+    'boite-enigme-001': 'boite-mystere-puzzle',
+    'sablier-001': 'sablier-magnetique',
+    'carnet-001': 'journal-infini',
+    'statuette-001': 'statue-bastet',
+    'carte-001': 'carte-du-monde-vintage',
+  };
+
+  // Trouver le produit le plus cher du panier localStorage
+  function findCartProductKey() {
+    try {
+      var cartKeys = ['curiosa_cart', 'serenlab_cart', 'technova_cart', 'focuslab_cart', 'footperf_cart'];
+      for (var c = 0; c < cartKeys.length; c++) {
+        var cart = JSON.parse(localStorage.getItem(cartKeys[c]) || '[]');
+        if (cart.length > 0) {
+          // Produit le plus cher
+          var sorted = cart.slice().sort(function(a, b) { return b.price - a.price; });
+          for (var i = 0; i < sorted.length; i++) {
+            var sk = CART_ID_TO_STRIPE[sorted[i].id];
+            if (sk && STRIPE_LINKS[sk]) return sk;
+            // Fallback: normaliser le nom
+            var nk = normalize(sorted[i].name || '');
+            if (STRIPE_LINKS[nk]) return nk;
+          }
+        }
+      }
+    } catch(e) {}
+    return null;
   }
 
   if (document.readyState === 'loading') {
