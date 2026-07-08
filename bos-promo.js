@@ -56,7 +56,7 @@
         '<span style="font-size:14px;font-weight:600;">-' + DISCOUNT_PCT + '% sur le produit le + cher</span>' +
         '<span style="font-size:13px;opacity:0.9;">Appliqué automatiquement au panier</span>' +
         '<span id="bos-countdown-banner" style="font-size:14px;font-weight:700;min-width:80px;text-align:center;"></span>' +
-        '<button id="bos-banner-close" aria-label="Fermer" style="background:none;border:1px solid rgba(255,255,255,0.4);color:#fff;padding:4px 8px;border-radius:4px;cursor:pointer;font-size:12px;">✕</button>' +
+        '' +
       '</div>';
     document.body.insertBefore(banner, document.body.firstChild);
 
@@ -144,10 +144,6 @@
     });
 
     overlay.addEventListener('click', function(e){ if (e.target === overlay) closePopup(); });
-
-    document.getElementById('bos-banner-close').addEventListener('click', function(){
-      banner.style.display = 'none';
-    });
 
     // Appliquer code promo
     var ci = document.querySelector('[name="coupon"], [name="discount"], .coupon-input, #coupon');
