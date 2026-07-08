@@ -810,3 +810,7 @@ section { padding:72px 0; }
   .cart-remove      { position:absolute; top:8px; right:8px; }
   .cart-summary, .summary-row { max-width:100%; }
 }
+
+.review-img { border-radius:12px; margin-bottom:12px; object-fit:cover; }
+.review-card { display:flex; flex-direction:column; align-items:center; text-align:center; }
+
