@@ -7,7 +7,7 @@
   'use strict';
 
   var DISCOUNT_CODE = 'BIENVENUE20';
-  var DISCOUNT_PCT = 20;
+  var DISCOUNT_PCT = 10;
   var COUNTDOWN_MINUTES = 60;
   var POPUP_COOLDOWN = 600; // 10 minutes en secondes
   var VERSION = 5;
@@ -52,11 +52,12 @@
     banner.id = 'bos-promo-banner';
     banner.style.cssText = 'display:none;position:sticky;top:0;z-index:9999;background:linear-gradient(135deg,#6366f1 0%,#8b5cf6 50%,#a855f7 100%);color:#fff;text-align:center;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;box-shadow:0 2px 8px rgba(0,0,0,0.15);';
     banner.innerHTML =
-      '<div style="max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px 16px;padding:10px 16px;">' +
+      '<div style="max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px 12px;padding:10px 16px;">' +
         '<span style="font-size:14px;font-weight:600;">-' + DISCOUNT_PCT + '% 1ère commande</span>' +
         '<span style="font-size:13px;opacity:0.9;">Code <strong style="background:rgba(255,255,255,0.2);padding:2px 8px;border-radius:4px;">' + DISCOUNT_CODE + '</strong></span>' +
         '<span id="bos-countdown-banner" style="font-size:14px;font-weight:700;min-width:80px;text-align:center;"></span>' +
-        '<button id="bos-banner-close" aria-label="Fermer" style="background:none;border:1px solid rgba(255,255,255,0.4);color:#fff;padding:4px 10px;border-radius:4px;cursor:pointer;font-size:13px;">✕</button>' +
+        '<button id="bos-banner-cta" style="background:#f59e0b;color:#000;border:none;padding:6px 14px;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;">J\'en profite</button>' +
+        '<button id="bos-banner-close" aria-label="Fermer" style="background:none;border:1px solid rgba(255,255,255,0.4);color:#fff;padding:4px 8px;border-radius:4px;cursor:pointer;font-size:12px;">✕</button>' +
       '</div>';
     document.body.insertBefore(banner, document.body.firstChild);
 
@@ -142,7 +143,7 @@
       localStorage.setItem('bos_promo_code', DISCOUNT_CODE);
       var toast = document.createElement('div');
       toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:999999;background:#10b981;color:#fff;padding:12px 24px;border-radius:12px;font-weight:700;font-size:15px;box-shadow:0 4px 20px rgba(0,0,0,0.3);animation:bos-fadein 0.3s ease;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;';
-      toast.textContent = '✅ Code ' + DISCOUNT_CODE + ' activé ! -' + DISCOUNT_PCT + '% sur le produit le plus cher';
+      toast.textContent = '✅ Code ' + DISCOUNT_CODE + ' activé ! -' + DISCOUNT_PCT + '% sur le produit le + cher';
       document.body.appendChild(toast);
       setTimeout(function(){ toast.style.opacity = '0'; toast.style.transition = 'opacity 0.5s'; }, 3000);
       setTimeout(function(){ toast.remove(); }, 3500);
@@ -154,6 +155,18 @@
     });
 
     overlay.addEventListener('click', function(e){ if (e.target === overlay) closePopup(); });
+
+    document.getElementById('bos-banner-cta').addEventListener('click', function(){
+      localStorage.setItem('bos_promo_code', DISCOUNT_CODE);
+      banner.style.display = 'none';
+      var toast = document.createElement('div');
+      toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:999999;background:#10b981;color:#fff;padding:12px 24px;border-radius:12px;font-weight:700;font-size:15px;box-shadow:0 4px 20px rgba(0,0,0,0.3);animation:bos-fadein 0.3s ease;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;';
+      toast.textContent = '✅ Code ' + DISCOUNT_CODE + ' activé ! -' + DISCOUNT_PCT + '% sur le produit le + cher';
+      document.body.appendChild(toast);
+      setTimeout(function(){ toast.style.opacity = '0'; toast.style.transition = 'opacity 0.5s'; }, 3000);
+      setTimeout(function(){ toast.remove(); }, 3500);
+      window.scrollTo({top:0,behavior:'smooth'});
+    });
 
     document.getElementById('bos-banner-close').addEventListener('click', function(){
       banner.style.display = 'none';
