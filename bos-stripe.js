@@ -87,8 +87,9 @@
 
   // Ajouter le bouton Stripe a cote du PayPal
   function addStripeButton(productKey) {
-    var link = STRIPE_LINKS[productKey];
-    if (!link) return;
+    var link = STRIPE_LINKS[productKey] || null;
+    var isCart = location.pathname.indexOf('panier') !== -1;
+    if (!link && !isCart) return;
 
     // Chercher un conteneur de checkout existant
     var container = document.querySelector('.checkout-stripe') ||
@@ -112,13 +113,13 @@
 
     // Creer le bouton Stripe
     var btn = document.createElement('a');
-    btn.href = link;
+    btn.href = link || '#checkout';
     btn.target = '_top';
     btn.rel = 'noopener';
     btn.className = 'btn btn-stripe';
     btn.innerHTML = '<span style="display:flex;align-items:center;justify-content:center;gap:8px;">' +
       '<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 4.5c-2.5 0-4.5 2-4.5 4.5s2 4.5 4.5 4.5 4.5-2 4.5-4.5-2-4.5-4.5-4.5z"/><rect x="2" y="4" width="20" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>' +
-      'Payer par carte</span>';
+      '<span>Payer par carte</span></span>';
     btn.style.cssText = 'display:inline-block;padding:12px 32px;background:#635BFF;color:#fff;border-radius:8px;text-decoration:none;font-weight:600;font-size:16px;transition:background 0.2s;';
     btn.onmouseover = function(){ this.style.background = '#4F46E5'; };
     btn.onmouseout  = function(){ this.style.background = '#635BFF'; };
@@ -133,14 +134,21 @@
     } catch(e) {}
   }
 
-  // Init au chargement
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function() {
-      var key = findProductKey();
-      if (key) addStripeButton(key);
-    });
-  } else {
+  // Init au chargement — toujours actif sur le panier
+  function init() {
+    // Forcer l'affichage sur la page panier (même sans produit spécifique)
+    var isCart = location.pathname.indexOf('panier') !== -1;
     var key = findProductKey();
-    if (key) addStripeButton(key);
+
+    if (isCart || key) {
+      // Sur le panier : ancrer sous .btn-checkout avec ou sans lien produit
+      addStripeButton(key || 'panier');
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
   }
 })();
