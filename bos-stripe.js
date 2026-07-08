@@ -85,15 +85,24 @@
     return null;
   }
 
-  // Lire le total du panier depuis le DOM (rendu par app.js)
+  // Lire le total RÉDUIT du panier (prix vert = avec -10%)
   function getCartTotal() {
-    // Essayer de parser le total affiché
-    var totalEl = document.querySelector('.cart-total h3, #cart-total');
-    if (totalEl) {
-      var match = totalEl.textContent.match(/(\d+[.,]\d{2})/);
-      if (match) return parseFloat(match[1].replace(',', '.'));
+    // Priorité : le prix en vert dans le DOM (déjà réduit par app.js)
+    var greenPrice = document.querySelector('.cart-total span[style*="color:#10b981"], .cart-total span[style*="color: #10b981"]');
+    if (greenPrice) {
+      var m = greenPrice.textContent.match(/(\d+[.,]\d{2})/);
+      if (m) return parseFloat(m[1].replace(',', '.'));
     }
-    // Fallback : localStorage
+    // Fallback : dernier nombre dans le total (le prix réduit est après le barré)
+    var totalEl = document.querySelector('.cart-total h3');
+    if (totalEl) {
+      var matches = totalEl.textContent.match(/\d+[.,]\d{2}/g);
+      if (matches && matches.length > 0) {
+        // Prendre le DERNIER prix (le réduit, après le barré)
+        return parseFloat(matches[matches.length - 1].replace(',', '.'));
+      }
+    }
+    // Fallback : localStorage (même calcul que app.js)
     try {
       var keys = ['curiosa_cart', 'serenlab_cart', 'technova_cart', 'focuslab_cart', 'footperf_cart'];
       for (var c = 0; c < keys.length; c++) {
@@ -101,8 +110,7 @@
         if (cart.length > 0) {
           var subtotal = cart.reduce(function(s, i) { return s + i.price * i.qty; }, 0);
           var maxPrice = Math.max.apply(null, cart.map(function(i) { return i.price; }));
-          var discount = maxPrice * 0.10;
-          return subtotal - discount;
+          return subtotal - maxPrice * 0.10;
         }
       }
     } catch(e) {}
