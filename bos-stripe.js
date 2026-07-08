@@ -181,6 +181,7 @@
   }
 
   function init() {
+    // Détecter page panier OU panier intégré (FootPerf one-page)
     var isCart = location.pathname.indexOf('panier') !== -1 || !!document.getElementById('cartFooter');
     if (isCart) {
       addStripeButton(null);
@@ -195,5 +196,7 @@
   } else {
     init();
   }
-window.initStripe = init;
+
+  // Exposer pour les paniers dynamiques (FootPerf)
+  window.initStripe = init;
 })();
