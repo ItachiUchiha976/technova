@@ -4,13 +4,13 @@
 (function(){
   'use strict';
 
-  // === SONS PAR BOUTIQUE ===
+  // === SONS PAR BOUTIQUE (fichiers locaux, générés sans copyright) ===
   var SOUNDS = {
-    'curiosaboutique.fr': 'https://cdn.freesound.org/previews/749/749395_16414967-lq.mp3',
-    'serenlabboutique.fr': 'https://cdn.freesound.org/previews/683/683447_6494688-lq.mp3',
-    'technovaboutique.fr': 'https://cdn.freesound.org/previews/462/462267_8391234-lq.mp3',
-    'focuslabboutique.fr': 'https://cdn.freesound.org/previews/341/341244_5121236-lq.mp3',
-    'footperf.fr': 'https://cdn.freesound.org/previews/513/513747_3190614-lq.mp3',
+    'curiosaboutique.fr': 'sounds/ambiance-curiosa.mp3',
+    'serenlabboutique.fr': 'sounds/ambiance-serenlab.mp3',
+    'technovaboutique.fr': 'sounds/ambiance-technova.mp3',
+    'focuslabboutique.fr': 'sounds/ambiance-focuslab.mp3',
+    'footperf.fr': 'sounds/ambiance-footperf.mp3',
   };
 
   var host = location.hostname.replace(/^www\./, '');
