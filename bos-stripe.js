@@ -141,7 +141,7 @@
     btn.className = isCart ? 'btn btn-stripe-cart' : 'btn btn-stripe';
     btn.innerHTML = '<span style="display:flex;align-items:center;justify-content:center;gap:8px;">' +
       '<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 4.5c-2.5 0-4.5 2-4.5 4.5s2 4.5 4.5 4.5 4.5-2 4.5-4.5-2-4.5-4.5-4.5z"/><rect x="2" y="4" width="20" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>' +
-      '<span>💳 Payer par carte</span></span>';
+      '<span>💳 Payer par CB</span></span>';
     btn.style.cssText = 'display:inline-block;width:100%;max-width:400px;padding:14px 24px;background:#635BFF;color:#fff;border-radius:8px;text-decoration:none;font-weight:600;font-size:16px;cursor:pointer;border:none;transition:background 0.2s;';
     btn.onmouseover = function(){ this.style.background = '#4F46E5'; };
     btn.onmouseout  = function(){ this.style.background = '#635BFF'; };
@@ -161,11 +161,11 @@
         .then(function(r) { return r.json(); })
         .then(function(data) {
           if (data.url) { window.location.href = data.url; }
-          else { alert('Erreur de paiement : ' + (data.error || 'inconnue')); btn.textContent = '💳 Payer par carte'; btn.disabled = false; }
+          else { alert('Erreur de paiement : ' + (data.error || 'inconnue')); btn.textContent = '💳 Payer par CB'; btn.disabled = false; }
         })
         .catch(function(err) {
           alert('Impossible de contacter le serveur de paiement. Réessaie dans quelques instants.');
-          btn.textContent = '💳 Payer par carte';
+          btn.textContent = '💳 Payer par CB';
           btn.disabled = false;
         });
       });
