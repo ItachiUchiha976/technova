@@ -13,37 +13,53 @@
 const CART_KEY = 'technova_cart';
 
 const PRODUCTS = {
-  'proj-wifi': {
-    name: 'Mini Projecteur WiFi Portable',
+  'TN-PROJ-001': {
+    name: 'Mini Projecteur Portable Autofocus',
     price: 79,
-    sku: 'TN-PROJ-001',
-    visual: 'proj',
     emoji: '🎬',
     url: 'produit-projecteur-wifi.html'
   },
-  'led-rgb': {
-    name: 'Ruban LED WiFi RGB 5m',
-    price: 34,
-    sku: 'TN-LED-001',
-    visual: 'led',
+  'TN-BUNDLE-001': {
+    name: 'Pack Écran de Projection + Trépied',
+    price: 24,
+    emoji: '🖥️',
+    url: 'produit-bundle-ecran-trepied.html'
+  },
+  'TN-CHG-001': {
+    name: 'Chargeur Sans Fil 3-en-1',
+    price: 29,
+    emoji: '🔋',
+    url: 'produit-chargeur-sans-fil.html'
+  },
+  'TN-PRINT-001': {
+    name: 'Imprimante Thermique Sans Encre',
+    price: 49,
+    emoji: '🖨️',
+    url: 'produit-imprimante-thermique.html'
+  },
+  'TN-MIC-001': {
+    name: 'Micro-cravate Sans Fil',
+    price: 44,
+    emoji: '🎤',
+    url: 'produit-micro-cravate.html'
+  },
+  'TN-SPK-001': {
+    name: 'Enceinte à Lévitation Magnétique Bluetooth',
+    price: 159,
+    emoji: '🔊',
+    url: 'produit-enceinte-levitation.html'
+  },
+  'TN-LAMP-001': {
+    name: 'Lampe de Bureau LED 3-en-1',
+    price: 69,
     emoji: '💡',
-    url: 'produit-ruban-led.html'
+    url: 'produit-lampe-bureau-3en1.html'
   },
-  'prise-wifi': {
-    name: 'Prise Connectée WiFi (lot de 2)',
-    price: 19,
-    sku: 'TN-PLUG-001',
-    visual: 'plug',
-    emoji: '🔌',
-    url: 'produit-prise-connectee.html'
-  },
-  'cam-wifi': {
-    name: 'Caméra Surveillance WiFi Extérieure',
-    price: 59,
-    sku: 'TN-CAM-001',
-    visual: 'cam',
-    emoji: '📷',
-    url: 'produit-camera-wifi.html'
+  'TN-VEN-001': {
+    name: 'Ventilateur Bureau Silencieux',
+    price: 25,
+    emoji: '🌀',
+    url: 'produit-ventilateur-bureau.html'
   }
 };
 
