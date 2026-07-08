@@ -8,7 +8,7 @@
   // === CONFIG ===
   var DISCOUNT_CODE = 'BIENVENUE20';
   var DISCOUNT_PCT = 20;
-  var COUNTDOWN_HOURS = 24;
+  var COUNTDOWN_HOURS = 1;
 
   function init() {
     // Ne pas afficher si déjà vu (cookie 7j)
