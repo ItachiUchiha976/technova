@@ -26,7 +26,8 @@
   btn.id = 'bos-ambiance-btn';
   btn.setAttribute('aria-label', 'Son d ambiance');
   btn.innerHTML = '🔇';
-  btn.style.cssText = 'position:fixed;bottom:20px;right:20px;z-index:9998;width:44px;height:44px;border-radius:50%;border:none;background:rgba(0,0,0,0.6);color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);transition:background 0.2s;';
+  btn.title = 'Ambiance sonore — cliquer pour activer';
+  btn.style.cssText = 'position:fixed;bottom:20px;right:20px;z-index:9998;width:48px;height:48px;border-radius:50%;border:2px solid rgba(255,255,255,0.3);background:rgba(0,0,0,0.7);color:#fff;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);transition:all 0.2s;box-shadow:0 2px 12px rgba(0,0,0,0.3);';
   btn.onmouseover = function(){ this.style.background = 'rgba(99,102,241,0.8)'; };
   btn.onmouseout  = function(){ this.style.background = 'rgba(0,0,0,0.6)'; };
 
@@ -38,7 +39,7 @@
     } else {
       audio = new Audio(soundUrl);
       audio.loop = true;
-      audio.volume = 0.15; // très discret
+      audio.volume = 0.35; // audible mais discret
       audio.play().catch(function(){});
       btn.innerHTML = '🔊';
       isPlaying = true;

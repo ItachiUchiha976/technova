@@ -95,13 +95,15 @@
                     document.getElementById('stripe-btn-container');
 
     if (!container) {
-      // Creer le conteneur a cote du PayPal
-      var paypalBtn = document.querySelector('.paypal-btn, #paypal-btn, [onclick*="bosPayPalCheckout"], button[onclick*="paypal"]');
-      if (paypalBtn && paypalBtn.parentNode) {
+      // Chercher un ancrage : priorité PayPal, sinon bouton add-cart, sinon h1
+      var anchor = document.querySelector('.paypal-btn, #paypal-btn, [onclick*="bosPayPalCheckout"], button[onclick*="paypal"]') ||
+                   document.querySelector('.btn-addcart, [data-add-cart]') ||
+                   document.querySelector('h1');
+      if (anchor && anchor.parentNode) {
         container = document.createElement('div');
         container.className = 'checkout-stripe';
         container.style.cssText = 'margin-top:12px;text-align:center;';
-        paypalBtn.parentNode.insertBefore(container, paypalBtn.nextSibling);
+        anchor.parentNode.insertBefore(container, anchor.nextSibling);
       }
     }
 
