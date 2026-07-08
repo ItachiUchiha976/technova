@@ -45,7 +45,14 @@
     }
   });
 
-  document.body.appendChild(btn);
+  function appendBtn() {
+    document.body.appendChild(btn);
+  }
+  if (document.body) {
+    appendBtn();
+  } else {
+    document.addEventListener('DOMContentLoaded', appendBtn);
+  }
 
   // Tracking
   try {

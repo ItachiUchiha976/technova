@@ -44,8 +44,15 @@
     '</div>';
   bar.style.cssText = 'background:linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);color:#fff;position:sticky;top:0;z-index:9999;text-align:center;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;box-shadow:0 2px 8px rgba(0,0,0,0.15);';
 
-  // Insérer avant le premier élément du body
-  document.body.insertBefore(bar, document.body.firstChild);
+  // Insérer avant le premier élément du body (attendre DOM ready)
+  function insertBar() {
+    document.body.insertBefore(bar, document.body.firstChild);
+  }
+  if (document.body) {
+    insertBar();
+  } else {
+    document.addEventListener('DOMContentLoaded', insertBar);
+  }
 
   // === COMPTE A REBOURS TICK ===
   var countdownEl = document.getElementById('bos-countdown');
