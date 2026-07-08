@@ -8,11 +8,13 @@
   var DISCOUNT_CODE = 'BIENVENUE20';
   var DISCOUNT_PCT = 20;
   var COUNTDOWN_MINUTES = 60; // 1 heure
-  var VERSION = 2; // incrémente si changement de durée → reset localStorage
+  var VERSION = 3; // incrémente si changement → reset localStorage
 
   function init() {
-    // Cookie anti-réaffichage 7j
-    if (document.cookie.indexOf('bos_promo_seen=1') !== -1) return;
+    // Pas de cookie : le pop-up s'affiche tant que le timer n'est pas écoulé.
+    // Si le timer est expiré → ne plus afficher.
+    var storedEnd = localStorage.getItem('bos_promo_end');
+    if (storedEnd && parseInt(storedEnd, 10) < Date.now()) return;
 
     // Versioning : reset si durée changée
     var storedVer = localStorage.getItem('bos_promo_ver');
@@ -99,7 +101,6 @@
     // === FERMER ===
     function closePopup() {
       overlay.style.display = 'none';
-      document.cookie = 'bos_promo_seen=1;path=/;max-age=' + (7*86400);
     }
     document.getElementById('bos-promo-close').addEventListener('click', closePopup);
     document.getElementById('bos-promo-cta').addEventListener('click', function(){
