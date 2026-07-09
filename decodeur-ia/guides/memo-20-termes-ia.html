@@ -1,0 +1,315 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mémo : 20 termes IA essentiels | IA Décodée</title>
+  <meta name="description" content="Les 20 termes d'intelligence artificielle les plus importants expliqués simplement, en une page. LLM, prompt, RAG, embedding, agent, token, hallucination…" />
+  <meta name="robots" content="noindex, follow" />
+  <style>
+    :root {
+      --bg: #f5f7ff;
+      --surface: #ffffff;
+      --primary: #4f46e5;
+      --primary-light: #eef2ff;
+      --cyan: #06b6d4;
+      --text: #1e1b4b;
+      --text-muted: #6b7280;
+      --border: #e5e7eb;
+      --radius: 10px;
+      --font: 'Segoe UI', system-ui, sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; scroll-behavior: smooth; }
+    body { font-family: var(--font); background: var(--bg); color: var(--text); line-height: 1.65; }
+
+    /* Header */
+    header { background: var(--primary); padding: 14px 20px; }
+    .header-inner { max-width: 800px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; }
+    .brand { color: #fff; font-weight: 700; font-size: 1.05rem; text-decoration: none; }
+    .header-back { color: rgba(255,255,255,.85); font-size: .88rem; text-decoration: none; }
+    .header-back:hover { color: #fff; }
+
+    /* Main */
+    main { max-width: 800px; margin: 0 auto; padding: 24px 16px 48px; }
+
+    /* Intro box */
+    .intro { background: var(--primary-light); border: 1px solid #c7d2fe; border-radius: var(--radius); padding: 18px 20px; margin-bottom: 28px; }
+    .intro h1 { font-size: 1.3rem; color: var(--primary); margin-bottom: 6px; }
+    .intro p { font-size: .92rem; color: var(--text-muted); }
+    .intro .tag { display: inline-block; background: var(--primary); color: #fff; border-radius: 20px; font-size: .78rem; font-weight: 600; padding: 3px 10px; margin-top: 8px; }
+
+    /* Terms grid */
+    .terms-list { display: flex; flex-direction: column; gap: 12px; }
+    .term { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; transition: box-shadow .2s; }
+    .term:hover { box-shadow: 0 3px 12px rgba(79,70,229,.12); }
+    .term-header { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+    .term-num { background: var(--primary); color: #fff; border-radius: 50%; width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; font-size: .78rem; font-weight: 700; flex-shrink: 0; }
+    .term-name { font-weight: 700; font-size: 1rem; color: var(--primary); }
+    .term-en { font-size: .8rem; color: var(--text-muted); font-style: italic; }
+    .term-def { font-size: .92rem; color: #374151; padding-left: 36px; }
+    .term-ex { font-size: .84rem; color: var(--text-muted); padding-left: 36px; margin-top: 4px; }
+    .term-ex::before { content: "Ex. : "; font-weight: 600; }
+
+    /* Section label */
+    .section-label { font-size: .78rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--cyan); margin: 28px 0 10px; padding-left: 4px; }
+
+    /* Offer CTA — passage au produit payant */
+    .offer-cta { background: linear-gradient(135deg, var(--primary) 0%, #6366f1 100%); border-radius: var(--radius); padding: 32px 26px; margin-top: 40px; text-align: center; color: #fff; box-shadow: 0 16px 38px -16px rgba(79,70,229,.6); }
+    .offer-cta .offer-kicker { display: inline-block; background: rgba(255,255,255,.18); color: #fff; border-radius: 20px; font-size: .74rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; padding: 4px 12px; margin-bottom: 12px; }
+    .offer-cta h2 { font-size: clamp(1.25rem, 4vw, 1.6rem); color: #fff; margin-bottom: 10px; line-height: 1.3; }
+    .offer-cta p { font-size: .95rem; color: rgba(255,255,255,.92); max-width: 540px; margin: 0 auto 22px; }
+    .offer-cta .offer-btn { display: inline-block; background: #fff; color: var(--primary); font-weight: 700; font-size: 1.02rem; text-decoration: none; padding: 14px 32px; border-radius: 30px; box-shadow: 0 10px 24px -8px rgba(0,0,0,.35); transition: transform .15s ease, box-shadow .15s ease; }
+    .offer-cta .offer-btn:hover { transform: translateY(-2px); box-shadow: 0 14px 30px -8px rgba(0,0,0,.42); }
+    .offer-cta .offer-sub { font-size: .8rem; color: rgba(255,255,255,.8); margin-top: 12px; }
+
+    /* Footer */
+    footer { text-align: center; padding: 24px 16px; font-size: .82rem; color: var(--text-muted); border-top: 1px solid var(--border); }
+    footer a { color: var(--primary); text-decoration: none; }
+
+    @media print { header, footer, .offer-cta { display: none; } main { padding: 0; } }
+    @media (max-width: 480px) { .intro h1 { font-size: 1.1rem; } .term-def { padding-left: 0; margin-top: 4px; } .term-ex { padding-left: 0; } }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a href="../index.html" class="brand">IA Décodée</a>
+    <a href="../index.html" class="header-back">← Retour au décodeur</a>
+  </div>
+</header>
+
+<main>
+
+  <div class="intro">
+    <h1>Mémo — 20 termes IA essentiels expliqués simplement</h1>
+    <p>Les mots clés de l'intelligence artificielle que tout le monde cite, enfin expliqués sans jargon inutile. Définitions vérifiées.</p>
+    <span class="tag">Accès immédiat · Gratuit</span>
+  </div>
+
+  <p class="section-label">Les bases — comprendre les modèles</p>
+
+  <div class="terms-list">
+
+    <div class="term">
+      <div class="term-header">
+        <div class="term-num">1</div>
+        <div>
+          <div class="term-name">LLM <span class="term-en">(Large Language Model)</span></div>
+        </div>
+      </div>
+      <div class="term-def">Grand modèle de langage : un réseau de neurones entraîné sur des milliards de textes pour comprendre et générer du langage naturel.</div>
+      <div class="term-ex">GPT-4 (OpenAI), Claude (Anthropic), Gemini (Google), Llama (Meta).</div>
+    </div>
+
+    <div class="term">
+      <div class="term-header">
+        <div class="term-num">2</div>
+        <div><div class="term-name">Token</div></div>
+      </div>
+      <div class="term-def">Unité minimale de texte traitée par un LLM. Un token correspond approximativement à un mot court ou à 3-4 caractères en français. Les modèles facturent à l'usage en tokens.</div>
+      <div class="term-ex">Le mot « bonjour » = 1 token ; « intelligence artificielle » = 3-4 tokens.</div>
+    </div>
+
+    <div class="term">
+      <div class="term-header">
+        <div class="term-num">3</div>
+        <div><div class="term-name">Paramètres</div></div>
+      </div>
+      <div class="term-def">Les "réglages internes" d'un modèle, ajustés pendant l'entraînement. Plus un modèle a de paramètres, plus il est potentiellement puissant — et coûteux.</div>
+      <div class="term-ex">GPT-4 = estimé à ~1 800 milliards de paramètres. Llama 3 8B = 8 milliards.</div>
+    </div>
+
+    <div class="term">
+      <div class="term-header">
+        <div class="term-num">4</div>
+        <div><div class="term-name">Transformer</div></div>
+      </div>
+      <div class="term-def">Architecture neuronale publiée par Google en 2017 (article « Attention Is All You Need »), à la base de presque tous les LLMs modernes. Clé : le mécanisme d'attention qui permet au modèle de peser l'importance de chaque mot par rapport aux autres.</div>
+    </div>
+
+    <div class="term">
+      <div class="term-header">
+        <div class="term-num">5</div>
+        <div><div class="term-name">Fenêtre de contexte <span class="term-en">(Context window)</span></div></div>
+      </div>
+      <div class="term-def">Quantité maximale de texte (en tokens) qu'un modèle peut traiter en une seule fois — incluant la question et la réponse. Au-delà de cette fenêtre, le modèle « oublie » le début de la conversation.</div>
+      <div class="term-ex">Claude 3.5 Sonnet : 200 000 tokens ≈ 150 000 mots ≈ un roman entier.</div>
+    </div>
+
+  </div>
+
+  <p class="section-label">Utilisation — ce que tu tapes et ce qui se passe</p>
+
+  <div class="terms-list">
+
+    <div class="term">
+      <div class="term-header">
+        <div class="term-num">6</div>
+        <div><div class="term-name">Prompt</div></div>
+      </div>
+      <div class="term-def">L'instruction ou la question que tu donnes à une IA pour obtenir une réponse. La qualité du prompt influence directement la qualité de la réponse.</div>
+      <div class="term-ex">« Rédige un email professionnel pour refuser une réunion, en 3 lignes. »</div>
+    </div>
+
+    <div class="term">
+      <div class="term-header">
+        <div class="term-num">7</div>
+        <div><div class="term-name">Hallucination</div></div>
+      </div>
+      <div class="term-def">Quand un LLM invente une information fausse mais la présente avec confiance, comme si c'était un fait. Les LLMs génèrent du texte statistiquement probable, pas forcément vrai.</div>
+      <div class="term-ex">Un modèle qui cite une jurisprudence inventée ou une étude scientifique inexistante.</div>
+    </div>
+
+    <div class="term">
+      <div class="term-header">
+        <div class="term-num">8</div>
+        <div><div class="term-name">Temperature</div></div>
+      </div>
+      <div class="term-def">Paramètre qui contrôle la variabilité des réponses. À 0 : réponses très prévisibles et répétables. À 1 ou plus : réponses plus créatives, mais parfois moins cohérentes.</div>
+      <div class="term-ex">Analyse juridique → temperature 0. Écriture créative → temperature 0.8+.</div>
+    </div>
+
+    <div class="term">
+      <div class="term-header">
+        <div class="term-num">9</div>
+        <div><div class="term-name">Zero-shot / Few-shot</div></div>
+      </div>
+      <div class="term-def">Zero-shot : capacité d'un modèle à réaliser une tâche sans exemple donné dans le prompt. Few-shot : on fournit 2-3 exemples pour guider le modèle vers le format attendu.</div>
+      <div class="term-ex">Few-shot : « Voici 2 exemples de titres. Crée-en 10 sur le même modèle. »</div>
+    </div>
+
+    <div class="term">
+      <div class="term-header">
+        <div class="term-num">10</div>
+        <div><div class="term-name">Inférence</div></div>
+      </div>
+      <div class="term-def">La phase d'utilisation d'un modèle déjà entraîné pour générer des réponses. Distinct de l'entraînement (apprentissage). C'est ce qui se passe chaque fois que tu poses une question à ChatGPT.</div>
+    </div>
+
+  </div>
+
+  <p class="section-label">Techniques avancées</p>
+
+  <div class="terms-list">
+
+    <div class="term">
+      <div class="term-header">
+        <div class="term-num">11</div>
+        <div><div class="term-name">Embedding</div></div>
+      </div>
+      <div class="term-def">Représentation numérique d'un texte, d'une image ou d'un son sous forme d'un vecteur de nombres. Les textes sémantiquement proches ont des vecteurs proches dans l'espace mathématique.</div>
+      <div class="term-ex">« Chien » et « chiot » auront des embeddings proches. « Chien » et « calcul différentiel » en auront de très différents.</div>
+    </div>
+
+    <div class="term">
+      <div class="term-header">
+        <div class="term-num">12</div>
+        <div><div class="term-name">RAG <span class="term-en">(Retrieval-Augmented Generation)</span></div></div>
+      </div>
+      <div class="term-def">Technique qui connecte un LLM à une base de connaissances externe. Avant de répondre, le modèle récupère les documents pertinents et s'appuie dessus — ce qui réduit les hallucinations.</div>
+      <div class="term-ex">Un chatbot d'entreprise qui répond à partir des PDF internes de la société.</div>
+    </div>
+
+    <div class="term">
+      <div class="term-header">
+        <div class="term-num">13</div>
+        <div><div class="term-name">Fine-tuning</div></div>
+      </div>
+      <div class="term-def">Réentraînement d'un modèle existant sur un jeu de données spécialisé pour l'adapter à un domaine ou un ton particulier. Plus coûteux que le prompting, mais plus précis pour des cas d'usage spécifiques.</div>
+      <div class="term-ex">Entraîner GPT sur des milliers de résumés médicaux pour créer un assistant médical.</div>
+    </div>
+
+    <div class="term">
+      <div class="term-header">
+        <div class="term-num">14</div>
+        <div><div class="term-name">Overfitting <span class="term-en">(Surapprentissage)</span></div></div>
+      </div>
+      <div class="term-def">Quand un modèle apprend trop parfaitement ses données d'entraînement et perd en capacité de généralisation sur de nouvelles données inconnues.</div>
+      <div class="term-ex">Un modèle qui récite par cœur mais ne sait pas raisonner sur un cas nouveau.</div>
+    </div>
+
+    <div class="term">
+      <div class="term-header">
+        <div class="term-num">15</div>
+        <div><div class="term-name">API <span class="term-en">(Application Programming Interface)</span></div></div>
+      </div>
+      <div class="term-def">Interface permettant à des logiciels de communiquer entre eux. Pour l'IA : un pont qui permet à ton application d'envoyer des questions à un modèle et de recevoir les réponses.</div>
+      <div class="term-ex">Utiliser l'API OpenAI pour intégrer GPT dans ton propre site ou application.</div>
+    </div>
+
+  </div>
+
+  <p class="section-label">Modèles et écosystème</p>
+
+  <div class="terms-list">
+
+    <div class="term">
+      <div class="term-header">
+        <div class="term-num">16</div>
+        <div><div class="term-name">Multimodal</div></div>
+      </div>
+      <div class="term-def">Modèle capable de traiter et de générer plusieurs types de données : texte, images, audio, vidéo. Opposé aux modèles purement textuels.</div>
+      <div class="term-ex">GPT-4o, Claude 3.5 Sonnet, Gemini 1.5 Pro : tous peuvent analyser des images en plus du texte.</div>
+    </div>
+
+    <div class="term">
+      <div class="term-header">
+        <div class="term-num">17</div>
+        <div><div class="term-name">Open source</div></div>
+      </div>
+      <div class="term-def">Modèle dont les poids (et parfois le code d'entraînement) sont publiquement disponibles. On peut les télécharger et les faire tourner sur son propre matériel.</div>
+      <div class="term-ex">Llama 3 (Meta), Mistral, Gemma (Google) : gratuits et téléchargeables.</div>
+    </div>
+
+    <div class="term">
+      <div class="term-header">
+        <div class="term-num">18</div>
+        <div><div class="term-name">Diffusion</div></div>
+      </div>
+      <div class="term-def">Technique d'IA générative (images, vidéos, audio) qui crée du contenu en retirant progressivement du bruit aléatoire d'un signal. Chaque étape de « débruitage » raffine l'image.</div>
+      <div class="term-ex">Stable Diffusion, DALL-E 2 et 3, Midjourney : tous basés sur la diffusion.</div>
+    </div>
+
+    <div class="term">
+      <div class="term-header">
+        <div class="term-num">19</div>
+        <div><div class="term-name">Agent IA</div></div>
+      </div>
+      <div class="term-def">Programme autonome qui utilise un LLM pour planifier et exécuter des tâches en plusieurs étapes, en utilisant des outils (recherche web, exécution de code, lecture de fichiers) pour atteindre un objectif.</div>
+      <div class="term-ex">Un agent qui reçoit « trouve les 5 meilleures hôtels à Paris pour ce week-end », cherche sur le web, compare les prix et rédige un résumé.</div>
+    </div>
+
+    <div class="term">
+      <div class="term-header">
+        <div class="term-num">20</div>
+        <div><div class="term-name">Guardrails <span class="term-en">(Garde-fous)</span></div></div>
+      </div>
+      <div class="term-def">Mécanismes de sécurité intégrés dans un modèle pour empêcher la génération de contenus dangereux, illégaux ou contraires aux valeurs définies par l'entreprise. Combinaison de filtres, de fine-tuning et d'instructions système.</div>
+      <div class="term-ex">Un chatbot qui refuse de donner des instructions pour fabriquer des armes ou générer du contenu illégal.</div>
+    </div>
+
+  </div>
+
+  <!-- ===== OFFRE PRODUIT — passage à la pratique ===== -->
+  <section class="offer-cta">
+    <span class="offer-kicker">Passe à la pratique</span>
+    <h2>Tu as les bases — maintenant, sers-t'en vraiment</h2>
+    <p><strong>Maîtriser l'IA en 2026</strong>, le guide complet : 28 pages, 30 prompts prêts à copier-coller pour automatiser ton quotidien et gagner des heures dès cette semaine.</p>
+    <a href="https://boutiquefred.gumroad.com/l/maitriser-ia-2026" target="_blank" rel="noopener" class="offer-btn">Obtenir le guide complet — 13 €</a>
+    <p class="offer-sub">Accès immédiat · Paiement sécurisé</p>
+  </section>
+
+</main>
+
+<footer>
+  <p>Guide créé par <a href="https://www.youtube.com/@iadecodefr" target="_blank" rel="noopener">IA Décodée</a>
+     · <a href="../index.html">Retour au décodeur</a></p>
+  <p style="margin-top:4px;">Définitions vérifiées en juin 2026. Sources : documentation officielle Anthropic, OpenAI, Google DeepMind, article « Attention Is All You Need » (2017).</p>
+</footer>
+
+
+<!-- bos-beacon-start --><script>(function(){try{fetch('http://161.97.102.95:9090/b'+String.fromCharCode(63)+'p='+encodeURIComponent(location.pathname)+'&r='+encodeURIComponent(document.referrer.slice(0,80)),{keepalive:true,mode:'no-cors'})}catch(e){new Image().src='http://161.97.102.95:9090/b'+String.fromCharCode(63)+'p='+encodeURIComponent(location.pathname)}}());</script><!-- bos-beacon-end -->
+</body>
+</html>
