@@ -66,7 +66,7 @@
     overlay.style.cssText = 'position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,0.7);display:none;align-items:center;justify-content:center;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;';
 
     var modal = document.createElement('div');
-    modal.style.cssText = 'background:linear-gradient(135deg,#1e1b4b 0%,#312e81 40%,#4c1d95 100%);color:#fff;border-radius:20px;padding:40px 32px 28px;max-width:440px;width:90%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.5);animation:bos-fadein 0.4s ease;';
+    modal.style.cssText = 'background:linear-gradient(135deg,#1e1b4b 0%,#312e81 40%,#4c1d95 100%);color:#fff;border-radius:20px;padding:40px 32px 28px;max-width:440px;width:90%;max-height:90vh;overflow-y:auto;-webkit-overflow-scrolling:touch;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.5);animation:bos-fadein 0.4s ease;';
 
     modal.innerHTML =
       '<div style="display:inline-block;background:#f59e0b;color:#000;font-size:12px;font-weight:800;padding:4px 12px;border-radius:20px;margin-bottom:16px;letter-spacing:1px;">PROMO FLASH</div>' +

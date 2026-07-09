@@ -133,6 +133,7 @@ ul   { list-style:none; }
   padding:70px 24px 24px;
   border-right:1px solid var(--border);
   width:280px;
+  overflow-y:auto; -webkit-overflow-scrolling:touch; /* BOS 09/07/2026 — menu défile lui-même, pas la page */
 }
 .mobile-menu.open { display:flex; }
 .mobile-menu a {
