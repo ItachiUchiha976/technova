@@ -265,14 +265,21 @@ document.addEventListener('DOMContentLoaded', () => {
     hamburger.addEventListener('click', () => {
       mobileMenu.classList.add('open');
       hamburger.setAttribute('aria-expanded', 'true');
-      document.body.style.overflow = 'hidden'; /* BOS 09/07/2026 — bloque défilement page derrière le menu */
+      /* BOS 09/07/2026 — bloque défilement page robuste (mobile + desktop) */
+      document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.width = '100%';
     });
   }
   if (closeBtn && mobileMenu) {
     closeBtn.addEventListener('click', () => {
       mobileMenu.classList.remove('open');
       hamburger && hamburger.setAttribute('aria-expanded', 'false');
-      document.body.style.overflow = ''; /* BOS 09/07/2026 — restaure défilement page */
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.width = '';
     });
   }
   /* BOS 09/07/2026 — fermer menu au clic sur un lien + restaurer scroll */
@@ -282,6 +289,9 @@ document.addEventListener('DOMContentLoaded', () => {
         mobileMenu.classList.remove('open');
         hamburger && hamburger.setAttribute('aria-expanded', 'false');
         document.body.style.overflow = '';
+        document.documentElement.style.overflow = '';
+        document.body.style.position = '';
+        document.body.style.width = '';
       });
     });
   }
