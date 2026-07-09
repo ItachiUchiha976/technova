@@ -60,6 +60,12 @@ const PRODUCTS = {
     price: 25,
     emoji: '🌀',
     url: 'produit-ventilateur-bureau.html'
+  },
+  'TN-GUIDE-IA-001': {
+    name: 'Guide Maîtriser l\'IA en 2026 (PDF)',
+    price: 13,
+    emoji: '🤖',
+    url: 'guide-ia/'
   }
 };
 
