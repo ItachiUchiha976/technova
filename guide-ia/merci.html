@@ -41,13 +41,13 @@ h1 { font-family:var(--font-title); font-size:1.6rem; font-weight:800; margin-bo
     <h1>Merci pour ta commande !</h1>
     <p class="sub">Ton paiement est confirmé. Ton guide « Maîtriser l'IA en 2026 » est prêt — télécharge-le maintenant :</p>
 
-    <a class="btn-dl" href="dl/bc8de4ddcfab3836/Maitriser_IA_2026_Guide_Pratique.pdf" download="Maitriser-IA-2026-Guide-Pratique.pdf">
-      ⬇️ Télécharger mon guide (PDF)
+    <a class="btn-dl" id="downloadBtn" href="#" style="pointer-events:none;opacity:0.7;">
+      ⏳ Préparation de ton téléchargement...
     </a>
-    <p class="dl-note">28 pages · format PDF · lisible sur mobile, tablette et ordinateur</p>
+    <p class="dl-note" id="dl-message">28 pages · format PDF · lisible sur mobile, tablette et ordinateur</p>
 
-    <div class="mail-box">
-      💾 <strong>Pense à enregistrer ton PDF</strong> une fois téléchargé (dans tes fichiers ou ton drive) : tu le retrouveras à tout moment. Sur mobile, le fichier atterrit en général dans le dossier « Téléchargements ».
+    <div class="mail-box" id="dl-error-box" style="display:none;">
+      💾 <strong>Lien expiré ou déjà utilisé.</strong> Envoie-nous un email à <a href="mailto:apprentissage.feynman@gmail.com">apprentissage.feynman@gmail.com</a> avec ta confirmation de paiement, on te renvoie le fichier sous 24 h.
     </div>
 
     <p class="help">Un souci pour télécharger, ou tu veux qu'on te renvoie le fichier par email ? Écris-nous à <a href="mailto:apprentissage.feynman@gmail.com">apprentissage.feynman@gmail.com</a>, on te l'envoie sous 24 h.</p>
@@ -56,6 +56,27 @@ h1 { font-family:var(--font-title); font-size:1.6rem; font-weight:800; margin-bo
 </div>
 <!-- umami-start --><script defer src="https://cloud.umami.is/script.js" data-website-id="d0fa94fe-a108-4590-a465-8f0017569370"></script><!-- umami-end -->
 <script>
+  // BOS 09/07/2026 — téléchargement sécurisé par token (anti-vol PDF)
+  var TOKEN_API = 'https://secretariat-retailers-bases-mandatory.trycloudflare.com/download/';
+  var token = new URLSearchParams(location.search).get('token');
+  var btn = document.getElementById('downloadBtn');
+  var msg = document.getElementById('dl-message');
+  var errBox = document.getElementById('dl-error-box');
+
+  if (token) {
+    btn.href = TOKEN_API + encodeURIComponent(token);
+    btn.textContent = '⬇️ Télécharger mon guide (PDF)';
+    btn.style.pointerEvents = 'auto';
+    btn.style.opacity = '1';
+    msg.textContent = '28 pages · format PDF · cliquer pour télécharger';
+  } else {
+    btn.textContent = '⚠️ Téléchargement indisponible';
+    btn.style.opacity = '0.5';
+    btn.href = '#';
+    msg.textContent = 'Si tu as bien payé, écris-nous à apprentissage.feynman@gmail.com.';
+    if (errBox) errBox.style.display = 'block';
+  }
+
   // Umami: marquer la conversion "guide-ia" (paiement PayPal validé -> page merci)
   try { if (window.umami) setTimeout(function(){ umami.track('guide_ia_purchase_confirmed', { produit:'maitriser-ia-2026', prix:13.00 }); }, 800); } catch(e){}
 </script>

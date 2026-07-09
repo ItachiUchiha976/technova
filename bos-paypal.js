@@ -16,7 +16,16 @@
     }catch(e){}
     return [];
   }
-  function merciUrl(){ return location.origin + location.pathname.replace(/[^\/]*$/,'merci.html'); }
+  function merciUrl(){ var u=location.origin + location.pathname.replace(/[^\/]*$/,'merci.html'); if(window._bosEagerToken) u+='?token='+encodeURIComponent(window._bosEagerToken); return u; }
+  // BOS 09/07/2026 — génération eager de token pour produits digitaux (anti-vol PDF)
+  window._bosEagerToken=null;
+  (function eagerToken(){
+    var pid=document.querySelector('[data-bos-product-id]'); if(!pid) return;
+    var productId=pid.getAttribute('data-bos-product-id');
+    var TOKEN_API='https://secretariat-retailers-bases-mandatory.trycloudflare.com/generate-token';
+    fetch(TOKEN_API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({product:productId})})
+      .then(function(r){return r.json();}).then(function(d){window._bosEagerToken=d.token;}).catch(function(){});
+  })();
   function toast(m){ if(typeof window.showToast==='function') window.showToast(m); else alert(m); }
   /* BOS — Umami events (funnel add_to_cart -> checkout_paypal/buy_now_click). Defensif, jamais bloquant. Ajout 02/07/2026. */
   function bosBoutiqueSlug(){
