@@ -1,5 +1,5 @@
 /* BOS — Checkout PayPal (Payments Standard, cart upload, 0 backend). Ajout 01/07/2026.
-   Encaisse vers le compte PayPal fredsoule976@gmail.com. Carte bancaire acceptee (pas besoin de compte PayPal cote acheteur). */
+   Encaisse vers le compte PayPal de la boutique. Carte bancaire acceptee (pas besoin de compte PayPal cote acheteur). */
 (function(){
   'use strict';
   var BUSINESS='fredsoule976@gmail.com';

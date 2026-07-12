@@ -1,7 +1,7 @@
 /* BOS — Checkout Stripe. Ajout 08/07/2026.
    - Pages produit : lien direct Stripe Payment Link (1 produit = 1 lien).
    - Page panier : endpoint VPS qui crée une session checkout avec le montant exact.
-   Encaisse vers le compte Stripe soulefred@hotmail.fr. */
+   Encaisse vers le compte Stripe de la boutique. */
 
 (function(){
   'use strict';
