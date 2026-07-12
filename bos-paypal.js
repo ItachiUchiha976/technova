@@ -22,7 +22,7 @@
   (function eagerToken(){
     var pid=document.querySelector('[data-bos-product-id]'); if(!pid) return;
     var productId=pid.getAttribute('data-bos-product-id');
-    var TOKEN_API='https://secretariat-retailers-bases-mandatory.trycloudflare.com/generate-token';
+    var TOKEN_API='https://api.tonargentexplique.fr/generate-token';
     fetch(TOKEN_API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({product:productId})})
       .then(function(r){return r.json();}).then(function(d){window._bosEagerToken=d.token;}).catch(function(){});
   })();

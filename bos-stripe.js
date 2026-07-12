@@ -7,7 +7,7 @@
   'use strict';
 
   // API VPS (Cloudflare Tunnel HTTPS → reverse proxy → Node Stripe)
-  var STRIPE_API = 'https://secretariat-retailers-bases-mandatory.trycloudflare.com/create-checkout-session';
+  var STRIPE_API = 'https://api.tonargentexplique.fr/create-checkout-session';
 
   // Mapping produit -> lien Stripe Payment Link (pages produit)
   var STRIPE_LINKS = {
