@@ -19,12 +19,6 @@
     'machine-a-sons-blancs': 'https://buy.stripe.com/dRmeVefbd22Z9ii9EM5Vu0b',
     'lampe-de-lecture-led': 'https://buy.stripe.com/cNi4gz2or0YV7aa8AI5Vu0c',
     'masque-de-nuit-premium': 'https://buy.stripe.com/4gM5kD3sv373fGG9EM5Vu0d',
-    'lampe-lune-3d':        'https://buy.stripe.com/aFabJ18MPePLbqq6sA5Vu00',
-    'boite-mystere-puzzle': 'https://buy.stripe.com/cNiaEX1kn0YV3XY6sA5Vu01',
-    'sablier-magnetique':   'https://buy.stripe.com/dRm9AT0gjdLH8ee18g5Vu02',
-    'journal-infini':       'https://buy.stripe.com/5kQcN5gfhbDz522bMU5Vu03',
-    'statue-bastet':        'https://buy.stripe.com/8x23cvbZ19vr52218g5Vu04',
-    'carte-du-monde-vintage': 'https://buy.stripe.com/3cIbJ1d358rn522eZ65Vu05',
     'enceinte-bluetooth-vintage': 'https://buy.stripe.com/8x2aEX0gjcHD2TU4ks5Vu0e',
     'mini-projecteur-portable':   'https://buy.stripe.com/8x24gzd354b79ii7wE5Vu0f',
     'microphone-pro-streaming':   'https://buy.stripe.com/6oU9AT9QTgXTcuug3a5Vu0g',
@@ -50,14 +44,7 @@
     'buts-pop-up':                'https://buy.stripe.com/bJe3cv4wz5fb522bMU5Vu0A',
   };
 
-  var CART_ID_TO_STRIPE = {
-    'lune-levitation-001': 'lampe-lune-3d',
-    'boite-enigme-001': 'boite-mystere-puzzle',
-    'sablier-001': 'sablier-magnetique',
-    'carnet-001': 'journal-infini',
-    'statuette-001': 'statue-bastet',
-    'carte-001': 'carte-du-monde-vintage',
-  };
+  var CART_ID_TO_STRIPE = {};
 
   function normalize(str) {
     return str.toLowerCase()
