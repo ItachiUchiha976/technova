@@ -145,7 +145,7 @@
         fetch(STRIPE_API, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ amount: total, currency: 'eur' }),
+          body: JSON.stringify({ amount: total, currency: 'eur', cancelPath: '/panier.html' }),
         })
         .then(function(r) { return r.json(); })
         .then(function(data) {

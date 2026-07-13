@@ -62,7 +62,11 @@
       fetch(STRIPE_API, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ amount: p.amount, currency: 'eur', boutique: p.boutique, products: [pid] })
+        body: JSON.stringify({ amount: p.amount, currency: 'eur', boutique: p.boutique, products: [pid],
+          /* BOS 13/07/2026 : sans returnPath, Stripe renvoyait vers /merci.html a la RACINE du domaine
+             (404 ou page sans code token) => le client payait et ne recevait rien. */
+          returnPath: location.pathname.replace(/[^\/]*$/, 'merci.html'),
+          cancelPath: location.pathname })
       })
       .then(function(r) { return r.json(); })
       .then(function(data) {

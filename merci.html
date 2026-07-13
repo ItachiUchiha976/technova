@@ -116,5 +116,25 @@ window.addEventListener('load', function(){
 });
 </script>
 
+
+<!-- BOS 13/07/2026 — filet de securite : livraison digitale par token (§12.35) si un success_url Stripe atterrit ici -->
+<section id="bos-digital-dl" style="display:none;max-width:600px;margin:2.5rem auto;padding:1.6rem 1.4rem;border:1px solid #e5e5e5;border-radius:14px;text-align:center;font-family:system-ui,-apple-system,Segoe UI,sans-serif;background:#fafafa;">
+  <h2 style="margin:0 0 .6rem;font-size:1.15rem;">📘 Ton produit numérique est prêt</h2>
+  <p style="margin:0 0 1.1rem;color:#555;">Télécharge-le maintenant — lien valable 24 h, usage unique.</p>
+  <a id="bosDlBtn" href="#" style="display:inline-block;padding:.9rem 1.7rem;background:#111;color:#fff;border-radius:9px;text-decoration:none;font-weight:700;">⬇️ Télécharger mon fichier</a>
+  <p style="margin:1.1rem 0 0;font-size:.85rem;color:#777;">Un souci&nbsp;? <a href="mailto:contact@technovaboutique.fr">contact@technovaboutique.fr</a> — on te renvoie le fichier sous 24&nbsp;h.</p>
+</section>
+<script>
+(function(){
+  var t = new URLSearchParams(location.search).get('token');
+  if (!t) return;
+  var sec = document.getElementById('bos-digital-dl');
+  var btn = document.getElementById('bosDlBtn');
+  if (!sec || !btn) return;
+  btn.href = 'https://api.tonargentexplique.fr/download/' + encodeURIComponent(t);
+  sec.style.display = 'block';
+})();
+</script>
+
 </body>
 </html>
