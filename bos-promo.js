@@ -43,8 +43,11 @@
   // Le bandeau promet une remise "au panier" → ne l'afficher que là où un panier existe.
   function hasCart(){
     if (/panier/i.test(location.pathname)) return true;
+    // Les 5 boutiques n'utilisent pas le meme markup pour "Ajouter au panier" :
+    // classe (.add-to-cart-btn, .btn-addcart, .fiche-add) OU id (#add-to-cart-btn) OU data-*.
     return !!document.querySelector(
-      '.add-to-cart-btn, .btn-addcart, [data-add-cart], .fiche-add, .cart-table, #cart-items, #cartItems, #cartFooter'
+      '.add-to-cart-btn, #add-to-cart-btn, .btn-addcart, [data-add-cart], [data-product-id], ' +
+      '.fiche-add, .cart-table, #cart-items, #cartItems, #cartFooter'
     );
   }
 
