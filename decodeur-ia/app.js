@@ -96,8 +96,8 @@
         var t = TERMS[ti];
         out += '<div class="det-card"><h4>' + escapeHtml(t.term) + "</h4><p>" + escapeHtml(t.short) + "</p></div>";
       });
-      out += '<a class="decoder-next" href="https://boutiquefred.gumroad.com/l/maitriser-ia-2026" target="_blank" rel="noopener">📘 Tu veux vraiment maîtriser l\'IA&nbsp;? → Le guide pratique 2026 (13&nbsp;€)</a>';
-      out += '<a class="decoder-next decoder-next-alt" href="https://itachiuchiha976.github.io/comparateur-ia" target="_blank" rel="sponsored nofollow noopener">🧠 Ou compare les outils IA gratuitement →</a>';
+      out += '<a class="decoder-next" href="https://technovaboutique.fr/guide-ia/" target="_blank" rel="noopener">📘 Tu veux vraiment maîtriser l\'IA&nbsp;? → Le guide pratique 2026 (13&nbsp;€)</a>';
+      out += '<a class="decoder-next decoder-next-alt" href="https://technovaboutique.fr/comparateur-ia" target="_blank" rel="sponsored nofollow noopener">🧠 Ou compare les outils IA gratuitement →</a>';
       detEl.innerHTML = out;
     }
 
@@ -251,8 +251,8 @@
         '<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:18px">' +
         '<button class="btn btn-ghost" id="quiz-again">Rejouer</button>' +
         '<a class="btn btn-sub" href="https://www.youtube.com/@iadecodefr?sub_confirmation=1" target="_blank" rel="noopener"><span class="yt-ico">▶</span> S\'abonner pour en apprendre plus</a>' +
-        '<a class="btn btn-primary" href="https://boutiquefred.gumroad.com/l/maitriser-ia-2026" target="_blank" rel="noopener">📘 Maîtriser l\'IA en 2026 (13&nbsp;€) →</a>' +
-        '<a class="btn btn-ghost" href="https://itachiuchiha976.github.io/comparateur-ia" target="_blank" rel="sponsored nofollow noopener">Comparer les outils IA (gratuit) →</a>' +
+        '<a class="btn btn-primary" href="https://technovaboutique.fr/guide-ia/" target="_blank" rel="noopener">📘 Maîtriser l\'IA en 2026 (13&nbsp;€) →</a>' +
+        '<a class="btn btn-ghost" href="https://technovaboutique.fr/comparateur-ia" target="_blank" rel="sponsored nofollow noopener">Comparer les outils IA (gratuit) →</a>' +
         "</div>";
       $("#quiz-again", quizBox).addEventListener("click", startQuiz);
     }

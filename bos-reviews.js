@@ -36,11 +36,39 @@
     for (var i = 0; i < 5; i++) o += (i < s ? '★' : '☆');
     return o;
   }
-  function flag(cc) {
-    if (!cc || cc.length !== 2) return '';
-    var A = 0x1F1E6; cc = cc.toUpperCase();
+  /* Pays : drapeau emoji + nom FR. Jamais le code brut ("us").
+     Certains OS (Windows) ne rendent pas les drapeaux emoji (ils affichent "US")
+     -> on teste le support et on retombe sur le nom du pays en francais. */
+  var CNAMES = {AE:'\u00c9mirats arabes unis',AR:'Argentine',AT:'Autriche',AU:'Australie',BE:'Belgique',BG:'Bulgarie',BR:'Br\u00e9sil',CA:'Canada',CH:'Suisse',CL:'Chili',CN:'Chine',CO:'Colombie',CZ:'Tch\u00e9quie',DE:'Allemagne',DK:'Danemark',EE:'Estonie',EG:'\u00c9gypte',ES:'Espagne',FI:'Finlande',FR:'France',GB:'Royaume-Uni',GR:'Gr\u00e8ce',HK:'Hong Kong',HR:'Croatie',HU:'Hongrie',ID:'Indon\u00e9sie',IE:'Irlande',IL:'Isra\u00ebl',IN:'Inde',IT:'Italie',JP:'Japon',KR:'Cor\u00e9e du Sud',KZ:'Kazakhstan',LT:'Lituanie',LU:'Luxembourg',LV:'Lettonie',MA:'Maroc',MX:'Mexique',MY:'Malaisie',NG:'Nigeria',NL:'Pays-Bas',NO:'Norv\u00e8ge',NZ:'Nouvelle-Z\u00e9lande',PE:'P\u00e9rou',PH:'Philippines',PL:'Pologne',PT:'Portugal',RO:'Roumanie',RS:'Serbie',RU:'Russie',SA:'Arabie saoudite',SE:'Su\u00e8de',SG:'Singapour',SI:'Slov\u00e9nie',SK:'Slovaquie',TH:'Tha\u00eflande',TN:'Tunisie',TR:'Turquie',TW:'Ta\u00efwan',TZ:'Tanzanie',UA:'Ukraine',US:'\u00c9tats-Unis',UY:'Uruguay',VN:'Vietnam',ZA:'Afrique du Sud'};
+
+  var _flagOK = null;
+  function flagsSupported() {
+    if (_flagOK !== null) return _flagOK;
+    try {
+      var c = document.createElement('canvas').getContext('2d');
+      c.font = '16px sans-serif';
+      // Drapeaux supportes => la paire de lettres regionales forme UN glyphe,
+      // donc plus etroit que les deux lettres rendues separement.
+      _flagOK = c.measureText('\uD83C\uDDFA\uD83C\uDDF8').width
+              < c.measureText('\uD83C\uDDFA').width + c.measureText('\uD83C\uDDF8').width - 1;
+    } catch (e) { _flagOK = false; }
+    return _flagOK;
+  }
+  function flagEmoji(cc) {
+    var A = 0x1F1E6;
     return String.fromCodePoint(A + cc.charCodeAt(0) - 65) + String.fromCodePoint(A + cc.charCodeAt(1) - 65);
   }
+  /* Renvoie "<drapeau> Etats-Unis" (ou juste le nom si les drapeaux ne s'affichent pas).
+     Code inconnu -> chaine vide (jamais le code brut). */
+  function country(cc) {
+    if (!cc || typeof cc !== 'string' || cc.length !== 2) return '';
+    cc = cc.toUpperCase();
+    if (!/^[A-Z]{2}$/.test(cc)) return '';
+    var name = CNAMES[cc] || '';
+    if (!name) return flagsSupported() ? flagEmoji(cc) : '';
+    return (flagsSupported() ? flagEmoji(cc) + ' ' : '') + name;
+  }
+
   function esc(t) { var d = document.createElement('div'); d.textContent = t || ''; return d.innerHTML; }
 
   function renderFull(mount, data) {
@@ -60,7 +88,7 @@
       var c = document.createElement('div'); c.className = 'bos-rv-c';
       c.innerHTML = '<div class="bos-rv-top"><span class="bos-rv-nm">' + esc(r.name || 'Client')
         + '</span><span class="bos-rv-vf">✔ Achat vérifié</span>'
-        + '<span class="bos-rv-cs">' + (flag(r.country) ? flag(r.country) + ' ' : '') + esc(r.date || '') + '</span></div>'
+        + '<span class="bos-rv-cs">' + (country(r.country) ? esc(country(r.country)) + ' \u00b7 ' : '') + esc(r.date || '') + '</span></div>'
         + '<div class="bos-rv-cst">' + stars(r.score) + '</div>'
         + (r.text ? '<div class="bos-rv-tx">' + esc(r.text) + '</div>' : '');
       return c;

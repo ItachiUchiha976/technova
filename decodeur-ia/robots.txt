@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://itachiuchiha976.github.io/decodeur-ia/sitemap.xml
+Sitemap: https://technovaboutique.fr/decodeur-ia/sitemap.xml
