@@ -280,8 +280,10 @@
     var price = parseFloat(btn.getAttribute('data-bos-price'));
     var key   = btn.getAttribute('data-bos-key') || '';
     if (!(price > 0)) { alert('Produit indisponible pour le moment.'); return; }
-    try { if (window.umami) umami.track('buy_now_cb', {produit: key, prix: price, boutique: BOUTIQUE}); } catch(e){}
-    go(btn, { amount: price, currency: 'eur', boutique: BOUTIQUE,
+    var amount = price;
+    if (window.BOS_PROMO && typeof window.BOS_PROMO.discount === 'function') { var _d = window.BOS_PROMO.discount([{ price: price, qty: 1 }]) || 0; amount = Math.round((price - _d) * 100) / 100; }
+    try { if (window.umami) umami.track('buy_now_cb', {produit: key, prix: amount, boutique: BOUTIQUE}); } catch(e){}
+    go(btn, { amount: amount, currency: 'eur', boutique: BOUTIQUE,
               products: key ? [key] : [], cancelPath: location.pathname });
   };
 })();
