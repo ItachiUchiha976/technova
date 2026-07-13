@@ -419,9 +419,9 @@
     <div class="price-old">19€</div>
     <div class="price-main">13€</div>
     <div class="price-note">Accès immédiat · PDF téléchargeable</div>
-    <button class="btn-buy" id="btn-hero" onclick="addToCart('TN-GUIDE-IA-001')" style="cursor:pointer;font-family:inherit;">
-      Ajouter au panier — 13€
-      <span class="btn-buy-sub">Ajouté à ton panier TechNova</span>
+    <button class="btn-buy" id="btn-hero" onclick="bosBuyNow('Guide Maitriser l’IA en 2026 (PDF)', 13.00, 'guide-ia')" style="cursor:pointer;font-family:inherit;">
+      Obtenir le guide — 13€
+      <span class="btn-buy-sub">PDF envoyé immédiatement après paiement</span>
     </button>
     <div class="trust-row">
       <span>✔ PDF immédiat</span>
@@ -646,11 +646,11 @@
       <div class="price-period">Paiement unique · Accès à vie</div>
     </div>
     <br />
-    <button class="btn-buy-final" id="btn-final" onclick="addToCart('TN-GUIDE-IA-001')" style="cursor:pointer;font-family:inherit;">
-      Ajouter au panier — 13€
+    <button class="btn-buy-final" id="btn-final" onclick="bosBuyNow('Guide Maitriser l’IA en 2026 (PDF)', 13.00, 'guide-ia')" style="cursor:pointer;font-family:inherit;">
+      Obtenir le guide — 13€
     </button>
     <p class="guarantee">
-      ✔ Satisfait ou remboursé 7 jours &nbsp;·&nbsp; ✔ PDF immédiat &nbsp;·&nbsp; ✔ Paiement sécurisé Gumroad
+      ✔ Satisfait ou remboursé 7 jours &nbsp;·&nbsp; ✔ PDF immédiat &nbsp;·&nbsp; ✔ Paiement sécurisé
     </p>
   </div>
 </section>
@@ -670,6 +670,10 @@
     Statistiques sources : KPMG 2026, Incremys 2026, McKinsey 2025, Bpifrance 2026
   </p>
 </footer>
+
+<!-- BOS 13/07/2026 — checkout digital direct (token de livraison, §12.35) -->
+<script src="../bos-paypal.js"></script>
+<script src="bos-stripe.js"></script>
 
 <!-- BOS 09/07/2026 — panier TechNova synchronisé -->
 <script src="../cart.js?v=4"></script>
