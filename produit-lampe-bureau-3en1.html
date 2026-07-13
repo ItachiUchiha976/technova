@@ -361,13 +361,6 @@
     document.querySelectorAll('.thumbnail').forEach(function (t) { t.classList.remove('active'); });
     el.classList.add('active');
   }
-
-  function buyNow() {
-    var c = TN_LAMP_COLORS[tnLampColor] || TN_LAMP_COLORS.noir;
-    if (typeof bosBuyNow === 'function') {
-      bosBuyNow('Lampe de Bureau LED 3-en-1', 69, c.id);
-    }
-  }
 </script>
 
 <script src="cart.js?v=4"></script>

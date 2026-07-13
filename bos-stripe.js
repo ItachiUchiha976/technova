@@ -72,44 +72,48 @@
     return null;
   }
 
-  // Lire le total RÉDUIT du panier (prix vert = avec -10%)
+  // BOS 13/07/2026 — Total REELLEMENT facture = sous-total - remise -10%,
+  // calcule a partir du panier (meme formule que l'affichage panier et que PayPal).
+  // Avant : lecture fragile du DOM -> risque d'ecart entre prix affiche et prix facture.
   function getCartTotal() {
-    // Priorité : le prix en vert dans le DOM (déjà réduit par app.js)
-    var greenPrice = document.querySelector('.cart-total span[style*="color:#10b981"], .cart-total span[style*="color: #10b981"]');
-    if (greenPrice) {
-      var m = greenPrice.textContent.match(/(\d+[.,]\d{2})/);
-      if (m) return parseFloat(m[1].replace(',', '.'));
-    }
-    // Fallback : dernier nombre dans le total (le prix réduit est après le barré)
-    var totalEl = document.querySelector('.cart-total h3');
-    if (totalEl) {
-      var matches = totalEl.textContent.match(/\d+[.,]\d{2}/g);
-      if (matches && matches.length > 0) {
-        // Prendre le DERNIER prix (le réduit, après le barré)
-        return parseFloat(matches[matches.length - 1].replace(',', '.'));
-      }
-    }
-    // Fallback : localStorage (même calcul que app.js)
-    try {
-      var keys = ['curiosa_cart', 'serenlab_cart', 'technova_cart', 'focuslab_cart', 'footperf_cart'];
-      for (var c = 0; c < keys.length; c++) {
-        var cart = JSON.parse(localStorage.getItem(keys[c]) || '[]');
-        if (cart.length > 0) {
-          var subtotal = cart.reduce(function(s, i) { return s + i.price * i.qty; }, 0);
-          var maxPrice = Math.max.apply(null, cart.map(function(i) { return i.price; }));
-          return subtotal - maxPrice * 0.10;
+    var cart = null;
+    try { if (typeof window.getCart === 'function') { var c = window.getCart(); if (Array.isArray(c)) cart = c; } } catch(e) {}
+    if (!cart || !cart.length) {
+      try {
+        var keys = ['footperf_v2_cart', 'curiosa_cart', 'serenlab_cart', 'technova_cart', 'focuslab_cart', 'footperf_cart'];
+        for (var i = 0; i < keys.length; i++) {
+          var v = JSON.parse(localStorage.getItem(keys[i]) || 'null');
+          if (Array.isArray(v) && v.length) { cart = v; break; }
         }
-      }
-    } catch(e) {}
-    return 0;
+      } catch(e) {}
+    }
+    if (!cart || !cart.length) return 0;
+    var subtotal = cart.reduce(function(s, i) {
+      return s + (Number(i.price) || 0) * Math.max(1, parseInt(i.qty || 1, 10));
+    }, 0);
+    var discount = 0;
+    if (window.BOS_PROMO && typeof window.BOS_PROMO.discount === 'function') {
+      discount = window.BOS_PROMO.discount(cart);
+    } else {
+      var max = 0;
+      cart.forEach(function(i) { var p = Number(i.price) || 0; if (p > max) max = p; });
+      discount = max > 0 ? Math.round(max * 10) / 100 : 0;
+    }
+    return Math.round((subtotal - discount) * 100) / 100;
   }
+
 
   var _stripeDone = false;
   function addStripeButton(productKey) {
     if (_stripeDone) return;
     var isCart = location.pathname.indexOf('panier') !== -1 || !!document.getElementById('cartFooter');
+    /* BOS 13/07/2026 (coherence des prix) — le Payment Link des fiches produit encaissait le
+       PLEIN TARIF alors que le bandeau annonce -10% : deux prix pour le meme produit selon le
+       bouton clique. On ne propose donc le paiement CB que depuis le PANIER, ou la remise est
+       reellement appliquee. Les fiches produit gardent "Ajouter au panier" comme CTA d'achat.
+       (Les produits digitaux ont leur propre bos-stripe.js dans leur sous-dossier : non impactes.) */
+    if (!isCart) return;
     var link = productKey ? (STRIPE_LINKS[productKey] || null) : null;
-    if (!link && !isCart) return;
 
     var container = document.querySelector('.checkout-stripe') || document.getElementById('stripe-btn-container');
     if (!container) {

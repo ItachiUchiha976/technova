@@ -357,13 +357,6 @@
     document.querySelectorAll('.thumbnail').forEach(function (t) { t.classList.remove('active'); });
     el.classList.add('active');
   }
-
-  function buyNow() {
-    var c = TN_COLORS[tnCurrentColor] || TN_COLORS.blanc;
-    if (typeof bosBuyNow === 'function') {
-      bosBuyNow('Enceinte à lévitation magnétique Bluetooth', 159, c.id);
-    }
-  }
 </script>
 
 <script src="cart.js?v=4"></script>

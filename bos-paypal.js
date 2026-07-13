@@ -41,13 +41,42 @@
       }
     }catch(e){}
   }
+  /* BOS 13/07/2026 — La remise -10% annoncee par le bandeau doit etre REELLEMENT facturee.
+     Avant : le panier affichait le total remise mais PayPal encaissait le PLEIN TARIF.
+     Source de verite du calcul = window.BOS_PROMO.discount() (bos-promo.js). */
+  function bosPromoDiscount(cart){
+    if(window.BOS_PROMO && typeof window.BOS_PROMO.discount==='function') return window.BOS_PROMO.discount(cart);
+    if(!cart || !cart.length) return 0;
+    var max=0;
+    cart.forEach(function(i){ var p=Number(i.price)||0; if(p>max) max=p; });
+    return max>0 ? Math.round(max*10)/100 : 0; // arrondi(max*0.10) au centime
+  }
+  function bosPromoLines(cart){
+    var lines=cart.map(function(it){
+      return {name:(it.name||'Article').toString(), price:Number(it.price||0),
+              qty:Math.max(1,parseInt(it.qty||1,10)), id:it.id};
+    });
+    var d=bosPromoDiscount(cart);
+    if(!(d>0) || !lines.length) return lines;
+    var maxPrice=0, idx=-1;
+    lines.forEach(function(l,i){ if(l.price>maxPrice){ maxPrice=l.price; idx=i; } });
+    if(idx<0 || maxPrice<=0) return lines;
+    var t=lines[idx];
+    var discounted=Math.round((t.price-d)*100)/100;
+    if(discounted<0) discounted=0;
+    var promoLine={name:(t.name+' (remise -10%)').slice(0,120), price:discounted, qty:1, id:t.id};
+    if(t.qty>1) lines.splice(idx,1,promoLine,{name:t.name,price:t.price,qty:t.qty-1,id:t.id});
+    else lines[idx]=promoLine;
+    return lines; // somme des lignes == sous-total - remise == total affiche au panier
+  }
   window.bosPayPalCheckout=function(){
     var cart=findCart();
     if(!cart.length){ toast('Ton panier est vide.'); return; }
     var cgv=document.getElementById('cgv-check');
     if(cgv && !cgv.checked){ toast('Merci d’accepter les CGV pour continuer.'); return; }
+    var lines=bosPromoLines(cart);
     var total=0;
-    cart.forEach(function(it){ total += Number(it.price||0)*Math.max(1,parseInt(it.qty||1,10)); });
+    lines.forEach(function(it){ total += Number(it.price||0)*Math.max(1,parseInt(it.qty||1,10)); });
     bosTrack('checkout_paypal', {montant:Number(total.toFixed(2)), boutique:bosBoutiqueSlug(), page:location.pathname});
     var f=document.createElement('form');
     f.method='POST'; f.action='https://www.paypal.com/cgi-bin/webscr'; f.style.display='none'; f.target='_top';
@@ -55,7 +84,7 @@
     add('cmd','_cart'); add('upload','1'); add('business',BUSINESS);
     add('currency_code','EUR'); add('lc','FR'); add('no_note','1'); add('rm','2');
     add('return',merciUrl()); add('cancel_return',location.href);
-    cart.forEach(function(it,idx){
+    lines.forEach(function(it,idx){
       var n=idx+1;
       add('item_name_'+n,(it.name||('Article '+n)).toString().slice(0,120));
       add('amount_'+n,Number(it.price||0).toFixed(2));
