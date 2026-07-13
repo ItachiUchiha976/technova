@@ -175,6 +175,14 @@
   }
 
   function init() {
+    // BOS 13/07/2026 : les boutons CB sont desormais explicites dans le HTML
+    // (data-bos-cb). Plus d'injection auto : elle plaçait le bouton au petit
+    // bonheur (ancre = bouton PayPal) et ne survivait pas aux re-rendus du panier.
+    if (document.querySelector('[data-bos-cb]')) return;
+    if (location.pathname.indexOf('panier') !== -1 ||
+        document.getElementById('cart-wrapper') ||
+        document.getElementById('cartFooter') ||
+        document.getElementById('cartItems')) return;
     // Détecter page panier OU panier intégré (FootPerf one-page)
     var isCart = location.pathname.indexOf('panier') !== -1 || !!document.getElementById('cartFooter');
     if (isCart) {
@@ -193,4 +201,87 @@
 
   // Exposer pour les paniers dynamiques (FootPerf)
   window.initStripe = init;
+})();
+
+/* ==========================================================================
+   BOS 13/07/2026 - RAIL CARTE UNIQUE POUR LES PRODUITS PHYSIQUES
+   PayPal a ete retire du parcours physique : il envoyait les PRIX PLEINS
+   (sans la remise affichee dans le panier) et aucun fulfillment ne lisait
+   ses ventes -> le client payait trop cher et n'etait jamais livre.
+   Ici : le montant envoye a Stripe est EXACTEMENT celui affiche au client,
+   et metadata.products porte les cles de fulfillment_products.json (VPS)
+   pour que la commande fournisseur parte bien apres paiement.
+   ========================================================================== */
+(function(){
+  'use strict';
+  var API = 'https://api.tonargentexplique.fr/create-checkout-session';
+  var BOUTIQUE = 'technova';
+  var CART_KEY = 'technova_cart';
+  var ID_TO_FULFILL = {
+      "TN-PROJ-001": "mini-projecteur-portable",
+      "TN-LAMP-001": "lampe-led-bureau",
+      "TN-CHG-001": "chargeur-sans-fil-3-en-1",
+      "TN-PRINT-001": "mini-imprimante-portable",
+      "TN-MIC-001": "microphone-pro-streaming",
+      "TN-VEN-001": "ventilateur-portable"
+  };
+
+  function items(){
+    try { var v = JSON.parse(localStorage.getItem(CART_KEY) || '[]'); return Array.isArray(v) ? v : []; }
+    catch(e){ return []; }
+  }
+  function fulfillKeys(){
+    return items().map(function(i){ return ID_TO_FULFILL[i.id] || i.id; });
+  }
+  /* Total EXACT affiche au client (remise incluse), expose par le panier. */
+  function displayedTotal(){
+    if (typeof window.bosCartTotal === 'function') {
+      var t = Number(window.bosCartTotal());
+      if (isFinite(t) && t > 0) return Math.round(t * 100) / 100;
+    }
+    return 0;
+  }
+  function fail(btn, label, msg){ alert(msg); btn.disabled = false; btn.innerHTML = label; }
+
+  function go(btn, payload){
+    var label = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = 'Redirection securisee...';
+    fetch(API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    })
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if (d && d.url) { window.location.href = d.url; }
+      else { fail(btn, label, 'Erreur de paiement : ' + ((d && d.error) || 'inconnue')); }
+    })
+    .catch(function(){
+      fail(btn, label, 'Impossible de contacter le serveur de paiement. Reessaie dans quelques instants.');
+    });
+  }
+
+  /* Panier -> session au montant exact affiche. */
+  window.bosCartCB = function(btn){
+    var cgv = document.getElementById('cgv-check');
+    if (cgv && !cgv.checked) { alert('Merci d\u2019accepter les CGV pour continuer.'); return; }
+    var total = displayedTotal();
+    if (!(total > 0)) { alert('Ton panier est vide.'); return; }
+    try { if (window.umami) umami.track('checkout_cb', {montant: total, boutique: BOUTIQUE}); } catch(e){}
+    go(btn, { amount: total, currency: 'eur', boutique: BOUTIQUE,
+              products: fulfillKeys(), cancelPath: '/panier.html' });
+  };
+
+  /* Fiche produit -> session au prix EXACT affiche sur la fiche.
+     On n'utilise plus les Payment Links statiques : leurs montants avaient
+     derive des prix affiches (ex. 79 EUR affiche / 59 EUR preleve). */
+  window.bosProductCB = function(btn){
+    var price = parseFloat(btn.getAttribute('data-bos-price'));
+    var key   = btn.getAttribute('data-bos-key') || '';
+    if (!(price > 0)) { alert('Produit indisponible pour le moment.'); return; }
+    try { if (window.umami) umami.track('buy_now_cb', {produit: key, prix: price, boutique: BOUTIQUE}); } catch(e){}
+    go(btn, { amount: price, currency: 'eur', boutique: BOUTIQUE,
+              products: key ? [key] : [], cancelPath: location.pathname });
+  };
 })();

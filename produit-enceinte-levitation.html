@@ -162,13 +162,19 @@
           </ul>
         </div>
 
-        <!-- CTA r&eacute;el : paiement PayPal (CB accept&eacute;e), 0 pr&eacute;vente -->
+        <!-- CTA reel : paiement par carte bancaire (Stripe), 0 pr&eacute;vente -->
         <button type="button" id="buyBtn" class="add-to-cart-btn" data-add-cart data-id="TN-SPK-001" data-name="Enceinte à lévitation magnétique Bluetooth" data-price="159" >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
           Ajouter au panier &mdash; 159&nbsp;&euro;
         </button>
+          <div class="checkout-stripe">
+            <button type="button" data-bos-cb data-bos-price="159" data-bos-key=""
+              onclick="bosProductCB(this)" style="display:block;width:100%;max-width:420px;margin:12px auto 0;padding:14px 24px;background:#635BFF;color:#fff;border:none;border-radius:8px;font-weight:600;font-size:16px;cursor:pointer;text-align:center;">
+              💳 Acheter maintenant par carte — 159 €
+            </button>
+          </div>
         <div id="bos-trust-mount"></div>
-        <p style="font-size:.8rem; color:var(--text-light); margin-top:10px;">Paiement 100&nbsp;% s&eacute;curis&eacute; par PayPal &mdash; carte bancaire accept&eacute;e (pas besoin de compte PayPal).</p>
+        <p style="font-size:.8rem; color:var(--text-light); margin-top:10px;">Paiement 100&nbsp;% s&eacute;curis&eacute; par carte bancaire (sans créer de compte).</p>
 
         <div class="trust-row">
           <div class="trust-item">
@@ -253,7 +259,7 @@
         </div>
         <div class="faq-item bos-kit-faq">
           <div class="faq-question">Le paiement est-il s&eacute;curis&eacute; ?</div>
-          <div class="faq-answer">Oui. Le r&egrave;glement se fait via PayPal &mdash; carte bancaire accept&eacute;e sans besoin de compte PayPal. Vos coordonn&eacute;es bancaires ne nous sont jamais transmises ni stock&eacute;es.</div>
+          <div class="faq-answer">Oui. Le r&egrave;glement se fait par carte bancaire sans créer de compte. Vos coordonn&eacute;es bancaires ne nous sont jamais transmises ni stock&eacute;es.</div>
         </div>
       </div>
     </div>
@@ -275,7 +281,7 @@
         <div class="proof-card">
           <div class="proof-icon">&#x1F512;</div>
           <div class="proof-stat">Paiement s&eacute;curis&eacute;</div>
-          <p class="proof-text">R&eacute;gl&eacute; via PayPal &mdash; carte bancaire accept&eacute;e. Vos coordonn&eacute;es bancaires ne nous sont jamais transmises.</p>
+          <p class="proof-text">R&eacute;gl&eacute; par carte bancaire. Vos coordonn&eacute;es bancaires ne nous sont jamais transmises.</p>
         </div>
 
         <div class="proof-card">
@@ -360,7 +366,6 @@
 </script>
 
 <script src="cart.js?v=4"></script>
-<script src="bos-paypal.js"></script>
 <script src="bos-trust.js" defer></script>
 
 <!-- umami-start --><script defer src="https://cloud.umami.is/script.js" data-website-id="d0fa94fe-a108-4590-a465-8f0017569370"></script><!-- umami-end -->
@@ -384,5 +389,6 @@
 </script>
 
 
+<script src="bos-stripe.js"></script>
 </body>
 </html>

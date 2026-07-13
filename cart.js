@@ -202,6 +202,8 @@ function renderCart() {
     : Math.round(maxPrice * 10) / 100;
   const shipping = 0;
   const total    = Math.round((subtotal - discount + shipping) * 100) / 100;
+  // BOS 13/07/2026 — le checkout CB (bos-stripe.js) facture EXACTEMENT ce total affiche.
+  window.bosCartTotal = function(){ return total; };
 
   const subEl = document.getElementById('summary-subtotal');
   const shipEl= document.getElementById('summary-shipping');
