@@ -11,20 +11,28 @@
   function init() {
     if (document.querySelector('.bos-sticky-cta')) return; // idempotent
 
-    // 1) add-to-cart (classe ou id), 2) checkout Stripe direct, 3) texte
-    var main = document.querySelector('.add-to-cart-btn, #add-to-cart-btn, .btn-addcart, [data-add-cart]');
+    // Priorite : 1) add-to-cart (boutiques physiques), 2) buy-now digital (bosBuyNow),
+    // 3) checkout Stripe direct (data-bos-key), 4) texte.
+    var main = document.querySelector('.add-to-cart-btn, #add-to-cart-btn, .btn-addcart, [data-add-cart]')
+      || document.querySelector('.btn-buy, [onclick*="bosBuyNow"]');
     if (!main) {
       var keys = Array.prototype.slice.call(document.querySelectorAll('[data-bos-key]'));
       main = keys.filter(function (b) { return /panier/i.test(b.textContent || ''); })[0] || keys[0];
     }
     if (!main) {
       main = Array.prototype.slice.call(document.querySelectorAll('button,a'))
-        .filter(function (b) { return /ajouter au panier|acheter maintenant/i.test(b.textContent || ''); })[0];
+        .filter(function (b) { return /ajouter au panier|acheter maintenant|obtenir|commander/i.test(b.textContent || ''); })[0];
     }
     if (!main) return;
 
     var label = (main.textContent || '').trim().replace(/\s+/g, ' ');
-    if (/panier/i.test(label)) label = 'Ajouter au panier';
+    if (/panier/i.test(label)) {
+      label = 'Ajouter au panier';
+    } else {
+      // Boutons a sous-texte (ex: "Obtenir le guide — 13€ PDF envoye...") : couper au prix
+      var pm = label.match(/^(.*?\d+\s*€)/);
+      if (pm) label = pm[1].trim();
+    }
     if (label.length > 42) label = label.slice(0, 42);
     if (!label) label = 'Ajouter au panier';
 
