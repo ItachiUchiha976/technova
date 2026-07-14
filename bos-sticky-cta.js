@@ -12,7 +12,7 @@
     if (document.querySelector('.bos-sticky-cta')) return; // idempotent
 
     // 1) add-to-cart (classe ou id), 2) checkout Stripe direct, 3) texte
-    var main = document.querySelector('.add-to-cart-btn, #add-to-cart-btn');
+    var main = document.querySelector('.add-to-cart-btn, #add-to-cart-btn, .btn-addcart, [data-add-cart]');
     if (!main) {
       var keys = Array.prototype.slice.call(document.querySelectorAll('[data-bos-key]'));
       main = keys.filter(function (b) { return /panier/i.test(b.textContent || ''); })[0] || keys[0];
