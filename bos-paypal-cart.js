@@ -47,15 +47,27 @@
                     '<strong style="font-style:italic;">PayPal</strong>' +
                     '<span style="font-weight:600;">— payer sans saisir ma carte</span></span>';
 
+    var LABEL = btn.innerHTML;
+
     btn.addEventListener('click', function () {
       if (cartIsEmpty()) { alert('Ton panier est vide.'); return; }
+
+      // bosPayPalCheckout() peut SORTIR SANS RIEN FAIRE (panier vide, CGV non cochées) :
+      // on ne bloque donc jamais le bouton définitivement, sinon le client reste coincé
+      // sur « ⏳ Redirection… » et ne peut plus payer du tout.
       btn.disabled = true;
       btn.innerHTML = '<span>⏳ Redirection vers PayPal…</span>';
+      var restore = setTimeout(function () {
+        btn.disabled = false;
+        btn.innerHTML = LABEL;
+      }, 3500);
+
       try {
         window.bosPayPalCheckout();
       } catch (e) {
+        clearTimeout(restore);
         btn.disabled = false;
-        btn.innerHTML = '<span><strong style="font-style:italic;">PayPal</strong> — payer sans saisir ma carte</span>';
+        btn.innerHTML = LABEL;
         alert('Le paiement PayPal est momentanément indisponible. Réessaie ou paie par carte.');
       }
     });
