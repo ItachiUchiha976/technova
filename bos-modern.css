@@ -167,3 +167,31 @@ body.bos-atc-open { padding-bottom: 76px; }
 
 /* Pastille retractation au-dessus de la barre sticky ATC (conflit visuel attrape 16/07) */
 body.bos-atc-open #bos-retract-link{ bottom: 88px; }
+
+/* ---------- 6. TYPO DESCRIPTIONS — 17/07 ----------
+   Ame "tech / futuriste" distincte sur les paragraphes du panneau
+   Description des fiches produit (#tab-desc uniquement -> ne touche
+   pas #tab-specs ni #tab-faq, ni les titres/prix/boutons/CGV).
+   Police Space Grotesk (Google Fonts, chargee dans le <head> des 8
+   pages produit). Fond indigo tres sombre translucide + fine bordure
+   cyan, dans la palette de marque deja en place (--indigo/--cyan).
+   #tab-desc p (specificite ID) l'emporte sans !important sur la regle
+   de base .tab-content p (specificite classe) definie dans styles.css. */
+#tab-desc p {
+  font-family: 'Space Grotesk', var(--f-body);
+  font-weight: 400;
+  font-size: 1.02rem;
+  line-height: 1.7;
+  color: #E8E4F5;
+  background: rgba(30,20,60,.55);
+  border: 1px solid rgba(34,211,238,.4);
+  border-radius: 10px;
+  padding: 1.1rem 1.4rem;
+  margin-bottom: 14px;
+}
+#tab-desc p strong {
+  font-family: 'Space Grotesk', var(--f-body);
+  font-weight: 500;
+  color: var(--cyan);
+}
+#tab-desc p:last-child { margin-bottom: 0; }
