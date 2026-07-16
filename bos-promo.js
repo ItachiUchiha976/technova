@@ -42,6 +42,8 @@
 
   // Le bandeau promet une remise "au panier" → ne l'afficher que là où un panier existe.
   function hasCart(){
+    // Home de la boutique : annoncer la remise REELLE & permanente y est honnete (aucune fausse urgence).
+    if (location.pathname === '/' || location.pathname === '/index.html') return true;
     if (/panier/i.test(location.pathname)) return true;
     // Les 5 boutiques n'utilisent pas le meme markup pour "Ajouter au panier" :
     // classe (.add-to-cart-btn, .btn-addcart, .fiche-add) OU id (#add-to-cart-btn) OU data-*.
@@ -60,7 +62,7 @@
     banner.style.cssText = 'position:sticky;top:0;z-index:9999;background:linear-gradient(135deg,#6366f1 0%,#8b5cf6 50%,#a855f7 100%);color:#fff;text-align:center;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;box-shadow:0 2px 8px rgba(0,0,0,0.15);';
     banner.innerHTML =
       '<div style="max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:4px 12px;padding:10px 16px;">' +
-        '<span style="font-size:14px;font-weight:700;">-' + DISCOUNT_PCT + '% sur le produit le plus cher de votre panier</span>' +
+        '<span style="font-size:14px;font-weight:700;">-' + DISCOUNT_PCT + '% sur le produit le plus cher de votre commande</span>' +
         '<span style="font-size:13px;opacity:0.92;">Remise appliquée automatiquement au panier, sans code.</span>' +
       '</div>';
     document.body.insertBefore(banner, document.body.firstChild);
