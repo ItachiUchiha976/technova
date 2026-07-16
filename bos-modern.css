@@ -164,3 +164,6 @@ body.bos-atc-open { padding-bottom: 76px; }
   .btn-primary::after { animation: none !important; }
   [data-reveal] { opacity: 1 !important; transform: none !important; transition: none !important; }
 }
+
+/* Pastille retractation au-dessus de la barre sticky ATC (conflit visuel attrape 16/07) */
+body.bos-atc-open #bos-retract-link{ bottom: 88px; }
