@@ -94,6 +94,23 @@
       <!-- Visuel : vraies photos produit -->
       <div>
         <div class="product-main-visual" style="background:linear-gradient(135deg, #1a1040 0%, #2d1b69 100%); box-shadow:var(--glow-indigo); padding:0;">
+          <style>
+.bos-anim-lamp{position:absolute;top:12px;right:12px;width:88px;height:88px;pointer-events:none;z-index:2;overflow:hidden}
+.bos-anim-lamp svg{width:100%;height:100%;display:block}
+.bos-anim-lamp .halo{animation:bosLampBreathe 4.5s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 50%}
+@keyframes bosLampBreathe{0%,100%{opacity:.25;transform:scale(.85)}50%{opacity:.7;transform:scale(1.15)}}
+.bos-anim-lamp .bulb{animation:bosLampGlow 4.5s ease-in-out infinite}
+@keyframes bosLampGlow{0%,100%{opacity:.7}50%{opacity:1}}
+@media (prefers-reduced-motion: reduce){.bos-anim-lamp .halo,.bos-anim-lamp .bulb{animation:none;opacity:.6}}
+</style>
+<div class="bos-anim-produit bos-anim-lamp" aria-hidden="true">
+  <svg viewBox="0 0 100 100">
+    <circle class="halo" cx="50" cy="46" r="30" fill="#fde68a" opacity=".3"/>
+    <circle class="bulb" cx="50" cy="46" r="16" fill="#fbbf24"/>
+    <rect x="46" y="62" width="8" height="20" fill="#818cf8"/>
+    <ellipse cx="50" cy="84" rx="18" ry="4" fill="#818cf8" opacity=".5"/>
+  </svg>
+</div>
           <img id="main-product-img" src="img/lampe-noir-hero.jpg" alt="Lampe de bureau LED 3-en-1 TechNova, coloris noir, chargeur sans fil et r&eacute;veil digital int&eacute;gr&eacute;s" loading="eager" style="width:100%;height:100%;object-fit:cover;border-radius:var(--r2);">
         </div>
 <div style="margin-top:14px;padding:12px 14px;background:var(--dark3);border:1px solid var(--border);border-radius:10px;font-size:.8rem;color:var(--text-light);">

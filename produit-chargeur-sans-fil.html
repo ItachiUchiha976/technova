@@ -93,6 +93,21 @@
       <!-- Visuel -->
       <div>
         <div class="product-main-visual" style="position:relative;overflow:hidden;background:var(--bg-card);border-radius:16px;">
+          <style>
+.bos-anim-charge{position:absolute;top:12px;right:12px;width:84px;height:84px;pointer-events:none;z-index:2;overflow:hidden}
+.bos-anim-charge svg{width:100%;height:100%;display:block}
+.bos-anim-charge .ring{animation:bosChargeSpin 8s linear infinite;transform-box:fill-box;transform-origin:50% 50%}
+@keyframes bosChargeSpin{to{transform:rotate(360deg)}}
+.bos-anim-charge .bolt{animation:bosChargePulse 2.2s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 50%}
+@keyframes bosChargePulse{0%,100%{opacity:.55;transform:scale(.92)}50%{opacity:1;transform:scale(1.08)}}
+@media (prefers-reduced-motion: reduce){.bos-anim-charge .ring,.bos-anim-charge .bolt{animation:none}}
+</style>
+<div class="bos-anim-produit bos-anim-charge" aria-hidden="true">
+  <svg viewBox="0 0 100 100">
+    <circle class="ring" cx="50" cy="50" r="34" fill="none" stroke="#22d3ee" stroke-width="3" stroke-dasharray="10 8" opacity=".55"/>
+    <polygon class="bolt" points="54,20 32,56 48,56 44,80 70,42 52,42" fill="#fbbf24"/>
+  </svg>
+</div>
           <img id="main-product-img" src="img/chargeur-sans-fil-technova.jpg" alt="Chargeur sans fil 3-en-1 TechNova &mdash; charge iPhone, Apple Watch et AirPods simultan&eacute;ment, design pliable" style="width:100%;height:100%;object-fit:contain;display:block">
         </div>
       </div>

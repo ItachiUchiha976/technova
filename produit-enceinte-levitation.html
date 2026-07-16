@@ -94,6 +94,26 @@
       <!-- Visuel : vraies photos produit -->
       <div>
         <div class="product-main-visual" style="background:linear-gradient(135deg, #1a1040 0%, #2d1b69 100%); box-shadow:var(--glow-indigo); padding:0;">
+          <style>
+.bos-anim-lev{position:absolute;top:12px;right:12px;width:90px;height:90px;pointer-events:none;z-index:2;overflow:hidden}
+.bos-anim-lev svg{width:100%;height:100%;display:block;overflow:visible}
+.bos-anim-lev .orb{animation:bosLevFloat 4s ease-in-out infinite}
+@keyframes bosLevFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+.bos-anim-lev .shadow{animation:bosLevShadow 4s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 50%}
+@keyframes bosLevShadow{0%,100%{opacity:.35;transform:scaleX(1)}50%{opacity:.15;transform:scaleX(.7)}}
+.bos-anim-lev .ring{animation:bosLevRing 4.5s ease-out infinite;opacity:0;transform-box:fill-box;transform-origin:50% 50%}
+.bos-anim-lev .r2{animation-delay:1.5s}
+.bos-anim-lev .r3{animation-delay:3s}
+@keyframes bosLevRing{0%{opacity:.7;transform:scale(.6)}100%{opacity:0;transform:scale(1.6)}}
+@media (prefers-reduced-motion: reduce){.bos-anim-lev *{animation:none}}
+</style>
+<div class="bos-anim-produit bos-anim-lev" aria-hidden="true">
+  <svg viewBox="0 0 100 100"><ellipse class="shadow" cx="50" cy="78" rx="16" ry="5" fill="#312e81"/>
+  <circle class="ring" cx="50" cy="46" r="14" fill="none" stroke="#22d3ee" stroke-width="2"/>
+  <circle class="ring r2" cx="50" cy="46" r="14" fill="none" stroke="#22d3ee" stroke-width="2"/>
+  <circle class="ring r3" cx="50" cy="46" r="14" fill="none" stroke="#22d3ee" stroke-width="2"/>
+  <circle class="orb" cx="50" cy="46" r="11" fill="#6366f1"/></svg>
+</div>
           <img id="main-product-img" src="img/enceinte-blanc-hero.jpg" alt="Enceinte Bluetooth &agrave; l&eacute;vitation magn&eacute;tique TechNova, orbe blanc flottant avec &eacute;clairage LED" loading="eager" style="width:100%;height:100%;object-fit:cover;border-radius:var(--r2);">
         </div>
 <div style="margin-top:14px;padding:12px 14px;background:var(--dark3);border:1px solid var(--border);border-radius:10px;font-size:.8rem;color:var(--text-light);">

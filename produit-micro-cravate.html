@@ -91,7 +91,30 @@
     <div class="product-page-grid">
 
       <!-- Visuel -->
-      <div>
+      <div style="position:relative;overflow:hidden;border-radius:12px">
+        <style>
+.bos-anim-mic{position:absolute;top:12px;right:12px;width:88px;height:88px;pointer-events:none;z-index:2;overflow:hidden}
+.bos-anim-mic svg{width:100%;height:100%;display:block}
+.bos-anim-mic .bar{animation:bosMicBar 1.6s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 100%}
+.bos-anim-mic .b1{animation-delay:0s}
+.bos-anim-mic .b2{animation-delay:.2s}
+.bos-anim-mic .b3{animation-delay:.4s}
+.bos-anim-mic .b4{animation-delay:.6s}
+.bos-anim-mic .b5{animation-delay:.8s}
+@keyframes bosMicBar{0%,100%{transform:scaleY(.35)}50%{transform:scaleY(1)}}
+@media (prefers-reduced-motion: reduce){.bos-anim-mic .bar{animation:none;transform:scaleY(.7)}}
+</style>
+<div class="bos-anim-produit bos-anim-mic" aria-hidden="true">
+  <svg viewBox="0 0 100 100">
+    <circle cx="50" cy="30" r="14" fill="#6366f1"/>
+    <rect x="46" y="42" width="8" height="18" fill="#6366f1"/>
+    <rect class="bar b1" x="20" y="60" width="7" height="24" rx="3" fill="#5eead4"/>
+    <rect class="bar b2" x="32" y="60" width="7" height="24" rx="3" fill="#a78bfa"/>
+    <rect class="bar b3" x="44" y="60" width="7" height="24" rx="3" fill="#5eead4"/>
+    <rect class="bar b4" x="56" y="60" width="7" height="24" rx="3" fill="#a78bfa"/>
+    <rect class="bar b5" x="68" y="60" width="7" height="24" rx="3" fill="#5eead4"/>
+  </svg>
+</div>
         <img id="main-product-img" src="img/micro-cravate-real.jpg" alt="Micro-cravate sans fil TechNova — transmission 2,4 GHz, compatible iOS Android PC" style="width:100%;height:100%;object-fit:contain;display:block" loading="eager">
       </div>
 

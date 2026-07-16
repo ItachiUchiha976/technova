@@ -91,7 +91,25 @@
     <div class="product-page-grid">
 
       <!-- Visuel -->
-      <div>
+      <div style="position:relative;overflow:hidden;border-radius:12px">
+        <style>
+.bos-anim-screen{position:absolute;top:12px;right:12px;width:96px;height:96px;pointer-events:none;z-index:2;overflow:hidden}
+.bos-anim-screen svg{width:100%;height:100%;display:block}
+.bos-anim-screen .glow{animation:bosScreenGlow 5s ease-in-out infinite}
+@keyframes bosScreenGlow{0%,100%{opacity:.3}50%{opacity:.8}}
+.bos-anim-screen .sweep{animation:bosScreenSweep 4s ease-in-out infinite}
+@keyframes bosScreenSweep{0%{transform:translateX(-38px);opacity:0}10%{opacity:.9}90%{opacity:.9}100%{transform:translateX(38px);opacity:0}}
+@media (prefers-reduced-motion: reduce){.bos-anim-screen .glow,.bos-anim-screen .sweep{animation:none;opacity:.5}}
+</style>
+<div class="bos-anim-produit bos-anim-screen" aria-hidden="true">
+  <svg viewBox="0 0 100 100">
+    <rect x="14" y="18" width="72" height="48" rx="4" class="glow" fill="#1a1040" stroke="#818cf8" stroke-width="2"/>
+    <rect x="40" y="66" width="20" height="8" fill="#818cf8" opacity=".6"/>
+    <rect x="30" y="74" width="40" height="4" rx="2" fill="#818cf8" opacity=".4"/>
+    <clipPath id="screenClipBundle"><rect x="14" y="18" width="72" height="48" rx="4"/></clipPath>
+    <g clip-path="url(#screenClipBundle)"><rect class="sweep" x="10" y="18" width="10" height="48" fill="#5eead4" opacity=".7"/></g>
+  </svg>
+</div>
         <img id="main-product-img" src="img/bundle-ecran-trepied-real.jpg" alt="Pack écran de projection 60 pouces + trépied réglable TechNova" style="width:100%;height:100%;object-fit:contain;display:block" loading="eager">
 
       </div>
