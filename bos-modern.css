@@ -1,0 +1,156 @@
+/* ============================================================
+   BOS MODERN LAYER — TechNova — 16/07/2026
+   Couche ADDITIVE de modernisation (hero vivant, boutons premium,
+   cartes produit profondes, reveal au scroll). Ne remplace aucune
+   regle de base : uniquement des enrichissements visuels.
+   Adaptee de la couche Curiosa (16/07/2026) a la palette TechNova
+   (--indigo / --cyan / --dark1, hero deja SOMBRE "space" -> le champ
+   d'etoiles garde tout son sens ici, en teinte cyan/indigo). Classes
+   reelles : .hero-visual (pas .hero-img-wrap), .product-visual (pas
+   .product-card__img), .btn-primary (identique a Curiosa).
+   Respecte prefers-reduced-motion.
+   ============================================================ */
+
+/* ---------- 1. HERO VIVANT ---------- */
+.hero { position: relative; }
+/* Halo lumineux anime derriere le visuel phare (se superpose au
+   radial-gradient statique deja present sur .hero-visual) */
+.hero-visual { position: relative; }
+.hero-visual::before {
+  content: '';
+  position: absolute; inset: -20%;
+  background: radial-gradient(circle at 50% 45%,
+     rgba(99,102,241,.42) 0%,
+     rgba(34,211,238,.20) 34%,
+     transparent 68%);
+  filter: blur(10px);
+  z-index: 0;
+  animation: bosGlow 6s ease-in-out infinite;
+  pointer-events: none;
+}
+.hero-visual img { position: relative; z-index: 1; animation: bosFloat 7s ease-in-out infinite; will-change: transform; }
+
+@keyframes bosGlow {
+  0%,100% { opacity: .65; transform: scale(1); }
+  50%     { opacity: 1;   transform: scale(1.07); }
+}
+@keyframes bosFloat {
+  0%,100% { transform: translateY(0)     rotate(-.6deg); }
+  50%     { transform: translateY(-14px) rotate(.6deg); }
+}
+
+/* Champ d'etoiles discret : le hero TechNova est deja sombre ("space"),
+   theme tech/IA -> etoiles en teinte cyan/indigo (pas le blanc chaud
+   de Curiosa) pour rester dans la palette de la marque. */
+.hero::after {
+  content: '';
+  position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  background-image:
+    radial-gradient(1.5px 1.5px at 12% 22%, rgba(199,210,254,.9),  transparent),
+    radial-gradient(1.2px 1.2px at 28% 68%, rgba(165,243,252,.55), transparent),
+    radial-gradient(1.7px 1.7px at 62% 30%, rgba(199,210,254,.75), transparent),
+    radial-gradient(1.1px 1.1px at 82% 58%, rgba(165,243,252,.5),  transparent),
+    radial-gradient(1.3px 1.3px at 46% 82%, rgba(199,210,254,.6),  transparent),
+    radial-gradient(1.2px 1.2px at 90% 16%, rgba(165,243,252,.55), transparent),
+    radial-gradient(1.0px 1.0px at 8%  54%, rgba(199,210,254,.5),  transparent);
+  animation: bosTwinkle 5s ease-in-out infinite alternate;
+}
+@keyframes bosTwinkle { from { opacity: .3; } to { opacity: .95; } }
+.hero-grid { position: relative; z-index: 2; }
+
+/* Titre : reflet anime sur le mot cle en italique. TechNova a deja un
+   gradient statique indigo->cyan sur .hero-title em : on l'anime avec
+   les memes teintes (pas de rupture de charte). */
+.hero-title em {
+  background: linear-gradient(100deg, var(--indigo-light) 0%, var(--cyan) 28%, var(--indigo) 52%, var(--cyan) 78%, var(--indigo-light) 100%);
+  background-size: 220% auto;
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: bosShine 6.5s linear infinite;
+}
+@keyframes bosShine { to { background-position: 220% center; } }
+
+/* ---------- 2. BOUTONS PREMIUM ---------- */
+.btn-primary {
+  position: relative; overflow: hidden;
+  box-shadow: 0 6px 18px rgba(99,102,241,.28);
+}
+.btn-primary::after {
+  content: ''; position: absolute; top: 0; left: -120%;
+  width: 60%; height: 100%;
+  background: linear-gradient(120deg, transparent, rgba(255,255,255,.45), transparent);
+  transform: skewX(-18deg);
+  transition: left .6s ease;
+  pointer-events: none;
+}
+.btn-primary:hover::after { left: 135%; }
+
+/* ---------- 3. CARTES PRODUIT PREMIUM ---------- */
+/* .product-card:hover existe deja en base (border-color + translateY(-4px)
+   + glow-indigo/shadow2) : on l'intensifie via les memes tokens de marque.
+   NB : .product-visual::after est deja un vignettage PERMANENT (pas
+   hover) dans styles.css -> on ne le redefinit pas pour ne pas l'ecraser ;
+   TechNova a deja un zoom d'image au survol (.product-visual img), donc
+   pas besoin d'un assombrissement supplementaire ici. */
+.product-card:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--glow-indigo), 0 24px 50px rgba(0,0,0,.45);
+}
+
+/* ---------- 4. REVEAL AU SCROLL ---------- */
+[data-reveal] {
+  opacity: 0; transform: translateY(26px);
+  transition: opacity .7s ease, transform .7s cubic-bezier(.2,.7,.2,1);
+}
+[data-reveal].is-in { opacity: 1; transform: none; }
+[data-reveal-delay="1"] { transition-delay: .08s; }
+[data-reveal-delay="2"] { transition-delay: .16s; }
+[data-reveal-delay="3"] { transition-delay: .24s; }
+
+/* ---------- 5bis. BARRE D'ACHAT STICKY MOBILE (fiches produit) ----------
+   Construite dynamiquement par bos-reveal.js a partir du bouton
+   [data-add-cart] de la page. Remplace bos-sticky-cta.js (retire des
+   fiches produit pour eviter 2 barres empilees) avec un rendu premium
+   aux couleurs de la marque (degrade indigo, comme .btn-primary). */
+.bos-sticky-atc {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 900;
+  display: flex; align-items: center; gap: .8rem;
+  padding: .6rem .9rem calc(.6rem + env(safe-area-inset-bottom, 0px));
+  background: rgba(13,20,33,.96);
+  border-top: 1px solid var(--border);
+  backdrop-filter: blur(8px);
+  transform: translateY(110%);
+  transition: transform .3s ease;
+}
+.bos-sticky-atc.is-visible { transform: translateY(0); }
+.bos-sticky-atc__meta { min-width: 0; }
+.bos-sticky-atc__price { color: var(--cyan); font-weight: 800; font-size: 1.12rem; line-height: 1.1; white-space: nowrap; }
+.bos-sticky-atc__name {
+  color: var(--text-light); font-size: .72rem; line-height: 1.25;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 38vw;
+}
+.bos-sticky-atc__btn {
+  flex: 1; border: none; cursor: pointer;
+  background: linear-gradient(135deg, var(--indigo), var(--indigo-dark));
+  color: #fff;
+  font-weight: 700; font-size: .95rem; font-family: inherit;
+  padding: .8rem 1rem; border-radius: var(--r);
+  box-shadow: 0 6px 18px rgba(99,102,241,.35);
+  white-space: nowrap;
+}
+.bos-sticky-atc__btn:active { transform: scale(.98); }
+body.bos-atc-open { padding-bottom: 76px; }
+@media (min-width: 768px) {
+  .bos-sticky-atc { display: none; }
+  body.bos-atc-open { padding-bottom: 0; }
+}
+
+/* ---------- 5. ACCESSIBILITE : respect du mouvement reduit ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .hero-visual img,
+  .hero-visual::before,
+  .hero::after,
+  .hero-title em,
+  .btn-primary::after { animation: none !important; }
+  [data-reveal] { opacity: 1 !important; transform: none !important; transition: none !important; }
+}
