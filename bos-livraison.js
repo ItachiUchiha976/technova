@@ -1,4 +1,4 @@
-/* bos-livraison.js — BOS 25/07/2026
+/* bos-livraison.js — BOS 25/07/2026 (v2)
  *
  * POURQUOI : les fiches annonçaient « Livraison estimée 12 à 20 jours ouvrés » — une FOURCHETTE de
  * 8 jours ouvrés (17 à 28 jours calendaires). Les données de Purple Dot (2025, dizaines de milliers
@@ -9,6 +9,9 @@
  * CE QUE FAIT CE SCRIPT : il remplace la fourchette abstraite par une DATE CALENDAIRE au plus tard,
  * recalculée à chaque chargement. On annonce la BORNE HAUTE (jamais une date optimiste) : la promesse
  * est donc toujours tenable, et souvent battue — ce qui produit un client content plutôt que déçu.
+ *
+ * v2 : ne réécrit QUE le segment de délai, sans réintroduire « Livraison offerte » (qui précède
+ * souvent déjà dans la phrase) — évite « Livraison offerte — Livraison offerte — … ».
  *
  * DÉGRADATION GRACIEUSE : si le script ne se charge pas, le texte d'origine reste affiché.
  */
@@ -27,41 +30,46 @@
   }
 
   function remplacer() {
-    var cible = dateAuPlusTard();
-    var motifs = [
-      /Livraison\s+estim[ée]e?\s*:?\s*12\s*[àa]\s*20\s*jours\s*ouvr[ée]s/gi,
-      /Livraison\s*12\s*-\s*20\s*j\b/gi,
-      /12\s*[àa]\s*20\s*jours\s*ouvr[ée]s/gi
+    var date = dateAuPlusTard();
+    var phrase = 'chez vous au plus tard le ' + date;
+
+    // Chaque motif est remplacé par SA propre formulation, adaptée au contexte de la phrase.
+    var regles = [
+      [/Livraison\s+estim[ée]e?\s*:?\s*12\s*[àa]\s*20\s*jours\s*ouvr[ée]s/gi, 'Livraison ' + phrase],
+      [/estim[ée]e?\s+12\s*[àa]\s*20\s*jours\s*ouvr[ée]s/gi, phrase],
+      [/Livraison\s*12\s*-\s*20\s*j\b/gi, 'Livré avant le ' + date],
+      [/12\s*[àa]\s*20\s*jours\s*ouvr[ée]s/gi, phrase]
     ];
-    var remplacement = 'Livraison offerte — chez vous au plus tard le ' + cible;
 
     var it = document.createNodeIterator(document.body, NodeFilter.SHOW_TEXT, null);
-    var n, aTraiter = [];
+    var n, cibles = [];
     while ((n = it.nextNode())) {
       var t = n.nodeValue;
       if (!t || t.indexOf('20') === -1) continue;
-      for (var i = 0; i < motifs.length; i++) {
-        if (motifs[i].test(t)) { aTraiter.push(n); break; }
+      for (var i = 0; i < regles.length; i++) {
+        regles[i][0].lastIndex = 0;
+        if (regles[i][0].test(t)) { cibles.push(n); break; }
       }
     }
-    aTraiter.forEach(function (node) {
+
+    cibles.forEach(function (node) {
       var v = node.nodeValue;
-      motifs.forEach(function (m) { v = v.replace(m, remplacement); });
+      regles.forEach(function (r) { r[0].lastIndex = 0; v = v.replace(r[0], r[1]); });
+      // nettoyage : jamais deux « Livraison offerte » de suite
+      v = v.replace(/(Livraison offerte[\s—\-·]*){2,}/gi, 'Livraison offerte — ');
       node.nodeValue = v;
     });
-    return aTraiter.length;
+    return cibles.length;
   }
 
   function go() {
     try {
-      var n = remplacer();
-      // le panier et les onglets se construisent après coup : on repasse quelques fois
+      remplacer();
       var passes = 0;
       var t = setInterval(function () {
         remplacer();
         if (++passes > 6) clearInterval(t);
       }, 900);
-      if (window.console && n) console.debug('[BOS] délai de livraison affiché en date calendaire');
     } catch (e) { /* silence : on laisse le texte d'origine */ }
   }
 
