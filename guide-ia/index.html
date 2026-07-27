@@ -448,6 +448,9 @@
       Payer avec PayPal — 13€
       <span class="btn-buy-sub">PDF envoyé immédiatement après paiement</span>
     </button>
+    <!-- BOS 27/07/2026 (§12.36) — emplacement EXPLICITE du rail CB, juste sous le bouton
+         PayPal. Sans ce conteneur, bos-stripe.js retombait sur une ancre devinee. -->
+    <div class="checkout-stripe" style="margin-top:10px;"></div>
     <div class="trust-row">
       <span>✔ PDF immédiat</span>
       <span>✔ Satisfait ou remboursé 7j</span>
@@ -674,6 +677,9 @@
     <button class="btn-buy-final" id="btn-final" onclick="bosBuyNow('Guide Maitriser l’IA en 2026 (PDF)', 13.00, 'guide-ia')" style="cursor:pointer;font-family:inherit;">
       Payer avec PayPal — 13€
     </button>
+    <!-- BOS 27/07/2026 (§12.36) — le CTA de bas de page n'avait AUCUN rail CB : le client
+         arrive en bas de page ne voyait que PayPal. -->
+    <div class="checkout-stripe" style="margin-top:10px;"></div>
     <p class="guarantee">
       ✔ Satisfait ou remboursé 7 jours &nbsp;·&nbsp; ✔ PDF immédiat &nbsp;·&nbsp; ✔ Paiement sécurisé
     </p>

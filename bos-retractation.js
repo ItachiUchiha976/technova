@@ -17,6 +17,10 @@
   var css = '' +
     '#bos-retract-link{position:fixed;left:12px;bottom:12px;z-index:9998;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;font-size:12px;color:#fff;background:rgba(30,27,75,.82);border:1px solid rgba(255,255,255,.25);border-radius:20px;padding:6px 12px;cursor:pointer;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.2);backdrop-filter:blur(4px);}' +
     '#bos-retract-link:hover{background:rgba(30,27,75,.95);}' +
+    /* BOS 27/07/2026 - la pastille ne doit JAMAIS recouvrir la barre d'achat collante
+       (.bos-sticky-cta, bottom:0, affichee <=768px). On la leve au-dessus de la barre :
+       --bos-sticky-h est mesuree en JS ; 78px = repli si le JS ne passe pas. */
+    '@media(max-width:768px){body.has-bos-sticky #bos-retract-link{bottom:calc(var(--bos-sticky-h,78px) + 10px);}}' +
     '#bos-retract-overlay{position:fixed;inset:0;z-index:10050;background:rgba(0,0,0,.55);display:none;align-items:flex-start;justify-content:center;overflow-y:auto;padding:24px 12px;}' +
     '#bos-retract-modal{background:#fff;color:#1f2937;max-width:520px;width:100%;border-radius:14px;padding:22px 22px 18px;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;box-shadow:0 12px 40px rgba(0,0,0,.3);margin:auto;}' +
     '#bos-retract-modal h2{margin:0 0 4px;font-size:19px;color:#312e81;}' +
@@ -33,6 +37,21 @@
     '#bos-retract-msg.ok{color:#059669;}#bos-retract-msg.ko{color:#dc2626;}' +
     '#bos-retract-legal{margin-top:14px;font-size:11px;color:#9ca3af;line-height:1.45;}';
   var st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
+
+  // ---- la pastille se cale au-dessus de la barre d'achat collante (si presente) ----
+  // bos-sticky-cta.js peut s'initialiser avant OU apres ce script : on remesure
+  // plusieurs fois + au load + au resize. La regle CSS ci-dessus fait le reste.
+  function bosSyncStickyOffset() {
+    try {
+      var bar = document.querySelector('.bos-sticky-cta');
+      var h = bar ? bar.offsetHeight : 0;
+      if (h > 0) document.documentElement.style.setProperty('--bos-sticky-h', h + 'px');
+    } catch (e) {}
+  }
+  bosSyncStickyOffset();
+  [120, 400, 1200, 2500].forEach(function (d) { setTimeout(bosSyncStickyOffset, d); });
+  window.addEventListener('load', bosSyncStickyOffset);
+  window.addEventListener('resize', bosSyncStickyOffset, { passive: true });
 
   // ---- lien permanent ----
   // MAJ 16/07/2026 (demande Fred) : la pastille FLOTTANTE n'apparait que sur les pages

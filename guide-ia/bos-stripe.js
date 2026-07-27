@@ -29,7 +29,10 @@
     var p = DIGITAL[pid];
     if (!p) return;
 
-    var container = document.querySelector('.checkout-stripe') || document.getElementById('stripe-btn-container');
+    // BOS 27/07/2026 (regle 12.36) : le rail CB doit apparaitre a cote de CHAQUE bouton
+    // PayPal statique. On collecte donc TOUS les emplacements .checkout-stripe de la page.
+    var containers = Array.prototype.slice.call(document.querySelectorAll('.checkout-stripe'));
+    var container = containers[0] || document.getElementById('stripe-btn-container');
     if (!container) {
       var anchor = document.querySelector('.bos-paypal-btn') ||
                    document.querySelector('.btn-checkout') ||
@@ -45,6 +48,8 @@
     }
     if (!container) return;
 
+    if (!containers.length) containers = [container];
+    containers.forEach(function (slot) {
     var btn = document.createElement('button');
     btn.type = 'button';
     btn.className = 'btn btn-stripe';
@@ -82,7 +87,8 @@
       });
     });
 
-    container.appendChild(btn);
+    slot.appendChild(btn);
+    });
     _done = true;
 
     try {
