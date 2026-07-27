@@ -80,6 +80,37 @@
       });
     }, { passive: true });
     link.style.transition = 'opacity .25s';
+
+    // ---- INVARIANT : ne jamais recouvrir un bouton d'achat ----
+    var BOS_BUY_SEL = '.btn-buy,.btn-buy-final,.btn-addcart,[data-add-cart],' +
+      '.bos-sticky-cta__btn,.btn-checkout,.btn-stripe,.add-to-cart,.fiche-add,' +
+      '.buy-now-btn,.bos-paypal-btn,[data-bos-cb],[onclick*="bosBuyNow"]';
+    function bosPillClearOfBuyButtons() {
+      try {
+        link.style.visibility = '';               // mesurer la position reelle
+        var p = link.getBoundingClientRect();
+        if (!p.width) return;
+        var boutons = document.querySelectorAll(BOS_BUY_SEL), touche = false;
+        for (var i = 0; i < boutons.length && !touche; i++) {
+          var b = boutons[i].getBoundingClientRect();
+          if (b.width < 2 || b.height < 2) continue;
+          touche = !(p.right < b.left || p.left > b.right ||
+                     p.bottom < b.top || p.top > b.bottom);
+        }
+        link.style.visibility = touche ? 'hidden' : '';
+      } catch (e) {}
+    }
+    var bosTickBtn = false;
+    function bosScheduleClearCheck() {
+      if (bosTickBtn) return; bosTickBtn = true;
+      window.requestAnimationFrame(function () {
+        bosPillClearOfBuyButtons(); bosTickBtn = false;
+      });
+    }
+    window.addEventListener('scroll', bosScheduleClearCheck, { passive: true });
+    window.addEventListener('resize', bosScheduleClearCheck, { passive: true });
+    window.addEventListener('load', bosScheduleClearCheck);
+    [150, 500, 1400, 2600].forEach(function (d) { setTimeout(bosScheduleClearCheck, d); });
   } else {
     // lien texte discret dans le footer (id conserve pour le garde anti-double-init ;
     // le style pastille fixe est neutralise en inline, prioritaire sur la feuille)
