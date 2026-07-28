@@ -67,6 +67,12 @@
       '[onclick*="addToCart"]', '[onclick*="ajouterAuPanier"]',
       '.add-to-cart', '.btn-add-cart', '.btn-panier', '#add-to-cart'
     ];
+    /* On repère l'ancre AVANT de masquer quoi que ce soit : insérer le message
+       dans un conteneur qu'on vient de passer en display:none le rendrait
+       invisible (bug constaté en live le 29/07 : le message atterrissait dans
+       .checkout-stripe, déjà masqué). L'ancre est donc le <h1>, jamais masqué. */
+    var ancreVisible = document.querySelector('h1');
+
     var vus = [];
     selecteurs.forEach(function (s) {
       Array.prototype.forEach.call(document.querySelectorAll(s), function (el) {
@@ -97,14 +103,22 @@
         'que nous ne pourrions pas expédier tout de suite.<br><br>' +
         'Écrivez-nous à <a href="mailto:apprentissage.feynman@gmail.com" ' +
         'style="color:#8a6d3b">apprentissage.feynman@gmail.com</a> pour être prévenu(e) de son retour.';
-      var ancre = vus.length ? vus[0] : null;
-      if (ancre && ancre.parentNode) ancre.parentNode.insertBefore(box, ancre);
-      else {
-        var h1 = document.querySelector('h1');
-        if (h1 && h1.parentNode) h1.parentNode.insertBefore(box, h1.nextSibling);
-        else document.body.insertBefore(box, document.body.firstChild);
+      if (ancreVisible && ancreVisible.parentNode) {
+        ancreVisible.parentNode.insertBefore(box, ancreVisible.nextSibling);
+      } else {
+        var principal = document.querySelector('main, .product, .container') || document.body;
+        principal.insertBefore(box, principal.firstChild);
       }
     }
+  }
+
+  /* Filet de sécurité : si un autre script masque le conteneur du message
+     après coup, on le déplace dans le premier parent réellement visible. */
+  function bosVerifierVisibilite() {
+    var b = document.querySelector('#bos-indispo');
+    if (!b || b.offsetParent) return;
+    var h1 = document.querySelector('h1');
+    if (h1 && h1.parentNode) h1.parentNode.insertBefore(b, h1.nextSibling);
   }
 
   // au chargement ET après coup : d'autres scripts injectent leurs boutons plus tard
@@ -116,6 +130,10 @@
   setTimeout(bosBloquerAchat, 800);
   setTimeout(bosBloquerAchat, 2500);
   setTimeout(bosBloquerAchat, 6000);
+  setTimeout(bosVerifierVisibilite, 1200);
+  setTimeout(bosVerifierVisibilite, 3000);
+  setTimeout(bosVerifierVisibilite, 7000);
+
 
 
 
