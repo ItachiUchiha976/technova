@@ -6,6 +6,119 @@
 (function(){
   'use strict';
 
+  /* ─────────────────────────────────────────────────────────────────────────
+     BOS 29/07/2026 — GARDE-FOU « PRODUIT NON LIVRABLE »
+
+     Pourquoi : 24 des 47 produits du mapping d'expédition n'ont AUCUN SKU
+     fournisseur (`cj_sku: null`, vérifié sur l'API CJ le 28/07). Leur page
+     restait pourtant entièrement achetable : un client pouvait payer un
+     article que nous ne savons pas commander. Le back-office alerte bien
+     dans ce cas, mais l'argent est déjà encaissé et le client attend.
+
+     Ce garde-fou coupe la vente EN AMONT : plus de bouton de paiement, plus
+     d'ajout au panier, et un message honnête à la place. La page reste en
+     ligne (référencement, catalogue) — seul l'achat est suspendu.
+
+     Pour remettre un produit en vente : retirer sa clé de la liste ci-dessous
+     APRÈS avoir renseigné son cj_sku dans fulfillment_products.json, et
+     seulement si les photos de la page correspondent au produit réel (§12.23).
+     ───────────────────────────────────────────────────────────────────────── */
+  var BOS_NON_LIVRABLES = [
+    'masque-de-nuit-premium', 'lampe-de-lecture-led', 'machine-a-sons-blancs',
+    'oreiller-rafraichissant', 'masque-bluetooth-duo',
+    'enceinte-bluetooth-vintage', 'microphone-pro-streaming',
+    'ecran-secondaire-portable', 'mini-imprimante-portable',
+    'chargeur-sans-fil-3-en-1', 'ventilateur-portable', 'bundle-ecran',
+    'enceinte-levitation-blanc', 'enceinte-levitation-noir',
+    'lampe-led-focus', 'organisateur-cables', 'tiroir-sous-bureau',
+    'cible-de-precision', 'protege-tibias-carbone', 'gants-gardien-pro',
+    'parachute-de-resistance', 'cones-de-marquage', 'echelle-agilite',
+    'balle-de-reaction'
+  ];
+
+  /* Les URL des pages ne reprennent pas toujours la clé du mapping
+     (ex. « produit-micro-cravate.html » = microphone-pro-streaming).
+     On liste donc aussi les noms de fichiers réellement en ligne. */
+  var BOS_PAGES_NON_LIVRABLES = [
+    'produit-lampe-lecture', 'produit-machine-sons', 'produit-oreiller-gel',
+    'produit-masque-bluetooth', 'produit-masque-nuit',
+    'produit-micro-cravate', 'produit-imprimante-thermique',
+    'produit-chargeur-sans-fil', 'produit-ventilateur-bureau',
+    'produit-enceinte-levitation', 'produit-bundle-ecran-trepied',
+    'produit-organiseur-cables', 'produit-tiroir-invisible',
+    'produit-cible-precision', 'produit-protege-tibias', 'produit-gants-gardien',
+    'produit-parachute', 'produit-cones', 'produit-echelle-agilite',
+    'produit-balle-reaction'
+  ];
+
+  function bosPageNonLivrable() {
+    var f = location.pathname.replace(/\.html?$/, '').split('/').pop() || '';
+    if (BOS_PAGES_NON_LIVRABLES.indexOf(f) !== -1) return true;
+    var k = f.replace(/^produit-/, '');
+    return BOS_NON_LIVRABLES.indexOf(k) !== -1;
+  }
+
+  function bosBloquerAchat() {
+    if (!bosPageNonLivrable()) return;
+
+    // 1) neutraliser tout ce qui déclenche un paiement ou un ajout au panier
+    var selecteurs = [
+      '.btn-buy', '[data-bos-cb]', '.checkout-stripe', '.bos-cb-btn',
+      '[onclick*="addToCart"]', '[onclick*="ajouterAuPanier"]',
+      '.add-to-cart', '.btn-add-cart', '.btn-panier', '#add-to-cart'
+    ];
+    var vus = [];
+    selecteurs.forEach(function (s) {
+      Array.prototype.forEach.call(document.querySelectorAll(s), function (el) {
+        if (vus.indexOf(el) !== -1) return;
+        vus.push(el);
+        el.style.display = 'none';
+      });
+    });
+    // tout bouton dont le texte parle de payer / panier / acheter
+    Array.prototype.forEach.call(document.querySelectorAll('button, a'), function (el) {
+      var t = (el.textContent || '').toLowerCase();
+      if (/payer|ajouter au panier|acheter|commander|paypal/.test(t) &&
+          !/retour|continuer mes achats|mentions/.test(t)) {
+        if (vus.indexOf(el) === -1) { vus.push(el); el.style.display = 'none'; }
+      }
+    });
+
+    // 2) message honnête à la place
+    if (!document.querySelector('#bos-indispo')) {
+      var box = document.createElement('div');
+      box.id = 'bos-indispo';
+      box.style.cssText = 'margin:24px 0;padding:18px 20px;border:1px solid #e2c391;' +
+        'background:#fdf6e9;border-radius:10px;color:#5b4a2a;font-size:15px;line-height:1.55;max-width:640px';
+      box.innerHTML = '<strong style="display:block;margin-bottom:6px;font-size:16px">' +
+        'Temporairement indisponible</strong>' +
+        'Ce produit est en cours de réapprovisionnement chez notre fournisseur : ' +
+        'nous préférons suspendre la vente plutôt que de vous faire attendre une commande ' +
+        'que nous ne pourrions pas expédier tout de suite.<br><br>' +
+        'Écrivez-nous à <a href="mailto:apprentissage.feynman@gmail.com" ' +
+        'style="color:#8a6d3b">apprentissage.feynman@gmail.com</a> pour être prévenu(e) de son retour.';
+      var ancre = vus.length ? vus[0] : null;
+      if (ancre && ancre.parentNode) ancre.parentNode.insertBefore(box, ancre);
+      else {
+        var h1 = document.querySelector('h1');
+        if (h1 && h1.parentNode) h1.parentNode.insertBefore(box, h1.nextSibling);
+        else document.body.insertBefore(box, document.body.firstChild);
+      }
+    }
+  }
+
+  // au chargement ET après coup : d'autres scripts injectent leurs boutons plus tard
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', bosBloquerAchat);
+  } else {
+    bosBloquerAchat();
+  }
+  setTimeout(bosBloquerAchat, 800);
+  setTimeout(bosBloquerAchat, 2500);
+  setTimeout(bosBloquerAchat, 6000);
+
+
+
   // API VPS (Cloudflare Tunnel HTTPS → reverse proxy → Node Stripe)
   var STRIPE_API = 'https://api.tonargentexplique.fr/create-checkout-session';
 
