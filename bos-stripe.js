@@ -183,7 +183,12 @@
     if (/add-to-cart|buy-now|fiche-add|fiche-paypal|btn-buy|bos-cb-btn/.test(cl)) return true;
     var oc = (el.getAttribute && el.getAttribute('onclick')) || '';
     if (/bosProductCB|bosBuyNow|bosPayPalCheckout|ajouterAuPanier/.test(oc)) return true;
-    return /ajouter au panier|acheter maintenant|payer par carte/.test(t);
+    /* « paypal » est inclus SANS risque parce que cette fonction ne s'applique
+       qu'à l'intérieur d'un bloc produit déjà identifié comme bloqué — jamais à
+       la page entière. Sans lui, le bouton « PayPal — payer sans saisir ma
+       carte » du bloc buts restait cliquable sous le message de retrait
+       (constaté en capture le 29/07). */
+    return /ajouter au panier|acheter maintenant|payer par carte|paypal/.test(t);
   }
 
   /* Le message, en version pleine page ou compacte (dans une carte de grille). */
@@ -354,6 +359,41 @@
     }
   }
 
+  /* ═══ PURGE DU PANIER ═════════════════════════════════════════════════════
+     Masquer les boutons ne suffit pas : un article ajouté AVANT le retrait
+     reste dans le panier du visiteur (localStorage) et demeure payable.
+     Constaté en capture le 29/07/2026 : le panier contenait encore « Set de 2
+     buts pop-up — 44,00 € » avec un bouton « Payer par carte » actif, alors
+     que le produit venait d'être retiré. On retire donc l'article du panier et
+     on l'explique — un panier qui se vide sans un mot inquiète le client. */
+  function bosPurgerPanier() {
+    if (typeof window.getCart !== 'function' || typeof window.saveCart !== 'function') return;
+    var cart;
+    try { cart = window.getCart(); } catch (e) { return; }
+    if (!Array.isArray(cart) || !cart.length) return;
+    var enleves = [];
+    var restants = cart.filter(function (it) {
+      var id = String((it && it.id) || '');
+      if (BOS_RETIRES.indexOf(id) === -1 && BOS_NON_LIVRABLES.indexOf(id) === -1) return true;
+      enleves.push((it && it.name) || id);
+      return false;
+    });
+    if (!enleves.length) return;
+    try { window.saveCart(restants); } catch (e) { return; }
+    if (document.querySelector('#bos-panier-purge')) return;
+    var note = document.createElement('div');
+    note.id = 'bos-panier-purge';
+    note.style.cssText = 'margin:10px 0;padding:10px 12px;border:1px solid #e2c391;' +
+      'background:#fdf6e9;border-radius:8px;color:#5b4a2a;font-size:13px;line-height:1.5';
+    note.innerHTML = '<strong>' + (enleves.length > 1 ? 'Articles retirés' : 'Article retiré') +
+      ' de votre panier</strong><br>' + enleves.join(', ') +
+      ' : nous ne pouvons plus l’expédier dans les délais annoncés. ' +
+      'Désolé pour la déception — le reste de votre panier est intact.';
+    var cible = document.querySelector('#cart, .cart-panel, .cart-drawer, #cartPanel') ||
+                document.querySelector('h1');
+    if (cible && cible.parentNode) cible.insertBefore(note, cible.firstChild || null);
+  }
+
   /* ═══ CGV PRÉ-COCHÉES — moins de friction au moment de payer ══════════════
      Demandé par Fred le 29/07/2026. La case reste VISIBLE et le lien vers les
      CGV reste cliquable : le client peut la décocher et lire les conditions.
@@ -396,6 +436,17 @@
   setTimeout(bosVerifierVisibilite, 1200);
   setTimeout(bosVerifierVisibilite, 3000);
   setTimeout(bosVerifierVisibilite, 7000);
+  /* Le panier est souvent rendu par JS après coup : on repasse plusieurs fois. */
+  setTimeout(bosPrecocherCGV, 400);
+  setTimeout(bosPrecocherCGV, 1500);
+  setTimeout(bosPrecocherCGV, 4000);
+  setTimeout(bosPurgerPanier, 900);
+  setTimeout(bosPurgerPanier, 3000);
+  document.addEventListener('click', function () {
+    setTimeout(bosPrecocherCGV, 250);
+    setTimeout(bosPurgerPanier, 250);
+  }, true);
+
   /* Le panier est souvent rendu par JS après coup : on repasse plusieurs fois. */
   setTimeout(bosPrecocherCGV, 400);
   setTimeout(bosPrecocherCGV, 1500);
