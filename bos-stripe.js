@@ -77,8 +77,7 @@
     'masque-de-nuit-premium',
     'mini-imprimante-portable',
     'parachute-de-resistance',
-    'protege-tibias-carbone',
-    'tiroir-sous-bureau'
+    'protege-tibias-carbone'
   ];
 
   /* Les URL des pages ne reprennent pas toujours la clé du mapping
@@ -86,8 +85,7 @@
      On liste donc aussi les noms de fichiers réellement en ligne. */
   var BOS_PAGES_NON_LIVRABLES = [
     'produit-bundle-ecran-trepied',
-    'produit-imprimante-thermique',
-    'produit-tiroir-invisible'
+    'produit-imprimante-thermique'
   ];
 
   /* Exposé au reste de la page : le menu catalogue (bos-nav-produits.js) s'en sert
