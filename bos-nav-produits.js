@@ -24,48 +24,53 @@
   var CATALOGUE = {
     'curiosaboutique.fr': [
       { titre: 'Objets de curiosité', produits: [
-        { nom: 'Lampe Lune en lévitation', url: 'produit-globe-levitation.html', cle: 'lampe-lune-3d' },
-        { nom: 'Statuette égyptienne',     url: 'produit-statuette.html',        cle: 'statue-bastet' },
-        { nom: 'Sablier magnétique',       url: 'produit-sablier.html',          cle: 'sablier-magnetique' },
-        { nom: 'Boîte-énigme',             url: 'produit-boite-enigme.html',     cle: 'puzzle-box' } ] },
+        { nom: 'Lampe Lune en lévitation', url: 'produit-globe-levitation.html', cle: 'lampe-lune-3d', prix: 59 },
+        { nom: 'Statuette égyptienne',     url: 'produit-statuette.html',        cle: 'statue-bastet', prix: 34 },
+        { nom: 'Sablier magnétique',       url: 'produit-sablier.html',          cle: 'sablier-magnetique', prix: 44 },
+        { nom: 'Boîte-énigme',             url: 'produit-boite-enigme.html',     cle: 'puzzle-box', prix: 54 } ] },
       { titre: 'Papeterie', produits: [
-        { nom: 'Carnet de voyage',         url: 'produit-carnet.html',           cle: 'journal-infini' },
-        { nom: 'Carte du monde',           url: 'produit-carte.html',            cle: 'carte-du-monde-vintage' } ] }
+        { nom: 'Carnet de voyage',         url: 'produit-carnet.html',           cle: 'journal-infini', prix: 34 },
+        { nom: 'Carte du monde',           url: 'produit-carte.html',            cle: 'carte-du-monde-vintage', prix: 39 } ] }
     ],
     'serenlabboutique.fr': [
       { titre: 'Sommeil', produits: [
-        { nom: 'Masque Bluetooth',         url: 'produit-masque-bluetooth.html', cle: 'masque-sommeil-bluetooth' },
-        { nom: 'Lampe de lecture',         url: 'produit-lampe-lecture.html',    cle: 'lampe-de-lecture-led' },
-        { nom: 'Oreiller rafraîchissant',  url: 'produit-oreiller-gel.html',     cle: 'oreiller-rafraichissant' },
-        { nom: 'Machine à sons blancs',    url: 'produit-machine-sons.html',     cle: 'machine-a-sons-blancs' } ] },
+        { nom: 'Masque Bluetooth',         url: 'produit-masque-bluetooth.html', cle: 'masque-sommeil-bluetooth', prix: 39 },
+        { nom: 'Lampe de lecture',         url: 'produit-lampe-lecture.html',    cle: 'lampe-de-lecture-led', prix: 32 },
+        { nom: 'Oreiller rafraîchissant',  url: 'produit-oreiller-gel.html',     cle: 'oreiller-rafraichissant', prix: 79 },
+        { nom: 'Machine à sons blancs',    url: 'produit-machine-sons.html',     cle: 'machine-a-sons-blancs', prix: 49.9 } ] },
       { titre: 'Soin & récupération', produits: [
-        { nom: 'Masque LED visage',        url: 'produit-masque-led.html',       cle: 'masque-led-visage' },
-        { nom: 'Masque gel yeux',          url: 'produit-masque-gel.html',       cle: 'masque-gel-yeux' },
-        { nom: 'Gua Sha & Roller',         url: 'produit-gua-sha.html',          cle: 'kit-gua-sha-premium' } ] }
+        { nom: 'Masque LED visage',        url: 'produit-masque-led.html',       cle: 'masque-led-visage', prix: 99 },
+        { nom: 'Masque gel yeux',          url: 'produit-masque-gel.html',       cle: 'masque-gel-yeux', prix: 27 },
+        { nom: 'Gua Sha & Roller',         url: 'produit-gua-sha.html',          cle: 'kit-gua-sha-premium', prix: 26 } ] }
     ],
     'technovaboutique.fr': [
       { titre: 'Image & son', produits: [
-        { nom: 'Projecteur Wi-Fi',         url: 'produit-projecteur-wifi.html',  cle: 'mini-projecteur-portable' },
-        { nom: 'Enceinte à lévitation',    url: 'produit-enceinte-levitation.html', cle: 'enceinte-levitation-blanc' },
-        { nom: 'Micro-cravate sans fil',   url: 'produit-micro-cravate.html',    cle: 'microphone-pro-streaming' } ] },
+        { nom: 'Projecteur Wi-Fi',         url: 'produit-projecteur-wifi.html',  cle: 'mini-projecteur-portable', prix: 79 },
+        { nom: 'Enceinte à lévitation',    url: 'produit-enceinte-levitation.html', cle: 'enceinte-levitation-blanc', prix: 159 },
+        { nom: 'Micro-cravate sans fil',   url: 'produit-micro-cravate.html',    cle: 'microphone-pro-streaming', prix: 44 } ] },
       { titre: 'Bureau connecté', produits: [
-        { nom: 'Lampe de bureau 3-en-1',   url: 'produit-lampe-bureau-3en1.html', cle: 'lampe-led-bureau' },
-        { nom: 'Chargeur sans fil 3-en-1', url: 'produit-chargeur-sans-fil.html', cle: 'chargeur-sans-fil-3-en-1' },
-        { nom: 'Ventilateur de bureau',    url: 'produit-ventilateur-bureau.html', cle: 'ventilateur-portable' },
-        { nom: 'Bundle écran + trépied',   url: 'produit-bundle-ecran-trepied.html', cle: 'bundle-ecran' } ] }
+        { nom: 'Lampe de bureau 3-en-1',   url: 'produit-lampe-bureau-3en1.html', cle: 'lampe-led-bureau', prix: 69 },
+        { nom: 'Chargeur sans fil 3-en-1', url: 'produit-chargeur-sans-fil.html', cle: 'chargeur-sans-fil-3-en-1', prix: 29 },
+        { nom: 'Ventilateur de bureau',    url: 'produit-ventilateur-bureau.html', cle: 'ventilateur-portable', prix: 25 },
+        { nom: 'Bundle écran + trépied',   url: 'produit-bundle-ecran-trepied.html', cle: 'bundle-ecran', prix: 24 } ] }
     ],
     'focuslabboutique.fr': [
       { titre: 'Concentration', produits: [
-        { nom: 'Minuteur Pomodoro',        url: 'produit-minuteur-pomodoro.html', cle: 'timer-pomodoro' },
-        { nom: 'Barre lumineuse écran',    url: 'produit-barre-lumineuse.html',   cle: 'barre-lumineuse-ecran' },
-        { nom: 'Lampe LED de bureau',      url: 'produit-lampe-led.html',         cle: 'lampe-led-focus' } ] },
+        { nom: 'Minuteur Pomodoro',        url: 'produit-minuteur-pomodoro.html', cle: 'timer-pomodoro', prix: 34 },
+        { nom: 'Barre lumineuse écran',    url: 'produit-barre-lumineuse.html',   cle: 'barre-lumineuse-ecran', prix: 45 },
+        { nom: 'Lampe LED de bureau',      url: 'produit-lampe-led.html',         cle: 'lampe-led-focus', prix: 75 } ] },
       { titre: 'Poste de travail', produits: [
-        { nom: 'Tapis de bureau XXL',      url: 'produit-tapis-bureau.html',      cle: 'tapis-bureau-premium' },
-        { nom: 'Support ordinateur',       url: 'produit-support-laptop.html',    cle: 'support-pc-portable' },
-        { nom: 'Organiseur de câbles',     url: 'produit-organiseur-cables.html', cle: 'organisateur-cables' },
-        { nom: 'Tiroir sous-bureau',       url: 'produit-tiroir-invisible.html',  cle: 'tiroir-sous-bureau' } ] }
+        { nom: 'Tapis de bureau XXL',      url: 'produit-tapis-bureau.html',      cle: 'tapis-bureau-premium', prix: 38 },
+        { nom: 'Support ordinateur',       url: 'produit-support-laptop.html',    cle: 'support-pc-portable', prix: 55 },
+        { nom: 'Organiseur de câbles',     url: 'produit-organiseur-cables.html', cle: 'organisateur-cables', prix: 15 },
+        { nom: 'Tiroir sous-bureau',       url: 'produit-tiroir-invisible.html',  cle: 'tiroir-sous-bureau', prix: 22 } ] }
     ]
   };
+
+  /* Exposé au reste du site : le bloc « Complétez votre commande » s'en sert
+     pour proposer d'autres articles de la MÊME boutique. Une seule source de
+     vérité — si un produit change de nom ou de prix, il change partout. */
+  window.BOS_CATALOGUE = CATALOGUE;
 
   function marque() {
     var h = location.hostname.replace(/^www\./, '');
