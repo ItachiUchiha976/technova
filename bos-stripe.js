@@ -58,6 +58,18 @@
   window.BOS_NON_LIVRABLES = BOS_NON_LIVRABLES;
   window.BOS_PAGES_NON_LIVRABLES = BOS_PAGES_NON_LIVRABLES;
 
+  /* Charge le menu catalogue. Passer par ici plutot que d'ajouter une balise
+     <script> dans les dizaines de pages produit : un seul point d'entree, et le
+     menu s'execute forcement APRES que les listes ci-dessus existent. */
+  (function () {
+    if (document.getElementById('bos-nav-produits-js')) return;
+    var s = document.createElement('script');
+    s.id = 'bos-nav-produits-js';
+    s.src = 'bos-nav-produits.js?v=20260729';
+    s.defer = true;
+    document.head.appendChild(s);
+  })();
+
   function bosPageNonLivrable() {
     var f = location.pathname.replace(/\.html?$/, '').split('/').pop() || '';
     if (BOS_PAGES_NON_LIVRABLES.indexOf(f) !== -1) return true;
@@ -140,6 +152,7 @@
   setTimeout(bosVerifierVisibilite, 1200);
   setTimeout(bosVerifierVisibilite, 3000);
   setTimeout(bosVerifierVisibilite, 7000);
+
 
 
 
