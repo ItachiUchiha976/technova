@@ -635,15 +635,22 @@
   function bosNormaliserConteneurActions() {
     var cb = document.querySelector('[data-bos-cb][data-bos-price]');
     if (!cb || !cb.parentNode) return null;
-    var p = cb.parentNode;
-    var s = window.getComputedStyle(p);
-    if (s.display === 'flex' || s.display === 'inline-flex') {
-      if (s.flexDirection !== 'column') { p.style.flexDirection = 'column'; }
-      p.style.alignItems = 'stretch';
-    } else if (s.display === 'grid') {
-      p.style.gridTemplateColumns = '1fr';
+    /* On remonte : le conteneur fautif n'est pas toujours le parent direct
+       (sur FocusLab c'est « .product-ctas », deux niveaux plus haut). */
+    var n = cb, dernier = null;
+    for (var i = 0; n && n !== document.body && i < 5; i++) {
+      var s = window.getComputedStyle(n);
+      if ((s.display === 'flex' || s.display === 'inline-flex') && s.flexDirection !== 'column') {
+        n.style.flexDirection = 'column';
+        n.style.alignItems = 'stretch';
+        dernier = n;
+      } else if (s.display === 'grid' && n.children.length > 1) {
+        n.style.gridTemplateColumns = '1fr';
+        dernier = n;
+      }
+      n = n.parentElement;
     }
-    return p;
+    return dernier || cb.parentNode;
   }
 
   function bosAjouterPayPalFiche() {
@@ -948,6 +955,28 @@
   setTimeout(bosVerifierVisibilite, 1200);
   setTimeout(bosVerifierVisibilite, 3000);
   setTimeout(bosVerifierVisibilite, 7000);
+  /* Le panier est souvent rendu par JS après coup : on repasse plusieurs fois. */
+  setTimeout(bosPrecocherCGV, 400);
+  setTimeout(bosPrecocherCGV, 1500);
+  setTimeout(bosPrecocherCGV, 4000);
+  setTimeout(bosPurgerPanier, 900);
+  setTimeout(bosPurgerPanier, 3000);
+  /* Après le garde-fou : on n'ajoute PayPal que si l'achat est resté ouvert. */
+  setTimeout(bosAjouterPayPalFiche, 1800);
+  setTimeout(bosAjouterPayPalFiche, 4500);
+  setTimeout(bosAjouterPayPalFiche, 8000);
+  /* Après le menu (qui expose le catalogue) et après le garde-fou. */
+  setTimeout(bosEncartAccueil, 1500);
+  setTimeout(bosEncartAccueil, 4000);
+  setTimeout(bosEncartAccueil, 8000);
+  setTimeout(bosCompleterCommande, 3200);
+  setTimeout(bosCompleterCommande, 7000);
+  setTimeout(bosCompleterCommande, 10500);
+  document.addEventListener('click', function () {
+    setTimeout(bosPrecocherCGV, 250);
+    setTimeout(bosPurgerPanier, 250);
+  }, true);
+
   /* Le panier est souvent rendu par JS après coup : on repasse plusieurs fois. */
   setTimeout(bosPrecocherCGV, 400);
   setTimeout(bosPrecocherCGV, 1500);
