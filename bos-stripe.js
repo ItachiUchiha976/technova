@@ -516,7 +516,11 @@
       '<button type="button" id="bos-qte-moins" aria-label="Diminuer la quantité" style="' + bStyle + '">−</button>' +
       '<strong id="bos-qte-val" style="min-width:26px;text-align:center;font-size:17px">1</strong>' +
       '<button type="button" id="bos-qte-plus" aria-label="Augmenter la quantité" style="' + bStyle + '">+</button>';
-    ancre.parentNode.insertBefore(box, ancre);
+    /* On choisit la quantité AVANT d'ajouter au panier : le sélecteur se place
+       donc au-dessus du premier bouton d'action, pas entre deux boutons. */
+    var premier = document.querySelector('#add-to-cart-btn');
+    var cible = (premier && premier.offsetParent) ? premier : ancre;
+    cible.parentNode.insertBefore(box, cible);
 
     function change(pas) {
       var v = document.getElementById('bos-qte-val');
@@ -734,6 +738,25 @@
   setTimeout(bosVerifierVisibilite, 1200);
   setTimeout(bosVerifierVisibilite, 3000);
   setTimeout(bosVerifierVisibilite, 7000);
+  /* Le panier est souvent rendu par JS après coup : on repasse plusieurs fois. */
+  setTimeout(bosPrecocherCGV, 400);
+  setTimeout(bosPrecocherCGV, 1500);
+  setTimeout(bosPrecocherCGV, 4000);
+  setTimeout(bosPurgerPanier, 900);
+  setTimeout(bosPurgerPanier, 3000);
+  /* Après le garde-fou : on n'ajoute PayPal que si l'achat est resté ouvert. */
+  setTimeout(bosAjouterPayPalFiche, 1800);
+  setTimeout(bosAjouterPayPalFiche, 4500);
+  setTimeout(bosAjouterPayPalFiche, 8000);
+  /* Après le menu (qui expose le catalogue) et après le garde-fou. */
+  setTimeout(bosCompleterCommande, 2500);
+  setTimeout(bosCompleterCommande, 6000);
+  setTimeout(bosCompleterCommande, 9500);
+  document.addEventListener('click', function () {
+    setTimeout(bosPrecocherCGV, 250);
+    setTimeout(bosPurgerPanier, 250);
+  }, true);
+
   /* Le panier est souvent rendu par JS après coup : on repasse plusieurs fois. */
   setTimeout(bosPrecocherCGV, 400);
   setTimeout(bosPrecocherCGV, 1500);
