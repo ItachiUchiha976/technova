@@ -25,7 +25,7 @@
   var ITEMS = [
     { ic: '🔒', t: 'Paiement sécurisé', s: 'Carte & PayPal cryptés' },
     { ic: '🚚', t: 'Livraison suivie', s: 'Numéro de suivi fourni' },
-    { ic: '↩️', t: 'Satisfait ou remboursé', s: '30 jours pour changer d’avis' },
+    { ic: '↩️', t: 'Satisfait ou remboursé', s: '14 jours pour changer d’avis' },
     { ic: '💬', t: 'Support réactif', s: 'Une question ? On répond' }
   ];
 
@@ -40,7 +40,7 @@
     });
     grid += '</div>';
     grid += '<div class="bos-tr-pay"><span class="bos-tr-badge">🔒 Commande protégée</span>'
-      + '<span>Expédié sous 24-48h · <b>Paiement 100% sécurisé</b></span></div>';
+      + '<span>Expédié sous 2 à 4 jours · <b>Paiement 100% sécurisé</b></span></div>';
     wrap.innerHTML = grid;
     return wrap;
   }
