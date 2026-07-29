@@ -220,6 +220,16 @@
     if (!bloc || bloc.getAttribute('data-bos-bloque')) return;
     bloc.setAttribute('data-bos-bloque', cle);
     var compact = !!(bloc.id && /^card-/.test(bloc.id));
+
+    /* Une CARTE de grille dont le produit n'est pas vendable disparaît, au lieu
+       d'afficher un message : dans une grille où d'autres articles s'achètent,
+       une liste d'indisponibles donne l'image d'une boutique en panne. Le
+       message n'a de sens que sur une fiche produit — là, le visiteur est venu
+       pour CET article et mérite une explication. (29/07/2026) */
+    if (compact) {
+      bloc.style.display = 'none';
+      return;
+    }
     var ancre = null;
     Array.prototype.forEach.call(bloc.querySelectorAll('button, a, .checkout-stripe'),
       function (el) {
@@ -856,6 +866,25 @@
   setTimeout(bosVerifierVisibilite, 1200);
   setTimeout(bosVerifierVisibilite, 3000);
   setTimeout(bosVerifierVisibilite, 7000);
+  /* Le panier est souvent rendu par JS après coup : on repasse plusieurs fois. */
+  setTimeout(bosPrecocherCGV, 400);
+  setTimeout(bosPrecocherCGV, 1500);
+  setTimeout(bosPrecocherCGV, 4000);
+  setTimeout(bosPurgerPanier, 900);
+  setTimeout(bosPurgerPanier, 3000);
+  /* Après le garde-fou : on n'ajoute PayPal que si l'achat est resté ouvert. */
+  setTimeout(bosAjouterPayPalFiche, 1800);
+  setTimeout(bosAjouterPayPalFiche, 4500);
+  setTimeout(bosAjouterPayPalFiche, 8000);
+  /* Après le menu (qui expose le catalogue) et après le garde-fou. */
+  setTimeout(bosCompleterCommande, 2500);
+  setTimeout(bosCompleterCommande, 6000);
+  setTimeout(bosCompleterCommande, 9500);
+  document.addEventListener('click', function () {
+    setTimeout(bosPrecocherCGV, 250);
+    setTimeout(bosPurgerPanier, 250);
+  }, true);
+
   /* Le panier est souvent rendu par JS après coup : on repasse plusieurs fois. */
   setTimeout(bosPrecocherCGV, 400);
   setTimeout(bosPrecocherCGV, 1500);
