@@ -626,6 +626,7 @@
     if (atc && !atc.getAttribute('data-bos-qte-branche')) {
       atc.setAttribute('data-bos-qte-branche', '1');
       atc.addEventListener('click', function () {
+        if (bosAjoutEnCours) return;       // c'est nous qui cliquons : ne pas boucler
         var reste = bosQuantite() - 1;     // le clic d'origine en ajoute déjà un
         for (var i = 0; i < reste; i++) { bosAjouterUneFois(); }
       }, false);
@@ -660,10 +661,18 @@
           corrompu la quantité.
      Cliquer le bouton natif laisse chaque page appliquer SA propre logique :
      c'est la seule approche qui vaille sur cinq balisages différents. */
+  /* ⚠️ Verrou de réentrance. bosAjouterUneFois() CLIQUE le bouton natif ; or
+     notre propre écouteur est branché sur ce même bouton. Sans ce drapeau, le
+     premier clic relance la boucle et le navigateur s'arrête au bout d'un tour :
+     le panier recevait 1 article au lieu de 3 (mesuré le 29/07 sur les
+     4 boutiques). Le verrou dit à l'écouteur « c'est moi, laisse passer ». */
+  var bosAjoutEnCours = false;
+
   function bosAjouterUneFois() {
     var b = bosBoutonPanier();
     if (!b) return false;
-    b.click();
+    bosAjoutEnCours = true;
+    try { b.click(); } finally { bosAjoutEnCours = false; }
     return true;
   }
 
@@ -768,6 +777,25 @@
   setTimeout(bosVerifierVisibilite, 1200);
   setTimeout(bosVerifierVisibilite, 3000);
   setTimeout(bosVerifierVisibilite, 7000);
+  /* Le panier est souvent rendu par JS après coup : on repasse plusieurs fois. */
+  setTimeout(bosPrecocherCGV, 400);
+  setTimeout(bosPrecocherCGV, 1500);
+  setTimeout(bosPrecocherCGV, 4000);
+  setTimeout(bosPurgerPanier, 900);
+  setTimeout(bosPurgerPanier, 3000);
+  /* Après le garde-fou : on n'ajoute PayPal que si l'achat est resté ouvert. */
+  setTimeout(bosAjouterPayPalFiche, 1800);
+  setTimeout(bosAjouterPayPalFiche, 4500);
+  setTimeout(bosAjouterPayPalFiche, 8000);
+  /* Après le menu (qui expose le catalogue) et après le garde-fou. */
+  setTimeout(bosCompleterCommande, 2500);
+  setTimeout(bosCompleterCommande, 6000);
+  setTimeout(bosCompleterCommande, 9500);
+  document.addEventListener('click', function () {
+    setTimeout(bosPrecocherCGV, 250);
+    setTimeout(bosPurgerPanier, 250);
+  }, true);
+
   /* Le panier est souvent rendu par JS après coup : on repasse plusieurs fois. */
   setTimeout(bosPrecocherCGV, 400);
   setTimeout(bosPrecocherCGV, 1500);
