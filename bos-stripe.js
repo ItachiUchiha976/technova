@@ -390,6 +390,67 @@
     }
   }
 
+  /* ═══ « COMPLÉTEZ VOTRE COMMANDE » — le panier multiple est le vrai levier ═
+     Mesuré le 29/07/2026 sur l'API du fournisseur : le fret est PARTIELLEMENT
+     MUTUALISÉ. Un article coûte 6,38 $ de port, deux articles 8,82 $, trois
+     articles 10,90 $ — soit 3,63 $ par article au lieu de 6,38 $, une baisse
+     de 43 %. Autrement dit : un panier de trois articles nous rapporte
+     beaucoup plus que trois commandes d'un article. C'est un levier de marge
+     supérieur au choix du transporteur, et il ne coûte rien au client.
+
+     ⚠️ L'argument affiché n'est PAS « économisez sur la livraison » : elle est
+     déjà offerte, ce serait un faux avantage. Les deux arguments sont vrais :
+     tout arrive dans le même colis, et la remise de 10 % porte sur l'article le
+     plus cher du panier (bos-promo.js). */
+  function bosCompleterCommande() {
+    if (document.querySelector('#bos-cross-sell')) return;
+    var cat = window.BOS_CATALOGUE;
+    if (!cat) return;
+    var hote = location.hostname.replace(/^www\./, '');
+    var groupes = null;
+    for (var d in cat) { if (hote.indexOf(d.split('.')[0]) !== -1) { groupes = cat[d]; break; } }
+    if (!groupes) return;
+
+    var ici = location.pathname.split('/').pop() || '';
+    var bloques = (BOS_NON_LIVRABLES || []).concat(BOS_RETIRES || []);
+    var choix = [];
+    groupes.forEach(function (g) {
+      (g.produits || []).forEach(function (p) {
+        if (!p.prix || p.url === ici) return;
+        if (bloques.indexOf(p.cle) !== -1) return;
+        choix.push(p);
+      });
+    });
+    if (choix.length < 2) return;
+
+    /* Ordre stable (pas d'aléatoire : deux visites doivent montrer la même
+       chose) : on met en avant les articles les moins chers, ceux qu'on ajoute
+       le plus facilement à une commande déjà décidée. */
+    choix.sort(function (a, b) { return a.prix - b.prix; });
+    choix = choix.slice(0, 3);
+
+    var anc = document.querySelector('[data-bos-cb][data-bos-price]') ||
+              document.querySelector('#add-to-cart-btn');
+    if (!anc || !anc.offsetParent) return;
+
+    var box = document.createElement('div');
+    box.id = 'bos-cross-sell';
+    box.style.cssText = 'margin:26px auto 0;padding:16px 18px;max-width:520px;' +
+      'border:1px solid #e5e7eb;border-radius:12px;background:#fafafa;' +
+      'font-size:14px;line-height:1.55;color:#1f2937';
+    var lignes = choix.map(function (p) {
+      return '<a href="' + p.url + '" style="display:flex;justify-content:space-between;' +
+        'gap:12px;padding:8px 0;color:#1f2937;text-decoration:none;border-top:1px solid #eee">' +
+        '<span>' + p.nom + '</span><strong style="white-space:nowrap">' +
+        String(p.prix).replace('.', ',') + ' €</strong></a>';
+    }).join('');
+    box.innerHTML =
+      '<strong style="display:block;margin-bottom:4px;font-size:15px">Complétez votre commande</strong>' +
+      '<span style="color:#4b5563">Tout arrive dans le même colis, et la remise de ' +
+      '10 % s’applique à l’article le plus cher de votre panier.</span>' + lignes;
+    anc.parentNode.insertBefore(box, anc.nextSibling);
+  }
+
   /* ═══ PAYPAL SUR LA FICHE PRODUIT ═════════════════════════════════════════
      Constat du 29/07/2026 : aucune des 23 fiches produit ne proposait PayPal —
      il n'existait que sur la page panier. Le rail fonctionnait donc, mais il
@@ -525,6 +586,25 @@
   setTimeout(bosVerifierVisibilite, 1200);
   setTimeout(bosVerifierVisibilite, 3000);
   setTimeout(bosVerifierVisibilite, 7000);
+  /* Le panier est souvent rendu par JS après coup : on repasse plusieurs fois. */
+  setTimeout(bosPrecocherCGV, 400);
+  setTimeout(bosPrecocherCGV, 1500);
+  setTimeout(bosPrecocherCGV, 4000);
+  setTimeout(bosPurgerPanier, 900);
+  setTimeout(bosPurgerPanier, 3000);
+  /* Après le garde-fou : on n'ajoute PayPal que si l'achat est resté ouvert. */
+  setTimeout(bosAjouterPayPalFiche, 1800);
+  setTimeout(bosAjouterPayPalFiche, 4500);
+  setTimeout(bosAjouterPayPalFiche, 8000);
+  /* Après le menu (qui expose le catalogue) et après le garde-fou. */
+  setTimeout(bosCompleterCommande, 2500);
+  setTimeout(bosCompleterCommande, 6000);
+  setTimeout(bosCompleterCommande, 9500);
+  document.addEventListener('click', function () {
+    setTimeout(bosPrecocherCGV, 250);
+    setTimeout(bosPurgerPanier, 250);
+  }, true);
+
   /* Le panier est souvent rendu par JS après coup : on repasse plusieurs fois. */
   setTimeout(bosPrecocherCGV, 400);
   setTimeout(bosPrecocherCGV, 1500);
