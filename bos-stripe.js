@@ -622,6 +622,30 @@
     }
   }
 
+  /* ⚠️ NE JAMAIS injecter dans un conteneur FLEX HORIZONTAL.
+     Défaut créé puis corrigé le 29/07/2026 : le bouton carte vit dans un
+     conteneur en `display:flex` qui passe en colonne sur mobile mais reste en
+     LIGNE sur ordinateur. Mes blocs (PayPal, note de remise, suggestions) y
+     sont devenus des colonnes sœurs : « Ajouter au panier » s'étirait à
+     **636 px de haut** sur 207 de large, et les blocs se retrouvaient côte à
+     côte. Invisible en 390 px, catastrophique en 1440 px — d'où le fait que
+     Fred et moi ne voyions pas le même site.
+     Règle : on force la colonne sur ce conteneur, et nos blocs prennent
+     toute la largeur. */
+  function bosNormaliserConteneurActions() {
+    var cb = document.querySelector('[data-bos-cb][data-bos-price]');
+    if (!cb || !cb.parentNode) return null;
+    var p = cb.parentNode;
+    var s = window.getComputedStyle(p);
+    if (s.display === 'flex' || s.display === 'inline-flex') {
+      if (s.flexDirection !== 'column') { p.style.flexDirection = 'column'; }
+      p.style.alignItems = 'stretch';
+    } else if (s.display === 'grid') {
+      p.style.gridTemplateColumns = '1fr';
+    }
+    return p;
+  }
+
   function bosAjouterPayPalFiche() {
     var cb = document.querySelector('[data-bos-cb][data-bos-price]');
     if (!cb || document.querySelector('#bos-paypal-fiche')) return;
@@ -707,6 +731,7 @@
       }, false);
     }
 
+    bosNormaliserConteneurActions();
     bosSuivreQuantite(prix);
     bosRafraichirMontants(prix);
   }
@@ -923,6 +948,28 @@
   setTimeout(bosVerifierVisibilite, 1200);
   setTimeout(bosVerifierVisibilite, 3000);
   setTimeout(bosVerifierVisibilite, 7000);
+  /* Le panier est souvent rendu par JS après coup : on repasse plusieurs fois. */
+  setTimeout(bosPrecocherCGV, 400);
+  setTimeout(bosPrecocherCGV, 1500);
+  setTimeout(bosPrecocherCGV, 4000);
+  setTimeout(bosPurgerPanier, 900);
+  setTimeout(bosPurgerPanier, 3000);
+  /* Après le garde-fou : on n'ajoute PayPal que si l'achat est resté ouvert. */
+  setTimeout(bosAjouterPayPalFiche, 1800);
+  setTimeout(bosAjouterPayPalFiche, 4500);
+  setTimeout(bosAjouterPayPalFiche, 8000);
+  /* Après le menu (qui expose le catalogue) et après le garde-fou. */
+  setTimeout(bosEncartAccueil, 1500);
+  setTimeout(bosEncartAccueil, 4000);
+  setTimeout(bosEncartAccueil, 8000);
+  setTimeout(bosCompleterCommande, 3200);
+  setTimeout(bosCompleterCommande, 7000);
+  setTimeout(bosCompleterCommande, 10500);
+  document.addEventListener('click', function () {
+    setTimeout(bosPrecocherCGV, 250);
+    setTimeout(bosPurgerPanier, 250);
+  }, true);
+
   /* Le panier est souvent rendu par JS après coup : on repasse plusieurs fois. */
   setTimeout(bosPrecocherCGV, 400);
   setTimeout(bosPrecocherCGV, 1500);
