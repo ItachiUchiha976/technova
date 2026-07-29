@@ -46,35 +46,48 @@
      fournisseur ne changera cela, et c'est une commodité qu'on trouve en magasin
      (§12.27) → produit retiré, la boutique garde son Guide Coupe du Monde à 4,90 €,
      qui est digital, livré automatiquement et sans aucun coût fournisseur. */
-  var BOS_ACCUEILS_PRODUIT = { 'footperf.fr': 'buts-pop-up' };
+     ⚠️ Sur un accueil, le message doit NOMMER le produit retiré. Première version
+     testée le 29/07 : le bandeau « Ce produit n'est plus proposé » s'insérait sous
+     le <h1>, or ce <h1> est celui du Guide Coupe du Monde — le visiteur lisait donc
+     que LE GUIDE n'était plus vendu, alors qu'il est justement le seul produit
+     rentable de la page. Un message générique n'est pas neutre : sur une page qui
+     présente plusieurs produits, il désigne le mauvais. */
+  var BOS_ACCUEILS_PRODUIT = {
+    'footperf.fr': {
+      cle: 'buts-pop-up',
+      nom: 'Le set de 2 buts de foot pop-up',
+      suite: '<a href="#guide" style="color:#8a6d3b;font-weight:600">' +
+             'Le Guide &amp; Grand Quiz de la Coupe du Monde 2026 reste disponible — 4,90 € →</a>'
+    }
+  };
 
   var BOS_NON_LIVRABLES = [
-    'balle-de-reaction',
+    'masque-de-nuit-premium', 'enceinte-bluetooth-vintage',     'ecran-secondaire-portable', 'mini-imprimante-portable',
     'bundle-ecran',
-    'cible-de-precision',
-    'cones-de-marquage',
-    'echelle-agilite',
-    'ecran-secondaire-portable',
-    'enceinte-bluetooth-vintage',
-    'gants-gardien-pro',
-    'lampe-led-focus',
-    'masque-de-nuit-premium',
-    'microphone-pro-streaming',
-    'mini-imprimante-portable',
-    'parachute-de-resistance',
-    'protege-tibias-carbone',
-    'tiroir-sous-bureau'
+    'lampe-led-focus', 'tiroir-sous-bureau',
+    'cible-de-precision', 'protege-tibias-carbone', 'gants-gardien-pro',
+    'parachute-de-resistance', 'cones-de-marquage', 'echelle-agilite',
+    'balle-de-reaction'
   ];
 
   /* Les URL des pages ne reprennent pas toujours la clé du mapping
      (ex. « produit-micro-cravate.html » = microphone-pro-streaming).
      On liste donc aussi les noms de fichiers réellement en ligne. */
   var BOS_PAGES_NON_LIVRABLES = [
-    'produit-bundle-ecran-trepied',
-    'produit-imprimante-thermique',
+    /* ⚠️ Trouvé le 29/07/2026 : cette page était ACHETABLE à 75 € alors que sa clé
+       de mapping (« lampe-led-focus ») n'a aucun SKU fournisseur. Le garde-fou ne
+       la voyait pas parce qu'il déduit la clé du nom de fichier, et le fichier
+       s'appelle « produit-lampe-led » — la correspondance ne tombait pas juste.
+       Leçon : croiser page ↔ mapping par l'URL réelle, jamais par ressemblance
+       de nom. À réactiver dès que son SKU est identifié. */
     'produit-lampe-led',
-    'produit-micro-cravate',
-    'produit-tiroir-invisible'
+    'produit-masque-nuit',
+    'produit-imprimante-thermique',
+    'produit-bundle-ecran-trepied',
+    'produit-tiroir-invisible',
+    'produit-cible-precision', 'produit-protege-tibias', 'produit-gants-gardien',
+    'produit-parachute', 'produit-cones', 'produit-echelle-agilite',
+    'produit-balle-reaction'
   ];
 
   /* Exposé au reste de la page : le menu catalogue (bos-nav-produits.js) s'en sert
@@ -104,11 +117,16 @@
     return /^[a-z0-9.-]+\.[a-z]{2,}$/.test(h) ? 'contact@' + h : 'contact@' + h;
   }
 
-  /* Clé produit de l'accueil, quand l'accueil EST une page produit (cf. FootPerf). */
-  function bosProduitDAccueil() {
+  /* Fiche de l'accueil-produit courant (ou null). Voir BOS_ACCUEILS_PRODUIT. */
+  function bosAccueilProduit() {
     var f = location.pathname.replace(/\.html?$/, '').split('/').pop() || '';
     if (f && f !== 'index') return null;
     return BOS_ACCUEILS_PRODUIT[location.hostname.replace(/^www\./, '')] || null;
+  }
+
+  function bosProduitDAccueil() {
+    var a = bosAccueilProduit();
+    return a ? a.cle : null;
   }
 
   function bosPageNonLivrable() {
@@ -185,15 +203,18 @@
                       (acc && BOS_RETIRES.indexOf(acc) !== -1);
       if (definitif) {
         /* Sur un accueil-produit, « voir le reste de la boutique » renverrait sur
-           la page où l'on se trouve déjà. On propose donc une vraie alternative :
-           chez FootPerf, le guide Coupe du Monde — digital, livré tout de suite. */
-        var suite = acc
-          ? '<a href="coupe-du-monde-2026.html" style="color:#8a6d3b;font-weight:600">' +
-            'Découvrir le Guide &amp; Grand Quiz de la Coupe du Monde 2026 — 4,90 € →</a>'
+           la page où l'on se trouve déjà — et un titre générique désignerait le
+           mauvais produit. On nomme donc l'article retiré et on oriente vers
+           l'offre qui reste réellement achetable. */
+        var fiche = bosAccueilProduit();
+        var titre = (fiche && fiche.nom)
+          ? fiche.nom + " n'est plus proposé"
+          : "Ce produit n'est plus proposé";
+        var suite = (fiche && fiche.suite) ? fiche.suite
           : '<a href="index.html" style="color:#8a6d3b;font-weight:600">' +
             'Voir le reste de la boutique →</a>';
         box.innerHTML = '<strong style="display:block;margin-bottom:6px;font-size:16px">' +
-          "Ce produit n'est plus proposé</strong>" +
+          titre + '</strong>' +
           'Nous avons retiré cet article de la boutique : nous ne pouvions plus le proposer ' +
           'au prix annoncé sans rogner sur la qualité ou les délais. Nous préférons vous le ' +
           'dire franchement plutôt que de vous faire attendre.<br><br>' + suite;
@@ -239,6 +260,7 @@
   setTimeout(bosVerifierVisibilite, 1200);
   setTimeout(bosVerifierVisibilite, 3000);
   setTimeout(bosVerifierVisibilite, 7000);
+
 
 
 
