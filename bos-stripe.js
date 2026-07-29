@@ -527,9 +527,17 @@
      que les boutons de paiement suivent, le client voyait donc le prix d'un
      seul exemplaire. On lit sa valeur au lieu d'en ajouter un deuxième. */
   function bosChampQuantite() {
+    /* ⚠️ Chaque boutique nomme son sélecteur autrement — relevé le 29/07 :
+         FocusLab  → #qty-value / #qty-plus   (identifiants)
+         SérénLab  → .qty-val   / .qty-inc    (CLASSES, aucun id)
+         Curiosa, TechNova, FootPerf → aucun sélecteur.
+       Ne chercher que des identifiants laissait SérénLab sans mise à jour du
+       prix : le client montait à 3 et voyait toujours le tarif d'un seul.
+       Signalé par Fred sur produit-masque-bluetooth. */
     var sels = ['#qty-value', '#quantity-value', '[id*="qty-value"]',
+                '.qty-val', '.qty-value', '.quantity-value', '[class*="qty-val"]',
                 'input[name="quantity"]', 'input[type=number][id*=qty]',
-                '.qty-value', '.quantity-value'];
+                'input[type=number][class*=qty]'];
     for (var i = 0; i < sels.length; i++) {
       var e = document.querySelector(sels[i]);
       if (e && e.offsetParent) return e;
@@ -557,8 +565,12 @@
     c.addEventListener('change', maj);
     c.addEventListener('input', maj);
     /* Les boutons + / − : on écoute le conteneur, ce qui couvre les deux. */
-    var boite = c.closest ? c.closest('.qty-selector, .qty-controls, .quantity') : null;
+    var boite = c.closest ? c.closest('.qty-selector, .qty-controls, .qty-ctrl, .qty-row, .quantity') : null;
     if (boite) boite.addEventListener('click', maj, true);
+    /* Filet : on écoute aussi les boutons + / − où qu'ils soient. */
+    Array.prototype.forEach.call(
+      document.querySelectorAll('.qty-inc, .qty-dec, #qty-plus, #qty-minus, [class*="qty-btn"]'),
+      function (b) { b.addEventListener('click', maj); });
   }
 
   /* Sélecteur de quantité — demandé par Fred le 29/07/2026, et c'est aussi le
@@ -955,6 +967,28 @@
   setTimeout(bosVerifierVisibilite, 1200);
   setTimeout(bosVerifierVisibilite, 3000);
   setTimeout(bosVerifierVisibilite, 7000);
+  /* Le panier est souvent rendu par JS après coup : on repasse plusieurs fois. */
+  setTimeout(bosPrecocherCGV, 400);
+  setTimeout(bosPrecocherCGV, 1500);
+  setTimeout(bosPrecocherCGV, 4000);
+  setTimeout(bosPurgerPanier, 900);
+  setTimeout(bosPurgerPanier, 3000);
+  /* Après le garde-fou : on n'ajoute PayPal que si l'achat est resté ouvert. */
+  setTimeout(bosAjouterPayPalFiche, 1800);
+  setTimeout(bosAjouterPayPalFiche, 4500);
+  setTimeout(bosAjouterPayPalFiche, 8000);
+  /* Après le menu (qui expose le catalogue) et après le garde-fou. */
+  setTimeout(bosEncartAccueil, 1500);
+  setTimeout(bosEncartAccueil, 4000);
+  setTimeout(bosEncartAccueil, 8000);
+  setTimeout(bosCompleterCommande, 3200);
+  setTimeout(bosCompleterCommande, 7000);
+  setTimeout(bosCompleterCommande, 10500);
+  document.addEventListener('click', function () {
+    setTimeout(bosPrecocherCGV, 250);
+    setTimeout(bosPurgerPanier, 250);
+  }, true);
+
   /* Le panier est souvent rendu par JS après coup : on repasse plusieurs fois. */
   setTimeout(bosPrecocherCGV, 400);
   setTimeout(bosPrecocherCGV, 1500);
