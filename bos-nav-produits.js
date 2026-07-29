@@ -85,6 +85,11 @@
     'gants-gardien-pro', 'parachute-de-resistance', 'cones-de-marquage',
     'echelle-agilite', 'balle-de-reaction'
   ];
+  /* Produits RETIRÉS définitivement (marge impossible) : leur page existe encore mais
+     ils ne doivent apparaître nulle part dans la navigation. Sans cette liste, leur
+     onglet restait dans la barre — constaté le 29/07 avec « Imprimante » sur TechNova. */
+  var PAGES_RETIREES = ['produit-imprimante-thermique'];
+
   var PAGES_SECOURS = [
     'produit-machine-sons', 'produit-masque-nuit', 'produit-imprimante-thermique',
     'produit-bundle-ecran-trepied', 'produit-tiroir-invisible',
@@ -120,9 +125,11 @@
       ' background:#fff;border:1px solid rgba(0,0,0,.12);border-radius:10px;',
       ' box-shadow:0 12px 30px rgba(0,0,0,.14);padding:8px;margin-top:8px}',
       '.bos-cat-menu h4{margin:8px 10px 4px;font-size:.72rem;letter-spacing:.06em;',
-      ' text-transform:uppercase;opacity:.55}',
+      ' text-transform:uppercase;color:#6b7280}',
       '.bos-cat-menu a{display:block;padding:8px 10px;border-radius:7px;text-decoration:none;',
-      ' font-size:.92rem;color:inherit;white-space:nowrap}',
+      ' font-size:.92rem;color:#16202e;white-space:nowrap}',   /* JAMAIS color:inherit : le fond
+         du menu est blanc alors que les boutiques sombres (TechNova) heritent d'un texte gris
+         clair -> libelles invisibles. Bug constate le 29/07. */
       '.bos-cat-menu a:hover{background:rgba(0,0,0,.06)}',
       '@media(max-width:900px){.bos-cat-menu{position:static;box-shadow:none;border:0;',
       ' min-width:0;padding:0;margin:4px 0 8px 10px}}'
@@ -252,7 +259,8 @@
       var produits = 0;
       Array.prototype.forEach.call(liens, function (a) {
         var href = (a.getAttribute('href') || '').split('/').pop();
-        if (urlsDuMenu[href]) { a.style.display = 'none'; produits++; }
+        var retire = PAGES_RETIREES.indexOf(href.replace(/\.html?$/, '')) !== -1;
+        if (urlsDuMenu[href] || retire) { a.style.display = 'none'; produits++; }
       });
       if (produits === liens.length) item.style.display = 'none';
     });
