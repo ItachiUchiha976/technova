@@ -490,8 +490,16 @@
     if (!/\d/.test(t)) return;
     var neuf = t.replace(/\d[\d  ]*(?:[.,]\d{1,2})?\s*€/, bosEuros(total));
     if (neuf === t) return;
-    if (total < prix && !/inclus/i.test(neuf)) neuf += ' (−10 % inclus)';
     cb.textContent = neuf;
+    /* La remise est dite UNE fois, sous les boutons — pas dans chacun d'eux. */
+    if (total < prix && !document.querySelector('#bos-note-remise')) {
+      var n = document.createElement('div');
+      n.id = 'bos-note-remise';
+      n.style.cssText = 'max-width:420px;margin:6px auto 0;text-align:center;' +
+        'font-size:12.5px;color:#4b5563';
+      n.textContent = 'Remise de 10 % déjà déduite du montant affiché.';
+      if (cb.parentNode) cb.parentNode.insertBefore(n, cb.nextSibling);
+    }
   }
 
   function bosQuantite() {
@@ -596,11 +604,14 @@
     var b = document.createElement('button');
     b.id = 'bos-paypal-fiche';
     b.type = 'button';
-    b.style.cssText = 'display:block;width:100%;max-width:420px;margin:10px auto 0;' +
-      'padding:14px 16px;background:#ffc439;color:#111;border:none;border-radius:10px;' +
-      'font-size:16px;font-weight:800;cursor:pointer';
-    b.innerHTML = '🅿 Payer avec PayPal — ' + bosEuros(montant) +
-      (montant < prix ? ' <span style="font-weight:600;opacity:.75">(−10 % inclus)</span>' : '');
+    /* ⚠️ Libellé COURT et hauteur contenue : signalé par Fred le 29/07 — avec
+       la mention « (−10 % inclus) » dans le bouton, le texte passait sur deux
+       lignes et le bouton montait à 69 px de haut sur mobile. La remise est
+       désormais rappelée une seule fois, en petit, SOUS les deux boutons. */
+    b.style.cssText = 'display:block;width:100%;max-width:420px;margin:8px auto 0;' +
+      'padding:12px 16px;background:#ffc439;color:#111;border:none;border-radius:10px;' +
+      'font-size:15px;font-weight:800;cursor:pointer;line-height:1.2';
+    b.innerHTML = '🅿 PayPal — ' + bosEuros(montant);
     b.addEventListener('click', function () {
       var qte = bosQuantite();
       /* Au-delà d'un exemplaire, on passe par le panier : son calcul de remise
@@ -787,6 +798,25 @@
   setTimeout(bosVerifierVisibilite, 1200);
   setTimeout(bosVerifierVisibilite, 3000);
   setTimeout(bosVerifierVisibilite, 7000);
+  /* Le panier est souvent rendu par JS après coup : on repasse plusieurs fois. */
+  setTimeout(bosPrecocherCGV, 400);
+  setTimeout(bosPrecocherCGV, 1500);
+  setTimeout(bosPrecocherCGV, 4000);
+  setTimeout(bosPurgerPanier, 900);
+  setTimeout(bosPurgerPanier, 3000);
+  /* Après le garde-fou : on n'ajoute PayPal que si l'achat est resté ouvert. */
+  setTimeout(bosAjouterPayPalFiche, 1800);
+  setTimeout(bosAjouterPayPalFiche, 4500);
+  setTimeout(bosAjouterPayPalFiche, 8000);
+  /* Après le menu (qui expose le catalogue) et après le garde-fou. */
+  setTimeout(bosCompleterCommande, 2500);
+  setTimeout(bosCompleterCommande, 6000);
+  setTimeout(bosCompleterCommande, 9500);
+  document.addEventListener('click', function () {
+    setTimeout(bosPrecocherCGV, 250);
+    setTimeout(bosPurgerPanier, 250);
+  }, true);
+
   /* Le panier est souvent rendu par JS après coup : on repasse plusieurs fois. */
   setTimeout(bosPrecocherCGV, 400);
   setTimeout(bosPrecocherCGV, 1500);
