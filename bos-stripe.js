@@ -27,6 +27,15 @@
      recherche d'image CJ (BOITE 101) et verification de marge :
      lampe-de-lecture-led, oreiller-rafraichissant, masque-bluetooth-duo,
      microphone-pro-streaming. Ils sont de nouveau achetables. */
+  /* Produits RETIRÉS DÉFINITIVEMENT (aucun fournisseur ne tient leur prix public).
+     Ils méritent un message différent de « temporairement indisponible » : des
+     publicités déjà en ligne renvoient encore vers ces pages (une épingle Pinterest
+     annonce même l'imprimante à 49 €), et l'API ne permet pas de les supprimer sur
+     Pinterest/Instagram/TikTok. Plutôt qu'un cul-de-sac trompeur, on dit la vérité
+     et on renvoie vers le reste de la boutique. */
+  var BOS_RETIRES = ['mini-imprimante-portable'];
+  var BOS_PAGES_RETIREES = ['produit-imprimante-thermique'];
+
   var BOS_NON_LIVRABLES = [
     'masque-de-nuit-premium', 'enceinte-bluetooth-vintage',     'ecran-secondaire-portable', 'mini-imprimante-portable',
     'bundle-ecran',
@@ -121,6 +130,21 @@
       box.id = 'bos-indispo';
       box.style.cssText = 'margin:24px 0;padding:18px 20px;border:1px solid #e2c391;' +
         'background:#fdf6e9;border-radius:10px;color:#5b4a2a;font-size:15px;line-height:1.55;max-width:640px';
+      var f = location.pathname.replace(/\.html?$/, '').split('/').pop() || '';
+      var definitif = BOS_PAGES_RETIREES.indexOf(f) !== -1 ||
+                      BOS_RETIRES.indexOf(f.replace(/^produit-/, '')) !== -1;
+      if (definitif) {
+        box.innerHTML = '<strong style="display:block;margin-bottom:6px;font-size:16px">' +
+          "Ce produit n'est plus proposé</strong>" +
+          'Nous avons retiré cet article de la boutique : nous ne pouvions plus le proposer ' +
+          'au prix annoncé sans rogner sur la qualité ou les délais. Nous préférons vous le ' +
+          'dire franchement plutôt que de vous faire attendre.<br><br>' +
+          '<a href="index.html" style="color:#8a6d3b;font-weight:600">Voir le reste de la boutique →</a>';
+        var ancre0 = document.querySelector('h1');
+        if (ancre0 && ancre0.parentNode) ancre0.parentNode.insertBefore(box, ancre0.nextSibling);
+        else document.body.insertBefore(box, document.body.firstChild);
+        return;
+      }
       box.innerHTML = '<strong style="display:block;margin-bottom:6px;font-size:16px">' +
         'Temporairement indisponible</strong>' +
         'Ce produit est en cours de réapprovisionnement chez notre fournisseur : ' +
@@ -158,6 +182,7 @@
   setTimeout(bosVerifierVisibilite, 1200);
   setTimeout(bosVerifierVisibilite, 3000);
   setTimeout(bosVerifierVisibilite, 7000);
+
 
 
 
