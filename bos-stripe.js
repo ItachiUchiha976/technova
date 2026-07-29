@@ -23,11 +23,13 @@
      APRÈS avoir renseigné son cj_sku dans fulfillment_products.json, et
      seulement si les photos de la page correspondent au produit réel (§12.23).
      ───────────────────────────────────────────────────────────────────────── */
+  /* MAJ 29/07/2026 : 4 produits RETIRES de cette liste apres re-sourcing par
+     recherche d'image CJ (BOITE 101) et verification de marge :
+     lampe-de-lecture-led, oreiller-rafraichissant, masque-bluetooth-duo,
+     microphone-pro-streaming. Ils sont de nouveau achetables. */
   var BOS_NON_LIVRABLES = [
-    'masque-de-nuit-premium', 'lampe-de-lecture-led', 'machine-a-sons-blancs',
-    'oreiller-rafraichissant', 'masque-bluetooth-duo',
-    'enceinte-bluetooth-vintage', 'microphone-pro-streaming',
-    'ecran-secondaire-portable', 'mini-imprimante-portable',
+    'masque-de-nuit-premium', 'machine-a-sons-blancs',
+        'enceinte-bluetooth-vintage',     'ecran-secondaire-portable', 'mini-imprimante-portable',
     'chargeur-sans-fil-3-en-1', 'ventilateur-portable', 'bundle-ecran',
     'enceinte-levitation-blanc', 'enceinte-levitation-noir',
     'lampe-led-focus', 'organisateur-cables', 'tiroir-sous-bureau',
@@ -40,9 +42,8 @@
      (ex. « produit-micro-cravate.html » = microphone-pro-streaming).
      On liste donc aussi les noms de fichiers réellement en ligne. */
   var BOS_PAGES_NON_LIVRABLES = [
-    'produit-lampe-lecture', 'produit-machine-sons', 'produit-oreiller-gel',
-    'produit-masque-bluetooth', 'produit-masque-nuit',
-    'produit-micro-cravate', 'produit-imprimante-thermique',
+    'produit-machine-sons', 'produit-masque-nuit',
+    'produit-imprimante-thermique',
     'produit-chargeur-sans-fil', 'produit-ventilateur-bureau',
     'produit-enceinte-levitation', 'produit-bundle-ecran-trepied',
     'produit-organiseur-cables', 'produit-tiroir-invisible',
@@ -133,6 +134,7 @@
   setTimeout(bosVerifierVisibilite, 1200);
   setTimeout(bosVerifierVisibilite, 3000);
   setTimeout(bosVerifierVisibilite, 7000);
+
 
 
 
