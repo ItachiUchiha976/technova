@@ -553,10 +553,11 @@
       bosHarmoniserPrixCarte(cb, prix * qte, total);
     }
     var pp = document.querySelector('#bos-paypal-fiche');
-    if (pp) {
-      pp.innerHTML = '🅿 Payer avec PayPal — ' + bosEuros(total) +
-        (total < prix * qte ? ' <span style="font-weight:600;opacity:.75">(−10 % inclus)</span>' : '');
-    }
+    /* Même libellé court qu'à la création : sans cela, cette fonction
+       réécrivait le bouton avec l'ancien texte long et le faisait repasser
+       sur deux lignes (constaté le 29/07 — deux endroits écrivaient la même
+       chose, et le second gagnait). */
+    if (pp) { pp.innerHTML = '🅿 PayPal — ' + bosEuros(total); }
     var atc = bosBoutonPanier();
     if (atc) {
       if (!atc.getAttribute('data-bos-libelle')) {
@@ -798,6 +799,25 @@
   setTimeout(bosVerifierVisibilite, 1200);
   setTimeout(bosVerifierVisibilite, 3000);
   setTimeout(bosVerifierVisibilite, 7000);
+  /* Le panier est souvent rendu par JS après coup : on repasse plusieurs fois. */
+  setTimeout(bosPrecocherCGV, 400);
+  setTimeout(bosPrecocherCGV, 1500);
+  setTimeout(bosPrecocherCGV, 4000);
+  setTimeout(bosPurgerPanier, 900);
+  setTimeout(bosPurgerPanier, 3000);
+  /* Après le garde-fou : on n'ajoute PayPal que si l'achat est resté ouvert. */
+  setTimeout(bosAjouterPayPalFiche, 1800);
+  setTimeout(bosAjouterPayPalFiche, 4500);
+  setTimeout(bosAjouterPayPalFiche, 8000);
+  /* Après le menu (qui expose le catalogue) et après le garde-fou. */
+  setTimeout(bosCompleterCommande, 2500);
+  setTimeout(bosCompleterCommande, 6000);
+  setTimeout(bosCompleterCommande, 9500);
+  document.addEventListener('click', function () {
+    setTimeout(bosPrecocherCGV, 250);
+    setTimeout(bosPurgerPanier, 250);
+  }, true);
+
   /* Le panier est souvent rendu par JS après coup : on repasse plusieurs fois. */
   setTimeout(bosPrecocherCGV, 400);
   setTimeout(bosPrecocherCGV, 1500);
