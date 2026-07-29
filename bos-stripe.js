@@ -74,9 +74,7 @@
     'ecran-secondaire-portable',
     'enceinte-bluetooth-vintage',
     'gants-gardien-pro',
-    'lampe-led-bureau',
     'masque-de-nuit-premium',
-    'microphone-pro-streaming',
     'mini-imprimante-portable',
     'parachute-de-resistance',
     'protege-tibias-carbone',
@@ -89,8 +87,6 @@
   var BOS_PAGES_NON_LIVRABLES = [
     'produit-bundle-ecran-trepied',
     'produit-imprimante-thermique',
-    'produit-lampe-bureau-3en1',
-    'produit-micro-cravate',
     'produit-tiroir-invisible'
   ];
 
