@@ -38,14 +38,18 @@
       [/Livraison\s+estim[ée]e?\s*:?\s*12\s*[àa]\s*20\s*jours\s*ouvr[ée]s/gi, 'Livraison ' + phrase],
       [/estim[ée]e?\s+12\s*[àa]\s*20\s*jours\s*ouvr[ée]s/gi, phrase],
       [/Livraison\s*12\s*-\s*20\s*j\b/gi, 'Livré avant le ' + date],
-      [/12\s*[àa]\s*20\s*jours\s*ouvr[ée]s/gi, phrase]
+      [/12\s*[àa]\s*20\s*jours\s*ouvr[ée]s/gi, phrase],
+      /* Filet : tout delai d'expedition flou devient la meme date. Une page
+         ne doit annoncer qu'UNE promesse de delai, sinon elle se contredit. */
+      [/Exp[ée]di[ée]\s+sous\s+24\s*-\s*48\s*h/gi, 'Livre ' + phrase],
+      [/Exp[ée]di[ée]\s+sous\s+\d+\s*[àa]\s*\d+\s*jours?/gi, 'Livre ' + phrase]
     ];
 
     var it = document.createNodeIterator(document.body, NodeFilter.SHOW_TEXT, null);
     var n, cibles = [];
     while ((n = it.nextNode())) {
       var t = n.nodeValue;
-      if (!t || t.indexOf('20') === -1) continue;
+      if (!t) continue;
       for (var i = 0; i < regles.length; i++) {
         regles[i][0].lastIndex = 0;
         if (regles[i][0].test(t)) { cibles.push(n); break; }
