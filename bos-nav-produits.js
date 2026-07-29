@@ -201,6 +201,43 @@
     document.addEventListener('click', function (e) { if (!d.contains(e.target)) d.removeAttribute('open'); });
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape') d.removeAttribute('open'); });
 
+    /* ── MENU MOBILE ────────────────────────────────────────────────────────
+       Les boutiques ont un panneau mobile distinct (`nav.mobile-menu`), qui ne
+       listait que 4 produits sur 6 chez SérénLab — les deux re-sourcés du 29/07
+       n'y étaient pas. Or la majorité du trafic vient du mobile (Shorts) : un
+       catalogue invisible sur téléphone, c'est un catalogue qui n'existe pas.
+       On complète donc ce panneau avec les produits manquants, et on en retire
+       ceux qui ne sont plus livrables. */
+    var mob = document.querySelector('nav.mobile-menu, .mobile-menu');
+    if (mob) {
+      var deja = {};
+      Array.prototype.forEach.call(mob.querySelectorAll('a'), function (a) {
+        var h = (a.getAttribute('href') || '').split('/').pop();
+        deja[h] = a;
+      });
+      var modele = mob.querySelector('a');
+      cats.forEach(function (c) {
+        c.produits.forEach(function (p) {
+          var suspendu = estSuspendu(p.cle, p.url);
+          if (deja[p.url]) {                    // déjà listé : on le retire s'il est suspendu
+            if (suspendu) deja[p.url].style.display = 'none';
+            return;
+          }
+          if (suspendu || !modele) return;      // absent et suspendu : on ne l'ajoute pas
+          var a = document.createElement('a');
+          a.href = p.url;
+          a.textContent = p.nom;
+          a.className = modele.className;
+          /* inséré juste après le dernier produit connu, pour rester groupé avec eux */
+          var ancre = null;
+          Object.keys(deja).forEach(function (h) { if (/^produit-/.test(h)) ancre = deja[h]; });
+          if (ancre && ancre.parentNode) ancre.parentNode.insertBefore(a, ancre.nextSibling);
+          else mob.appendChild(a);
+          deja[p.url] = a;
+        });
+      });
+    }
+
     /* masquage au défilement (repris du site maths) */
     var lastY = window.pageYOffset || 0, ticking = false;
     var ZONE_HAUTE = 60, SEUIL = 6;
