@@ -30,8 +30,7 @@
   var BOS_NON_LIVRABLES = [
     'masque-de-nuit-premium', 'machine-a-sons-blancs',
         'enceinte-bluetooth-vintage',     'ecran-secondaire-portable', 'mini-imprimante-portable',
-    'ventilateur-portable', 'bundle-ecran',
-    'enceinte-levitation-blanc', 'enceinte-levitation-noir',
+    'bundle-ecran',
     'lampe-led-focus', 'tiroir-sous-bureau',
     'cible-de-precision', 'protege-tibias-carbone', 'gants-gardien-pro',
     'parachute-de-resistance', 'cones-de-marquage', 'echelle-agilite',
@@ -44,8 +43,7 @@
   var BOS_PAGES_NON_LIVRABLES = [
     'produit-machine-sons', 'produit-masque-nuit',
     'produit-imprimante-thermique',
-    'produit-ventilateur-bureau',
-    'produit-enceinte-levitation', 'produit-bundle-ecran-trepied',
+    'produit-bundle-ecran-trepied',
     'produit-tiroir-invisible',
     'produit-cible-precision', 'produit-protege-tibias', 'produit-gants-gardien',
     'produit-parachute', 'produit-cones', 'produit-echelle-agilite',
@@ -152,6 +150,7 @@
   setTimeout(bosVerifierVisibilite, 1200);
   setTimeout(bosVerifierVisibilite, 3000);
   setTimeout(bosVerifierVisibilite, 7000);
+
 
 
 
