@@ -288,12 +288,33 @@
         bandeaux.push(el);
       }
     });
+    /* Défaut préexistant corrigé au passage : les bandeaux et le header sont TOUS
+       collés à top:0, et le bandeau a un z-index bien supérieur (9999 contre 100).
+       Résultat : dès qu'on défilait, le bandeau **recouvrait la barre et son bouton
+       menu** — le client ne pouvait plus naviguer. On décale donc le header juste
+       sous les bandeaux réellement visibles. */
+    function hauteurBandeaux() {
+      var h = 0;
+      bandeaux.forEach(function (b) {
+        if (!b.style.transform) h += b.getBoundingClientRect().height;
+      });
+      return Math.round(h);
+    }
+    function replacerHeader() {
+      var st = getComputedStyle(header);
+      if (st.position === 'sticky' || st.position === 'fixed') {
+        header.style.top = hauteurBandeaux() + 'px';
+      }
+    }
+
     function masquerTout(oui) {
       header.classList.toggle('nav-hidden', oui);
       bandeaux.forEach(function (b) {
         b.style.transform = oui ? 'translateY(-140%)' : '';
       });
+      replacerHeader();
     }
+    replacerHeader();
 
     function update() {
       ticking = false;
