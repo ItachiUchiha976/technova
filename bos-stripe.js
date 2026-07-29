@@ -569,7 +569,17 @@
     var cle = cb.getAttribute('data-bos-key') || '';
     if (BOS_RETIRES.indexOf(cle) !== -1 || BOS_NON_LIVRABLES.indexOf(cle) !== -1) return;
 
-    bosAjouterSelecteurQuantite(cb, prix);
+    /* ⛔ SÉLECTEUR DE QUANTITÉ DÉSACTIVÉ le 29/07/2026, volontairement.
+       Il s'affichait bien, mais le panier ne recevait qu'UN article quand le
+       client en demandait trois (mesuré sur les 4 boutiques). Un composant qui
+       promet trois exemplaires et n'en met qu'un est pire que pas de composant :
+       il fait douter le client au moment de payer.
+       Ce qui reste à comprendre avant de le réactiver : cliquer le bouton natif
+       en série n'ajoute qu'une unité — chaque boutique a sa propre fonction
+       addToCart (signatures différentes) et probablement une garde anti-double-
+       clic. La piste sûre est d'écrire directement dans le panier localStorage
+       après avoir lu son format sur chaque boutique, puis de rafraîchir
+       l'affichage — et de le PROUVER boutique par boutique avant déploiement. */
     var montant = bosTotal(prix, 1);
     var nom = (document.querySelector('[data-product-name]') || {}).getAttribute
       ? document.querySelector('[data-product-name]').getAttribute('data-product-name')
@@ -606,8 +616,8 @@
     });
     cb.parentNode.insertBefore(b, cb.nextSibling);
 
-    /* Le bouton carte suit exactement la même règle. */
-    if (!cb.getAttribute('data-bos-qte-branche')) {
+    /* Interception liée à la quantité — inactive tant que le sélecteur l'est. */
+    if (false && !cb.getAttribute('data-bos-qte-branche')) {
       cb.setAttribute('data-bos-qte-branche', '1');
       cb.addEventListener('click', function (ev) {
         if (bosQuantite() <= 1) return;
@@ -623,7 +633,7 @@
 
     /* « Ajouter au panier » doit ajouter la quantité choisie, pas une unité. */
     var atc = bosBoutonPanier();
-    if (atc && !atc.getAttribute('data-bos-qte-branche')) {
+    if (false && atc && !atc.getAttribute('data-bos-qte-branche')) {
       atc.setAttribute('data-bos-qte-branche', '1');
       atc.addEventListener('click', function () {
         if (bosAjoutEnCours) return;       // c'est nous qui cliquons : ne pas boucler
@@ -777,6 +787,25 @@
   setTimeout(bosVerifierVisibilite, 1200);
   setTimeout(bosVerifierVisibilite, 3000);
   setTimeout(bosVerifierVisibilite, 7000);
+  /* Le panier est souvent rendu par JS après coup : on repasse plusieurs fois. */
+  setTimeout(bosPrecocherCGV, 400);
+  setTimeout(bosPrecocherCGV, 1500);
+  setTimeout(bosPrecocherCGV, 4000);
+  setTimeout(bosPurgerPanier, 900);
+  setTimeout(bosPurgerPanier, 3000);
+  /* Après le garde-fou : on n'ajoute PayPal que si l'achat est resté ouvert. */
+  setTimeout(bosAjouterPayPalFiche, 1800);
+  setTimeout(bosAjouterPayPalFiche, 4500);
+  setTimeout(bosAjouterPayPalFiche, 8000);
+  /* Après le menu (qui expose le catalogue) et après le garde-fou. */
+  setTimeout(bosCompleterCommande, 2500);
+  setTimeout(bosCompleterCommande, 6000);
+  setTimeout(bosCompleterCommande, 9500);
+  document.addEventListener('click', function () {
+    setTimeout(bosPrecocherCGV, 250);
+    setTimeout(bosPurgerPanier, 250);
+  }, true);
+
   /* Le panier est souvent rendu par JS après coup : on repasse plusieurs fois. */
   setTimeout(bosPrecocherCGV, 400);
   setTimeout(bosPrecocherCGV, 1500);
