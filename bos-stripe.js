@@ -49,32 +49,32 @@
   var BOS_ACCUEILS_PRODUIT = { 'footperf.fr': 'buts-pop-up' };
 
   var BOS_NON_LIVRABLES = [
-    'masque-de-nuit-premium', 'enceinte-bluetooth-vintage',     'ecran-secondaire-portable', 'mini-imprimante-portable',
+    'balle-de-reaction',
     'bundle-ecran',
-    'lampe-led-focus', 'tiroir-sous-bureau',
-    'cible-de-precision', 'protege-tibias-carbone', 'gants-gardien-pro',
-    'parachute-de-resistance', 'cones-de-marquage', 'echelle-agilite',
-    'balle-de-reaction'
+    'cible-de-precision',
+    'cones-de-marquage',
+    'echelle-agilite',
+    'ecran-secondaire-portable',
+    'enceinte-bluetooth-vintage',
+    'gants-gardien-pro',
+    'lampe-led-focus',
+    'masque-de-nuit-premium',
+    'microphone-pro-streaming',
+    'mini-imprimante-portable',
+    'parachute-de-resistance',
+    'protege-tibias-carbone',
+    'tiroir-sous-bureau'
   ];
 
   /* Les URL des pages ne reprennent pas toujours la clé du mapping
      (ex. « produit-micro-cravate.html » = microphone-pro-streaming).
      On liste donc aussi les noms de fichiers réellement en ligne. */
   var BOS_PAGES_NON_LIVRABLES = [
-    /* ⚠️ Trouvé le 29/07/2026 : cette page était ACHETABLE à 75 € alors que sa clé
-       de mapping (« lampe-led-focus ») n'a aucun SKU fournisseur. Le garde-fou ne
-       la voyait pas parce qu'il déduit la clé du nom de fichier, et le fichier
-       s'appelle « produit-lampe-led » — la correspondance ne tombait pas juste.
-       Leçon : croiser page ↔ mapping par l'URL réelle, jamais par ressemblance
-       de nom. À réactiver dès que son SKU est identifié. */
-    'produit-lampe-led',
-    'produit-masque-nuit',
-    'produit-imprimante-thermique',
     'produit-bundle-ecran-trepied',
-    'produit-tiroir-invisible',
-    'produit-cible-precision', 'produit-protege-tibias', 'produit-gants-gardien',
-    'produit-parachute', 'produit-cones', 'produit-echelle-agilite',
-    'produit-balle-reaction'
+    'produit-imprimante-thermique',
+    'produit-lampe-led',
+    'produit-micro-cravate',
+    'produit-tiroir-invisible'
   ];
 
   /* Exposé au reste de la page : le menu catalogue (bos-nav-produits.js) s'en sert
