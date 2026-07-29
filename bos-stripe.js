@@ -462,6 +462,100 @@
      que le bouton carte utilise déjà, et la remise est calculée par la même
      fonction (window.BOS_PROMO.discount). Les deux boutons facturent donc, par
      construction, exactement la même somme. */
+  function bosEuros(n) {
+    var s = Number(n).toFixed(2).replace('.', ',');
+    return s.replace(/,00$/, '') + ' €';
+  }
+
+  /* La remise vient TOUJOURS de la même source que le panier et que le bouton
+     carte : window.BOS_PROMO.discount(). Elle porte sur l'article le plus cher
+     de la commande — donc sur UN exemplaire, même si l'on en achète trois.
+     C'est ce qu'annonce le bandeau ; on ne raconte pas autre chose ici. */
+  function bosRemise(prix, qte) {
+    if (window.BOS_PROMO && typeof window.BOS_PROMO.discount === 'function') {
+      return window.BOS_PROMO.discount([{ price: prix, qty: qte }]) || 0;
+    }
+    return Math.round(prix * 10) / 100;
+  }
+
+  function bosTotal(prix, qte) {
+    return Math.round((prix * qte - bosRemise(prix, qte)) * 100) / 100;
+  }
+
+  /* Réécrit le montant affiché sur le bouton carte pour qu'il corresponde à ce
+     qui sera débité. On ne touche qu'au nombre : le reste du libellé (icône,
+     formulation) appartient à la page. */
+  function bosHarmoniserPrixCarte(cb, prix, total) {
+    var t = cb.textContent || '';
+    if (!/\d/.test(t)) return;
+    var neuf = t.replace(/\d[\d  ]*(?:[.,]\d{1,2})?\s*€/, bosEuros(total));
+    if (neuf === t) return;
+    if (total < prix && !/inclus/i.test(neuf)) neuf += ' (−10 % inclus)';
+    cb.textContent = neuf;
+  }
+
+  function bosQuantite() {
+    var c = document.querySelector('#bos-qte-val');
+    var n = c ? parseInt(c.textContent, 10) : 1;
+    return (n > 0 && n < 100) ? n : 1;
+  }
+
+  /* Sélecteur de quantité — demandé par Fred le 29/07/2026, et c'est aussi le
+     levier de marge mesuré ce jour-là : le fret est partiellement mutualisé
+     (1 article 6,38 $, 2 articles 8,82 $, 3 articles 10,90 $). Deux exemplaires
+     dans une commande nous coûtent donc bien moins que deux commandes. */
+  function bosAjouterSelecteurQuantite(ancre, prix) {
+    if (document.querySelector('#bos-qte')) return;
+    var box = document.createElement('div');
+    box.id = 'bos-qte';
+    box.style.cssText = 'display:flex;align-items:center;justify-content:center;gap:14px;' +
+      'margin:14px auto 4px;max-width:420px;font-size:15px;color:#1f2937';
+    var bStyle = 'width:38px;height:38px;border:1px solid #d1d5db;background:#fff;' +
+      'border-radius:9px;font-size:20px;line-height:1;cursor:pointer;color:#111';
+    box.innerHTML = '<span>Quantité</span>' +
+      '<button type="button" id="bos-qte-moins" aria-label="Diminuer la quantité" style="' + bStyle + '">−</button>' +
+      '<strong id="bos-qte-val" style="min-width:26px;text-align:center;font-size:17px">1</strong>' +
+      '<button type="button" id="bos-qte-plus" aria-label="Augmenter la quantité" style="' + bStyle + '">+</button>';
+    ancre.parentNode.insertBefore(box, ancre);
+
+    function change(pas) {
+      var v = document.getElementById('bos-qte-val');
+      var n = Math.min(20, Math.max(1, parseInt(v.textContent, 10) + pas));
+      v.textContent = String(n);
+      bosRafraichirMontants(prix);
+    }
+    document.getElementById('bos-qte-moins').addEventListener('click', function () { change(-1); });
+    document.getElementById('bos-qte-plus').addEventListener('click', function () { change(1); });
+  }
+
+  /* Un seul endroit met à jour les deux boutons : ils ne peuvent pas diverger. */
+  function bosRafraichirMontants(prix) {
+    var qte = bosQuantite();
+    var total = bosTotal(prix, qte);
+    var cb = document.querySelector('[data-bos-cb][data-bos-price]');
+    if (cb) {
+      if (!cb.getAttribute('data-bos-libelle')) {
+        cb.setAttribute('data-bos-libelle', cb.textContent || '');
+      }
+      cb.textContent = cb.getAttribute('data-bos-libelle');
+      bosHarmoniserPrixCarte(cb, prix * qte, total);
+    }
+    var pp = document.querySelector('#bos-paypal-fiche');
+    if (pp) {
+      pp.innerHTML = '🅿 Payer avec PayPal — ' + bosEuros(total) +
+        (total < prix * qte ? ' <span style="font-weight:600;opacity:.75">(−10 % inclus)</span>' : '');
+    }
+    var atc = document.querySelector('#add-to-cart-btn');
+    if (atc) {
+      if (!atc.getAttribute('data-bos-libelle')) {
+        atc.setAttribute('data-bos-libelle', atc.textContent || 'Ajouter au panier');
+      }
+      atc.textContent = qte > 1
+        ? 'Ajouter ' + qte + ' au panier'
+        : atc.getAttribute('data-bos-libelle');
+    }
+  }
+
   function bosAjouterPayPalFiche() {
     var cb = document.querySelector('[data-bos-cb][data-bos-price]');
     if (!cb || document.querySelector('#bos-paypal-fiche')) return;
@@ -471,14 +565,19 @@
     var cle = cb.getAttribute('data-bos-key') || '';
     if (BOS_RETIRES.indexOf(cle) !== -1 || BOS_NON_LIVRABLES.indexOf(cle) !== -1) return;
 
-    var montant = prix;
-    if (window.BOS_PROMO && typeof window.BOS_PROMO.discount === 'function') {
-      var d = window.BOS_PROMO.discount([{ price: prix, qty: 1 }]) || 0;
-      montant = Math.round((prix - d) * 100) / 100;
-    }
+    bosAjouterSelecteurQuantite(cb, prix);
+    var montant = bosTotal(prix, 1);
     var nom = (document.querySelector('[data-product-name]') || {}).getAttribute
       ? document.querySelector('[data-product-name]').getAttribute('data-product-name')
       : (document.querySelector('h1') || {}).textContent || 'Commande';
+
+    /* ⚠️ Les deux boutons doivent afficher LE MÊME montant — celui qui sera
+       réellement débité. Signalé par Fred le 29/07/2026 : le bouton carte
+       annonçait 75 € et le bouton PayPal 67,50 €, alors que les deux
+       prélèvent 67,50 € (la remise de 10 % est appliquée par bosProductCB).
+       Voir deux prix pour le même achat fait douter au pire moment. On aligne
+       donc l'affichage sur le montant facturé, et on nomme la remise. */
+    bosHarmoniserPrixCarte(cb, prix, montant);
 
     var b = document.createElement('button');
     b.id = 'bos-paypal-fiche';
@@ -486,16 +585,65 @@
     b.style.cssText = 'display:block;width:100%;max-width:420px;margin:10px auto 0;' +
       'padding:14px 16px;background:#ffc439;color:#111;border:none;border-radius:10px;' +
       'font-size:16px;font-weight:800;cursor:pointer';
-    b.innerHTML = '🅿 Payer avec PayPal — ' +
-      montant.toFixed(2).replace('.', ',') + ' €';
+    b.innerHTML = '🅿 Payer avec PayPal — ' + bosEuros(montant) +
+      (montant < prix ? ' <span style="font-weight:600;opacity:.75">(−10 % inclus)</span>' : '');
     b.addEventListener('click', function () {
+      var qte = bosQuantite();
+      /* Au-delà d'un exemplaire, on passe par le panier : son calcul de remise
+         est déjà éprouvé et sert de source unique. Mieux vaut un clic de plus
+         qu'un montant faux. */
+      if (qte > 1) { bosVersPanier(qte); return; }
       if (typeof window.bosBuyNow === 'function') {
-        window.bosBuyNow(String(nom).trim().slice(0, 120), montant, cle);
+        window.bosBuyNow(String(nom).trim().slice(0, 120), bosTotal(prix, 1), cle);
       } else {
         location.href = 'panier.html';     // repli sûr : jamais de clic mort
       }
     });
     cb.parentNode.insertBefore(b, cb.nextSibling);
+
+    /* Le bouton carte suit exactement la même règle. */
+    if (!cb.getAttribute('data-bos-qte-branche')) {
+      cb.setAttribute('data-bos-qte-branche', '1');
+      cb.addEventListener('click', function (ev) {
+        if (bosQuantite() > 1) {
+          ev.preventDefault();
+          ev.stopImmediatePropagation();
+          bosVersPanier(bosQuantite());
+        }
+      }, true);
+    }
+
+    /* « Ajouter au panier » doit ajouter la quantité choisie, pas une unité. */
+    var atc = document.querySelector('#add-to-cart-btn');
+    if (atc && !atc.getAttribute('data-bos-qte-branche')) {
+      atc.setAttribute('data-bos-qte-branche', '1');
+      atc.addEventListener('click', function () {
+        var reste = bosQuantite() - 1;     // le clic d'origine en ajoute déjà un
+        for (var i = 0; i < reste; i++) { bosAjouterUneFois(); }
+      }, false);
+    }
+
+    bosRafraichirMontants(prix);
+  }
+
+  /* Ajoute un exemplaire en réutilisant le bouton d'origine de la page : on ne
+     réimplémente pas addToCart, dont la signature varie d'une boutique à l'autre. */
+  function bosAjouterUneFois() {
+    var b = document.querySelector('#add-to-cart-btn');
+    if (!b) return;
+    var id = b.getAttribute('data-product-id');
+    var nom = b.getAttribute('data-product-name');
+    var prix = parseFloat(b.getAttribute('data-product-price'));
+    var img = b.getAttribute('data-img-class') || '';
+    if (typeof window.addToCart === 'function' && id) {
+      window.addToCart(id, nom, prix, img);
+    }
+  }
+
+  function bosVersPanier(qte) {
+    for (var i = 0; i < qte; i++) { bosAjouterUneFois(); }
+    if (typeof window.openCart === 'function') { window.openCart(); }
+    else { location.href = 'panier.html'; }
   }
 
   /* bos-paypal.js porte bosBuyNow() ; il n'était chargé que par la page panier.
@@ -586,6 +734,25 @@
   setTimeout(bosVerifierVisibilite, 1200);
   setTimeout(bosVerifierVisibilite, 3000);
   setTimeout(bosVerifierVisibilite, 7000);
+  /* Le panier est souvent rendu par JS après coup : on repasse plusieurs fois. */
+  setTimeout(bosPrecocherCGV, 400);
+  setTimeout(bosPrecocherCGV, 1500);
+  setTimeout(bosPrecocherCGV, 4000);
+  setTimeout(bosPurgerPanier, 900);
+  setTimeout(bosPurgerPanier, 3000);
+  /* Après le garde-fou : on n'ajoute PayPal que si l'achat est resté ouvert. */
+  setTimeout(bosAjouterPayPalFiche, 1800);
+  setTimeout(bosAjouterPayPalFiche, 4500);
+  setTimeout(bosAjouterPayPalFiche, 8000);
+  /* Après le menu (qui expose le catalogue) et après le garde-fou. */
+  setTimeout(bosCompleterCommande, 2500);
+  setTimeout(bosCompleterCommande, 6000);
+  setTimeout(bosCompleterCommande, 9500);
+  document.addEventListener('click', function () {
+    setTimeout(bosPrecocherCGV, 250);
+    setTimeout(bosPurgerPanier, 250);
+  }, true);
+
   /* Le panier est souvent rendu par JS après coup : on repasse plusieurs fois. */
   setTimeout(bosPrecocherCGV, 400);
   setTimeout(bosPrecocherCGV, 1500);
