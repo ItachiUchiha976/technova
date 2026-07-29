@@ -506,10 +506,43 @@
     }
   }
 
+  /* La quantité vient du sélecteur NATIF de la page — chaque boutique a le sien
+     (#qty-value sur FocusLab). Signalé par Fred le 29/07 : il montait à 3 sans
+     que les boutons de paiement suivent, le client voyait donc le prix d'un
+     seul exemplaire. On lit sa valeur au lieu d'en ajouter un deuxième. */
+  function bosChampQuantite() {
+    var sels = ['#qty-value', '#quantity-value', '[id*="qty-value"]',
+                'input[name="quantity"]', 'input[type=number][id*=qty]',
+                '.qty-value', '.quantity-value'];
+    for (var i = 0; i < sels.length; i++) {
+      var e = document.querySelector(sels[i]);
+      if (e && e.offsetParent) return e;
+    }
+    return null;
+  }
+
   function bosQuantite() {
-    var c = document.querySelector('#bos-qte-val');
-    var n = c ? parseInt(c.textContent, 10) : 1;
+    var c = bosChampQuantite();
+    if (!c) return 1;
+    var v = ('value' in c && c.value !== undefined && c.value !== '') ? c.value : c.textContent;
+    var n = parseInt(String(v).replace(/\D/g, ''), 10);
     return (n > 0 && n < 100) ? n : 1;
+  }
+
+  /* Le sélecteur natif ne prévient personne quand il change : on l'observe. */
+  function bosSuivreQuantite(prix) {
+    var c = bosChampQuantite();
+    if (!c || c.getAttribute('data-bos-suivi')) return;
+    c.setAttribute('data-bos-suivi', '1');
+    var maj = function () { setTimeout(function () { bosRafraichirMontants(prix); }, 60); };
+    if (window.MutationObserver) {
+      new MutationObserver(maj).observe(c, { childList: true, characterData: true, subtree: true });
+    }
+    c.addEventListener('change', maj);
+    c.addEventListener('input', maj);
+    /* Les boutons + / − : on écoute le conteneur, ce qui couvre les deux. */
+    var boite = c.closest ? c.closest('.qty-selector, .qty-controls, .quantity') : null;
+    if (boite) boite.addEventListener('click', maj, true);
   }
 
   /* Sélecteur de quantité — demandé par Fred le 29/07/2026, et c'est aussi le
@@ -633,7 +666,7 @@
     cb.parentNode.insertBefore(b, cb.nextSibling);
 
     /* Interception liée à la quantité — inactive tant que le sélecteur l'est. */
-    if (false && !cb.getAttribute('data-bos-qte-branche')) {
+    if (!cb.getAttribute('data-bos-qte-branche')) {
       cb.setAttribute('data-bos-qte-branche', '1');
       cb.addEventListener('click', function (ev) {
         if (bosQuantite() <= 1) return;
@@ -658,6 +691,7 @@
       }, false);
     }
 
+    bosSuivreQuantite(prix);
     bosRafraichirMontants(prix);
   }
 
@@ -706,10 +740,11 @@
      remplir : il croirait avoir tout perdu et partirait. Si l'ajout échoue,
      on laisse le paiement direct se faire (un exemplaire vaut mieux que zéro)
      et on le dit au client. */
+  /* UN SEUL clic : le bouton natif lit lui-même le sélecteur de quantité de la
+     page et ajoute le bon nombre. Cliquer N fois n'ajoutait qu'un article
+     (garde anti-double-clic) — erreur mesurée le 29/07 sur les 4 boutiques. */
   function bosVersPanier(qte) {
-    var ajoutes = 0;
-    for (var i = 0; i < qte; i++) { if (bosAjouterUneFois()) ajoutes++; }
-    if (!ajoutes) return false;
+    if (!bosAjouterUneFois()) return false;
     if (typeof window.openCart === 'function') { window.openCart(); }
     else { location.href = 'panier.html'; }
     return true;
@@ -724,6 +759,24 @@
     s.src = 'bos-paypal.js';
     s.onload = function () { setTimeout(bosAjouterPayPalFiche, 100); };
     document.head.appendChild(s);
+  })();
+
+  /* ═══ BOUTONS PLUS COMPACTS ════════════════════════════════════════════════
+     Signalé par Fred le 29/07 : « les boutons Ajouter au panier et Voir le
+     panier sont trop grands ». Sur un écran de 390 px, empiler six boutons de
+     45 à 53 px repousse le contenu et donne une impression de formulaire.
+     On réduit l'espacement intérieur et la police SANS toucher à la largeur —
+     un bouton d'achat doit rester large et facile à viser au pouce. */
+  (function () {
+    if (document.getElementById('bos-css-boutons')) return;
+    var s = document.createElement('style');
+    s.id = 'bos-css-boutons';
+    s.textContent =
+      '.btn--secondary.btn--sm,.bos-sticky-cta__btn,.bos-sticky-atc__btn,' +
+      '.add-to-cart-btn,.btn-addcart,#add-to-cart-btn{' +
+      'padding:11px 18px!important;font-size:15px!important;line-height:1.25!important}' +
+      '#bos-paypal-fiche{padding:11px 16px!important;font-size:15px!important}';
+    (document.head || document.documentElement).appendChild(s);
   })();
 
   /* ═══ PURGE DU PANIER ═════════════════════════════════════════════════════
@@ -803,6 +856,25 @@
   setTimeout(bosVerifierVisibilite, 1200);
   setTimeout(bosVerifierVisibilite, 3000);
   setTimeout(bosVerifierVisibilite, 7000);
+  /* Le panier est souvent rendu par JS après coup : on repasse plusieurs fois. */
+  setTimeout(bosPrecocherCGV, 400);
+  setTimeout(bosPrecocherCGV, 1500);
+  setTimeout(bosPrecocherCGV, 4000);
+  setTimeout(bosPurgerPanier, 900);
+  setTimeout(bosPurgerPanier, 3000);
+  /* Après le garde-fou : on n'ajoute PayPal que si l'achat est resté ouvert. */
+  setTimeout(bosAjouterPayPalFiche, 1800);
+  setTimeout(bosAjouterPayPalFiche, 4500);
+  setTimeout(bosAjouterPayPalFiche, 8000);
+  /* Après le menu (qui expose le catalogue) et après le garde-fou. */
+  setTimeout(bosCompleterCommande, 2500);
+  setTimeout(bosCompleterCommande, 6000);
+  setTimeout(bosCompleterCommande, 9500);
+  document.addEventListener('click', function () {
+    setTimeout(bosPrecocherCGV, 250);
+    setTimeout(bosPurgerPanier, 250);
+  }, true);
+
   /* Le panier est souvent rendu par JS après coup : on repasse plusieurs fois. */
   setTimeout(bosPrecocherCGV, 400);
   setTimeout(bosPrecocherCGV, 1500);
