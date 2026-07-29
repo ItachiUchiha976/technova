@@ -68,6 +68,15 @@
     document.head.appendChild(s);
   })();
 
+  /* L'adresse affichée au client doit être celle de SA boutique, pas notre boîte
+     personnelle : écrire « apprentissage.feynman@gmail.com » sur une page TechNova
+     trahit l'amateurisme et casse la confiance au moment le plus fragile.
+     Chaque domaine a son contact@ (redirection OVH vers la boîte maître). */
+  function bosEmailBoutique() {
+    var h = location.hostname.replace(/^www\./, '');
+    return /^[a-z0-9.-]+\.[a-z]{2,}$/.test(h) ? 'contact@' + h : 'contact@' + h;
+  }
+
   function bosPageNonLivrable() {
     var f = location.pathname.replace(/\.html?$/, '').split('/').pop() || '';
     if (BOS_PAGES_NON_LIVRABLES.indexOf(f) !== -1) return true;
@@ -118,8 +127,8 @@
         'Ce produit est en cours de réapprovisionnement chez notre fournisseur : ' +
         'nous préférons suspendre la vente plutôt que de vous faire attendre une commande ' +
         'que nous ne pourrions pas expédier tout de suite.<br><br>' +
-        'Écrivez-nous à <a href="mailto:apprentissage.feynman@gmail.com" ' +
-        'style="color:#8a6d3b">apprentissage.feynman@gmail.com</a> pour être prévenu(e) de son retour.';
+        'Écrivez-nous à <a href="mailto:' + bosEmailBoutique() + '" ' +
+        'style="color:#8a6d3b">' + bosEmailBoutique() + '</a> pour être prévenu(e) de son retour.';
       if (ancreVisible && ancreVisible.parentNode) {
         ancreVisible.parentNode.insertBefore(box, ancreVisible.nextSibling);
       } else {
@@ -150,6 +159,7 @@
   setTimeout(bosVerifierVisibilite, 1200);
   setTimeout(bosVerifierVisibilite, 3000);
   setTimeout(bosVerifierVisibilite, 7000);
+
 
 
 
