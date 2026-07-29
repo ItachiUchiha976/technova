@@ -45,7 +45,8 @@
      Un but de foot est encombrant : 40 USD de fret pour un article à 11 USD. Aucun
      fournisseur ne changera cela, et c'est une commodité qu'on trouve en magasin
      (§12.27) → produit retiré, la boutique garde son Guide Coupe du Monde à 4,90 €,
-     qui est digital, livré automatiquement et sans aucun coût fournisseur. */
+     qui est digital, livré automatiquement et sans aucun coût fournisseur.
+
      ⚠️ Sur un accueil, le message doit NOMMER le produit retiré. Première version
      testée le 29/07 : le bandeau « Ce produit n'est plus proposé » s'insérait sous
      le <h1>, or ce <h1> est celui du Guide Coupe du Monde — le visiteur lisait donc
@@ -263,6 +264,7 @@
   setTimeout(bosVerifierVisibilite, 1200);
   setTimeout(bosVerifierVisibilite, 3000);
   setTimeout(bosVerifierVisibilite, 7000);
+
 
 
 
