@@ -186,12 +186,15 @@
       if (item === li) return;
       var liens = item.querySelectorAll('a');
       if (!liens.length) return;
-      var tousProduits = true;
+      /* Certains <li> mêlent un lien produit ET un lien d'article (ex. « Masque
+         Bluetooth » + « Lumière bleue & sommeil »). On ne masque alors QUE le lien
+         produit : l'article reste accessible, et les deux libellés ne se collent plus. */
+      var produits = 0;
       Array.prototype.forEach.call(liens, function (a) {
         var href = (a.getAttribute('href') || '').split('/').pop();
-        if (!urlsDuMenu[href]) tousProduits = false;
+        if (urlsDuMenu[href]) { a.style.display = 'none'; produits++; }
       });
-      if (tousProduits) item.style.display = 'none';
+      if (produits === liens.length) item.style.display = 'none';
     });
 
     /* fermeture au clic extérieur et à Échap */
