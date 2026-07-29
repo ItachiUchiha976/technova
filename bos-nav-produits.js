@@ -1,0 +1,179 @@
+/* bos-nav-produits.js — menu catalogue des boutiques BOS (29/07/2026)
+
+   POURQUOI CE FICHIER EXISTE
+   Constat du 29/07 : les menus des boutiques ne listaient quasiment aucun produit.
+   Curiosa affichait 0 produit sur 6, FocusLab 0 sur 7. Un visiteur arrivé sur une
+   page produit n'avait aucun moyen de découvrir le reste du catalogue — il repartait.
+
+   CE QUE FAIT CE SCRIPT
+   1. injecte dans le <nav> existant un menu « Boutique » déroulant, organisé en
+      CATÉGORIES, listant TOUS les produits vendables de la marque ;
+   2. masque la barre de menu quand on défile vers le bas, la fait revenir quand on
+      remonte (même comportement que le site maths, `bos-nav-shrink.js`) ;
+   3. ⭐ n'affiche JAMAIS un produit suspendu : la liste des non-livrables est lue
+      dans `window.BOS_NON_LIVRABLES`, exposée par bos-stripe.js. Un produit sans SKU
+      disparaît donc du menu tout seul, et réapparaît dès qu'il est re-sourcé.
+
+   Aucune retouche HTML des pages : tout est injecté en JS. Idempotent.
+*/
+(function () {
+  'use strict';
+
+  /* Catalogue par marque. Le domaine décide de la marque : un seul fichier sert
+     les 5 boutiques, ce qui évite d'avoir 5 versions à maintenir en parallèle. */
+  var CATALOGUE = {
+    'curiosaboutique.fr': [
+      { titre: 'Objets de curiosité', produits: [
+        { nom: 'Lampe Lune en lévitation', url: 'produit-globe-levitation.html', cle: 'lampe-lune-3d' },
+        { nom: 'Statuette égyptienne',     url: 'produit-statuette.html',        cle: 'statue-bastet' },
+        { nom: 'Sablier magnétique',       url: 'produit-sablier.html',          cle: 'sablier-magnetique' },
+        { nom: 'Boîte-énigme',             url: 'produit-boite-enigme.html',     cle: 'puzzle-box' } ] },
+      { titre: 'Papeterie', produits: [
+        { nom: 'Carnet de voyage',         url: 'produit-carnet.html',           cle: 'journal-infini' },
+        { nom: 'Carte du monde',           url: 'produit-carte.html',            cle: 'carte-du-monde-vintage' } ] }
+    ],
+    'serenlabboutique.fr': [
+      { titre: 'Sommeil', produits: [
+        { nom: 'Masque Bluetooth',         url: 'produit-masque-bluetooth.html', cle: 'masque-sommeil-bluetooth' },
+        { nom: 'Lampe de lecture',         url: 'produit-lampe-lecture.html',    cle: 'lampe-de-lecture-led' },
+        { nom: 'Oreiller rafraîchissant',  url: 'produit-oreiller-gel.html',     cle: 'oreiller-rafraichissant' },
+        { nom: 'Machine à sons blancs',    url: 'produit-machine-sons.html',     cle: 'machine-a-sons-blancs' } ] },
+      { titre: 'Soin & récupération', produits: [
+        { nom: 'Masque LED visage',        url: 'produit-masque-led.html',       cle: 'masque-led-visage' },
+        { nom: 'Masque gel yeux',          url: 'produit-masque-gel.html',       cle: 'masque-gel-yeux' },
+        { nom: 'Gua Sha & Roller',         url: 'produit-gua-sha.html',          cle: 'kit-gua-sha-premium' } ] }
+    ],
+    'technovaboutique.fr': [
+      { titre: 'Image & son', produits: [
+        { nom: 'Projecteur Wi-Fi',         url: 'produit-projecteur-wifi.html',  cle: 'mini-projecteur-portable' },
+        { nom: 'Enceinte à lévitation',    url: 'produit-enceinte-levitation.html', cle: 'enceinte-levitation-blanc' },
+        { nom: 'Micro-cravate sans fil',   url: 'produit-micro-cravate.html',    cle: 'microphone-pro-streaming' } ] },
+      { titre: 'Bureau connecté', produits: [
+        { nom: 'Lampe de bureau 3-en-1',   url: 'produit-lampe-bureau-3en1.html', cle: 'lampe-led-bureau' },
+        { nom: 'Chargeur sans fil 3-en-1', url: 'produit-chargeur-sans-fil.html', cle: 'chargeur-sans-fil-3-en-1' },
+        { nom: 'Ventilateur de bureau',    url: 'produit-ventilateur-bureau.html', cle: 'ventilateur-portable' },
+        { nom: 'Bundle écran + trépied',   url: 'produit-bundle-ecran-trepied.html', cle: 'bundle-ecran' } ] }
+    ],
+    'focuslabboutique.fr': [
+      { titre: 'Concentration', produits: [
+        { nom: 'Minuteur Pomodoro',        url: 'produit-minuteur-pomodoro.html', cle: 'timer-pomodoro' },
+        { nom: 'Barre lumineuse écran',    url: 'produit-barre-lumineuse.html',   cle: 'barre-lumineuse-ecran' },
+        { nom: 'Lampe LED de bureau',      url: 'produit-lampe-led.html',         cle: 'lampe-led-focus' } ] },
+      { titre: 'Poste de travail', produits: [
+        { nom: 'Tapis de bureau XXL',      url: 'produit-tapis-bureau.html',      cle: 'tapis-bureau-premium' },
+        { nom: 'Support ordinateur',       url: 'produit-support-laptop.html',    cle: 'support-pc-portable' },
+        { nom: 'Organiseur de câbles',     url: 'produit-organiseur-cables.html', cle: 'organisateur-cables' },
+        { nom: 'Tiroir sous-bureau',       url: 'produit-tiroir-invisible.html',  cle: 'tiroir-sous-bureau' } ] }
+    ]
+  };
+
+  function marque() {
+    var h = location.hostname.replace(/^www\./, '');
+    for (var d in CATALOGUE) if (h.indexOf(d.split('.')[0]) !== -1) return CATALOGUE[d];
+    return null;
+  }
+
+  /* Un produit suspendu (sans SKU fournisseur) ne doit pas apparaître au menu :
+     inutile d'envoyer un visiteur vers une page où il ne peut pas acheter. */
+  function estSuspendu(cle, url) {
+    var liste = window.BOS_NON_LIVRABLES || [];
+    var pages = window.BOS_PAGES_NON_LIVRABLES || [];
+    if (liste.indexOf(cle) !== -1) return true;
+    var f = (url || '').replace(/\.html?$/, '');
+    return pages.indexOf(f) !== -1;
+  }
+
+  function styles() {
+    if (document.getElementById('bos-nav-produits-css')) return;
+    var s = document.createElement('style');
+    s.id = 'bos-nav-produits-css';
+    s.textContent = [
+      '.header{transition:transform .28s ease}',
+      '.header.nav-hidden{transform:translateY(-100%)}',
+      '.bos-cat{position:relative}',
+      '.bos-cat>summary{list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:5px}',
+      '.bos-cat>summary::-webkit-details-marker{display:none}',
+      '.bos-cat>summary::after{content:"";border:4px solid transparent;border-top-color:currentColor;margin-top:3px}',
+      '.bos-cat[open]>summary::after{transform:rotate(180deg);margin-top:-3px}',
+      '.bos-cat-menu{position:absolute;top:100%;left:0;min-width:232px;z-index:120;',
+      ' background:#fff;border:1px solid rgba(0,0,0,.12);border-radius:10px;',
+      ' box-shadow:0 12px 30px rgba(0,0,0,.14);padding:8px;margin-top:8px}',
+      '.bos-cat-menu h4{margin:8px 10px 4px;font-size:.72rem;letter-spacing:.06em;',
+      ' text-transform:uppercase;opacity:.55}',
+      '.bos-cat-menu a{display:block;padding:8px 10px;border-radius:7px;text-decoration:none;',
+      ' font-size:.92rem;color:inherit;white-space:nowrap}',
+      '.bos-cat-menu a:hover{background:rgba(0,0,0,.06)}',
+      '@media(max-width:900px){.bos-cat-menu{position:static;box-shadow:none;border:0;',
+      ' min-width:0;padding:0;margin:4px 0 8px 10px}}'
+    ].join('');
+    document.head.appendChild(s);
+  }
+
+  function init() {
+    var cats = marque();
+    if (!cats) return;
+    var header = document.querySelector('header, .header');
+    if (!header || header.dataset.bosNavProduits) return;
+    var liste = header.querySelector('.nav-list, nav ul');
+    if (!liste) return;
+    header.dataset.bosNavProduits = '1';
+    styles();
+
+    var d = document.createElement('details');
+    d.className = 'bos-cat';
+    var s = document.createElement('summary');
+    s.className = 'nav-link';
+    s.textContent = 'Boutique';
+    d.appendChild(s);
+
+    var menu = document.createElement('div');
+    menu.className = 'bos-cat-menu';
+    var total = 0;
+    cats.forEach(function (c) {
+      var visibles = c.produits.filter(function (p) { return !estSuspendu(p.cle, p.url); });
+      if (!visibles.length) return;
+      var h4 = document.createElement('h4');
+      h4.textContent = c.titre;
+      menu.appendChild(h4);
+      visibles.forEach(function (p) {
+        var a = document.createElement('a');
+        a.href = p.url;
+        a.textContent = p.nom;
+        menu.appendChild(a);
+        total++;
+      });
+    });
+    if (!total) return;            // aucune raison d'ajouter un menu vide
+    d.appendChild(menu);
+
+    var li = document.createElement('li');
+    li.appendChild(d);
+    liste.insertBefore(li, liste.children[1] || null);
+
+    /* fermeture au clic extérieur et à Échap */
+    document.addEventListener('click', function (e) { if (!d.contains(e.target)) d.removeAttribute('open'); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') d.removeAttribute('open'); });
+
+    /* masquage au défilement (repris du site maths) */
+    var lastY = window.pageYOffset || 0, ticking = false;
+    var ZONE_HAUTE = 60, SEUIL = 6;
+    function update() {
+      ticking = false;
+      var y = window.pageYOffset || document.documentElement.scrollTop || 0;
+      if (y <= ZONE_HAUTE) { header.classList.remove('nav-hidden'); lastY = y; return; }
+      if (Math.abs(y - lastY) < SEUIL) return;
+      if (y > lastY) { header.classList.add('nav-hidden'); d.removeAttribute('open'); }
+      else header.classList.remove('nav-hidden');
+      lastY = y;
+    }
+    window.addEventListener('scroll', function () {
+      if (!ticking) { window.requestAnimationFrame(update); ticking = true; }
+    }, { passive: true });
+  }
+
+  /* bos-stripe.js expose BOS_NON_LIVRABLES : on lui laisse le temps de se charger,
+     sinon un produit suspendu s'afficherait quand même au premier rendu. */
+  function demarrer() { setTimeout(init, 350); }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', demarrer);
+  else demarrer();
+})();
