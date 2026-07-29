@@ -80,7 +80,7 @@
      produits qu'on ne sait pas expédier. La liste de bos-stripe.js reste
      prioritaire quand elle existe : une seule source de vérité à mettre à jour. */
   var SUSPENDUS_SECOURS = [
-    'masque-de-nuit-premium', 'machine-a-sons-blancs', 'enceinte-bluetooth-vintage',
+    'masque-de-nuit-premium', 'enceinte-bluetooth-vintage',
     'ecran-secondaire-portable', 'mini-imprimante-portable', 'bundle-ecran', 'lampe-led-focus', 'tiroir-sous-bureau', 'cible-de-precision', 'protege-tibias-carbone',
     'gants-gardien-pro', 'parachute-de-resistance', 'cones-de-marquage',
     'echelle-agilite', 'balle-de-reaction'
@@ -91,7 +91,7 @@
   var PAGES_RETIREES = ['produit-imprimante-thermique'];
 
   var PAGES_SECOURS = [
-    'produit-machine-sons', 'produit-masque-nuit', 'produit-imprimante-thermique',
+    'produit-masque-nuit', 'produit-imprimante-thermique',
     'produit-bundle-ecran-trepied', 'produit-tiroir-invisible',
     'produit-cible-precision', 'produit-protege-tibias', 'produit-gants-gardien',
     'produit-parachute', 'produit-cones', 'produit-echelle-agilite', 'produit-balle-reaction'
