@@ -28,8 +28,7 @@
      lampe-de-lecture-led, oreiller-rafraichissant, masque-bluetooth-duo,
      microphone-pro-streaming. Ils sont de nouveau achetables. */
   var BOS_NON_LIVRABLES = [
-    'masque-de-nuit-premium', 'machine-a-sons-blancs',
-        'enceinte-bluetooth-vintage',     'ecran-secondaire-portable', 'mini-imprimante-portable',
+    'masque-de-nuit-premium', 'enceinte-bluetooth-vintage',     'ecran-secondaire-portable', 'mini-imprimante-portable',
     'bundle-ecran',
     'lampe-led-focus', 'tiroir-sous-bureau',
     'cible-de-precision', 'protege-tibias-carbone', 'gants-gardien-pro',
@@ -41,7 +40,7 @@
      (ex. « produit-micro-cravate.html » = microphone-pro-streaming).
      On liste donc aussi les noms de fichiers réellement en ligne. */
   var BOS_PAGES_NON_LIVRABLES = [
-    'produit-machine-sons', 'produit-masque-nuit',
+    'produit-masque-nuit',
     'produit-imprimante-thermique',
     'produit-bundle-ecran-trepied',
     'produit-tiroir-invisible',
@@ -159,6 +158,7 @@
   setTimeout(bosVerifierVisibilite, 1200);
   setTimeout(bosVerifierVisibilite, 3000);
   setTimeout(bosVerifierVisibilite, 7000);
+
 
 
 
