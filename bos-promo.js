@@ -82,7 +82,7 @@
   if (document.getElementById('bos-nav-produits-js')) return;
   var s = document.createElement('script');
   s.id = 'bos-nav-produits-js';
-  s.src = 'bos-nav-produits.js?v=20260729b';
+  s.src = '/bos-nav-produits.js?v=20260729c';  /* ABSOLU : en relatif, les pages en sous-dossier recevaient un 404 et perdaient le menu */
   s.defer = true;
   (document.head || document.documentElement).appendChild(s);
 })();
