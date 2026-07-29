@@ -283,6 +283,7 @@
 
 
 
+
   // API VPS (Cloudflare Tunnel HTTPS → reverse proxy → Node Stripe)
   var STRIPE_API = 'https://api.tonargentexplique.fr/create-checkout-session';
 
