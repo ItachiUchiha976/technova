@@ -37,25 +37,32 @@
   var BOS_PAGES_RETIREES = ['produit-imprimante-thermique'];
 
   var BOS_NON_LIVRABLES = [
-    'masque-de-nuit-premium', 'enceinte-bluetooth-vintage',     'ecran-secondaire-portable', 'mini-imprimante-portable',
+    'balle-de-reaction',
     'bundle-ecran',
-    'lampe-led-focus', 'tiroir-sous-bureau',
-    'cible-de-precision', 'protege-tibias-carbone', 'gants-gardien-pro',
-    'parachute-de-resistance', 'cones-de-marquage', 'echelle-agilite',
-    'balle-de-reaction'
+    'cible-de-precision',
+    'cones-de-marquage',
+    'echelle-agilite',
+    'ecran-secondaire-portable',
+    'enceinte-bluetooth-vintage',
+    'gants-gardien-pro',
+    'lampe-led-focus',
+    'masque-de-nuit-premium',
+    'microphone-pro-streaming',
+    'mini-imprimante-portable',
+    'parachute-de-resistance',
+    'protege-tibias-carbone',
+    'tiroir-sous-bureau'
   ];
 
   /* Les URL des pages ne reprennent pas toujours la clé du mapping
      (ex. « produit-micro-cravate.html » = microphone-pro-streaming).
      On liste donc aussi les noms de fichiers réellement en ligne. */
   var BOS_PAGES_NON_LIVRABLES = [
-    'produit-masque-nuit',
-    'produit-imprimante-thermique',
     'produit-bundle-ecran-trepied',
-    'produit-tiroir-invisible',
-    'produit-cible-precision', 'produit-protege-tibias', 'produit-gants-gardien',
-    'produit-parachute', 'produit-cones', 'produit-echelle-agilite',
-    'produit-balle-reaction'
+    'produit-imprimante-thermique',
+    'produit-lampe-led',
+    'produit-micro-cravate',
+    'produit-tiroir-invisible'
   ];
 
   /* Exposé au reste de la page : le menu catalogue (bos-nav-produits.js) s'en sert
