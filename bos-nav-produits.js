@@ -175,32 +175,6 @@
     li.appendChild(d);
     liste.insertBefore(li, liste.children[1] || null);
 
-    /* La barre était déjà pleine : en y ajoutant « Boutique », les entrées produits
-       individuelles faisaient doublon et débordaient sur deux lignes (constaté en
-       capture le 29/07). Comme le menu contient TOUS les produits, on retire de la
-       barre les liens qui pointent vers une page produit — le menu devient la seule
-       porte d'entrée du catalogue, et la barre respire. */
-    var urlsDuMenu = {};
-    cats.forEach(function (c) { c.produits.forEach(function (p) { urlsDuMenu[p.url] = 1; }); });
-    Array.prototype.slice.call(liste.querySelectorAll('li')).forEach(function (item) {
-      if (item === li) return;
-      var liens = item.querySelectorAll('a');
-      if (!liens.length) return;
-      /* Certains <li> mêlent un lien produit ET un lien d'article (ex. « Masque
-         Bluetooth » + « Lumière bleue & sommeil »). On ne masque alors QUE le lien
-         produit : l'article reste accessible, et les deux libellés ne se collent plus. */
-      var produits = 0;
-      Array.prototype.forEach.call(liens, function (a) {
-        var href = (a.getAttribute('href') || '').split('/').pop();
-        if (urlsDuMenu[href]) { a.style.display = 'none'; produits++; }
-      });
-      if (produits === liens.length) item.style.display = 'none';
-    });
-
-    /* fermeture au clic extérieur et à Échap */
-    document.addEventListener('click', function (e) { if (!d.contains(e.target)) d.removeAttribute('open'); });
-    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') d.removeAttribute('open'); });
-
     /* ── MENU MOBILE ────────────────────────────────────────────────────────
        Les boutiques ont un panneau mobile distinct (`nav.mobile-menu`), qui ne
        listait que 4 produits sur 6 chez SérénLab — les deux re-sourcés du 29/07
@@ -237,6 +211,35 @@
         });
       });
     }
+
+
+    /* La barre était déjà pleine : en y ajoutant « Boutique », les entrées produits
+       individuelles faisaient doublon et débordaient sur deux lignes (constaté en
+       capture le 29/07). Comme le menu contient TOUS les produits, on retire de la
+       barre les liens qui pointent vers une page produit — le menu devient la seule
+       porte d'entrée du catalogue, et la barre respire. */
+    try {
+    var urlsDuMenu = {};
+    cats.forEach(function (c) { c.produits.forEach(function (p) { urlsDuMenu[p.url] = 1; }); });
+    Array.prototype.slice.call(liste.querySelectorAll('li')).forEach(function (item) {
+      if (item === li) return;
+      var liens = item.querySelectorAll('a');
+      if (!liens.length) return;
+      /* Certains <li> mêlent un lien produit ET un lien d'article (ex. « Masque
+         Bluetooth » + « Lumière bleue & sommeil »). On ne masque alors QUE le lien
+         produit : l'article reste accessible, et les deux libellés ne se collent plus. */
+      var produits = 0;
+      Array.prototype.forEach.call(liens, function (a) {
+        var href = (a.getAttribute('href') || '').split('/').pop();
+        if (urlsDuMenu[href]) { a.style.display = 'none'; produits++; }
+      });
+      if (produits === liens.length) item.style.display = 'none';
+    });
+    } catch (e) { /* le nettoyage est cosmétique : il ne doit jamais bloquer le reste */ }
+
+    /* fermeture au clic extérieur et à Échap */
+    document.addEventListener('click', function (e) { if (!d.contains(e.target)) d.removeAttribute('open'); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') d.removeAttribute('open'); });
 
     /* masquage au défilement (repris du site maths) */
     var lastY = window.pageYOffset || 0, ticking = false;
