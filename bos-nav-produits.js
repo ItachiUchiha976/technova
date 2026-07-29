@@ -73,11 +73,36 @@
     return null;
   }
 
+  /* Liste de SECOURS des produits suspendus.
+     Pourquoi la dupliquer ici : bos-stripe.js (qui expose window.BOS_NON_LIVRABLES)
+     n'est chargé que sur les pages AYANT un bouton d'achat — pas sur l'accueil ni
+     sur les pages annexes. Sans ce filet, le menu de l'accueil proposerait des
+     produits qu'on ne sait pas expédier. La liste de bos-stripe.js reste
+     prioritaire quand elle existe : une seule source de vérité à mettre à jour. */
+  var SUSPENDUS_SECOURS = [
+    'masque-de-nuit-premium', 'machine-a-sons-blancs', 'enceinte-bluetooth-vintage',
+    'ecran-secondaire-portable', 'mini-imprimante-portable', 'chargeur-sans-fil-3-en-1',
+    'ventilateur-portable', 'bundle-ecran', 'enceinte-levitation-blanc',
+    'enceinte-levitation-noir', 'lampe-led-focus', 'organisateur-cables',
+    'tiroir-sous-bureau', 'cible-de-precision', 'protege-tibias-carbone',
+    'gants-gardien-pro', 'parachute-de-resistance', 'cones-de-marquage',
+    'echelle-agilite', 'balle-de-reaction'
+  ];
+  var PAGES_SECOURS = [
+    'produit-machine-sons', 'produit-masque-nuit', 'produit-imprimante-thermique',
+    'produit-chargeur-sans-fil', 'produit-ventilateur-bureau', 'produit-enceinte-levitation',
+    'produit-bundle-ecran-trepied', 'produit-organiseur-cables', 'produit-tiroir-invisible',
+    'produit-cible-precision', 'produit-protege-tibias', 'produit-gants-gardien',
+    'produit-parachute', 'produit-cones', 'produit-echelle-agilite', 'produit-balle-reaction'
+  ];
+
   /* Un produit suspendu (sans SKU fournisseur) ne doit pas apparaître au menu :
      inutile d'envoyer un visiteur vers une page où il ne peut pas acheter. */
   function estSuspendu(cle, url) {
-    var liste = window.BOS_NON_LIVRABLES || [];
-    var pages = window.BOS_PAGES_NON_LIVRABLES || [];
+    var liste = (window.BOS_NON_LIVRABLES && window.BOS_NON_LIVRABLES.length)
+                ? window.BOS_NON_LIVRABLES : SUSPENDUS_SECOURS;
+    var pages = (window.BOS_PAGES_NON_LIVRABLES && window.BOS_PAGES_NON_LIVRABLES.length)
+                ? window.BOS_PAGES_NON_LIVRABLES : PAGES_SECOURS;
     if (liste.indexOf(cle) !== -1) return true;
     var f = (url || '').replace(/\.html?$/, '');
     return pages.indexOf(f) !== -1;
