@@ -33,36 +33,48 @@
      annonce même l'imprimante à 49 €), et l'API ne permet pas de les supprimer sur
      Pinterest/Instagram/TikTok. Plutôt qu'un cul-de-sac trompeur, on dit la vérité
      et on renvoie vers le reste de la boutique. */
-  var BOS_RETIRES = ['mini-imprimante-portable'];
-  var BOS_PAGES_RETIREES = ['produit-imprimante-thermique'];
+  var BOS_RETIRES = ['mini-imprimante-portable', 'buts-pop-up'];
+  var BOS_PAGES_RETIREES = ['produit-imprimante-thermique', 'produit-buts-pop-up'];
+
+  /* ⚠️ CAS PARTICULIER — une PAGE D'ACCUEIL peut être elle-même une page produit.
+     Trou découvert le 29/07/2026 : footperf.fr/ vendait les buts pop-up à 44,00 €
+     (panier + carte + PayPal) alors que le produit coûte 51,57 USD port compris et
+     n'a aucun SKU dans le mapping — donc vente à perte ET aucune commande
+     fournisseur n'aurait été créée. Le garde-fou ne voyait rien parce qu'il
+     identifie le produit par le NOM DE FICHIER, et l'accueil s'appelle « index ».
+     Un but de foot est encombrant : 40 USD de fret pour un article à 11 USD. Aucun
+     fournisseur ne changera cela, et c'est une commodité qu'on trouve en magasin
+     (§12.27) → produit retiré, la boutique garde son Guide Coupe du Monde à 4,90 €,
+     qui est digital, livré automatiquement et sans aucun coût fournisseur. */
+  var BOS_ACCUEILS_PRODUIT = { 'footperf.fr': 'buts-pop-up' };
 
   var BOS_NON_LIVRABLES = [
-    'balle-de-reaction',
+    'masque-de-nuit-premium', 'enceinte-bluetooth-vintage',     'ecran-secondaire-portable', 'mini-imprimante-portable',
     'bundle-ecran',
-    'cible-de-precision',
-    'cones-de-marquage',
-    'echelle-agilite',
-    'ecran-secondaire-portable',
-    'enceinte-bluetooth-vintage',
-    'gants-gardien-pro',
-    'lampe-led-focus',
-    'masque-de-nuit-premium',
-    'microphone-pro-streaming',
-    'mini-imprimante-portable',
-    'parachute-de-resistance',
-    'protege-tibias-carbone',
-    'tiroir-sous-bureau'
+    'lampe-led-focus', 'tiroir-sous-bureau',
+    'cible-de-precision', 'protege-tibias-carbone', 'gants-gardien-pro',
+    'parachute-de-resistance', 'cones-de-marquage', 'echelle-agilite',
+    'balle-de-reaction'
   ];
 
   /* Les URL des pages ne reprennent pas toujours la clé du mapping
      (ex. « produit-micro-cravate.html » = microphone-pro-streaming).
      On liste donc aussi les noms de fichiers réellement en ligne. */
   var BOS_PAGES_NON_LIVRABLES = [
-    'produit-bundle-ecran-trepied',
-    'produit-imprimante-thermique',
+    /* ⚠️ Trouvé le 29/07/2026 : cette page était ACHETABLE à 75 € alors que sa clé
+       de mapping (« lampe-led-focus ») n'a aucun SKU fournisseur. Le garde-fou ne
+       la voyait pas parce qu'il déduit la clé du nom de fichier, et le fichier
+       s'appelle « produit-lampe-led » — la correspondance ne tombait pas juste.
+       Leçon : croiser page ↔ mapping par l'URL réelle, jamais par ressemblance
+       de nom. À réactiver dès que son SKU est identifié. */
     'produit-lampe-led',
-    'produit-micro-cravate',
-    'produit-tiroir-invisible'
+    'produit-masque-nuit',
+    'produit-imprimante-thermique',
+    'produit-bundle-ecran-trepied',
+    'produit-tiroir-invisible',
+    'produit-cible-precision', 'produit-protege-tibias', 'produit-gants-gardien',
+    'produit-parachute', 'produit-cones', 'produit-echelle-agilite',
+    'produit-balle-reaction'
   ];
 
   /* Exposé au reste de la page : le menu catalogue (bos-nav-produits.js) s'en sert
@@ -92,7 +104,17 @@
     return /^[a-z0-9.-]+\.[a-z]{2,}$/.test(h) ? 'contact@' + h : 'contact@' + h;
   }
 
+  /* Clé produit de l'accueil, quand l'accueil EST une page produit (cf. FootPerf). */
+  function bosProduitDAccueil() {
+    var f = location.pathname.replace(/\.html?$/, '').split('/').pop() || '';
+    if (f && f !== 'index') return null;
+    return BOS_ACCUEILS_PRODUIT[location.hostname.replace(/^www\./, '')] || null;
+  }
+
   function bosPageNonLivrable() {
+    var acc = bosProduitDAccueil();
+    if (acc) return BOS_RETIRES.indexOf(acc) !== -1 ||
+                    BOS_NON_LIVRABLES.indexOf(acc) !== -1;
     var f = location.pathname.replace(/\.html?$/, '').split('/').pop() || '';
     if (BOS_PAGES_NON_LIVRABLES.indexOf(f) !== -1) return true;
     var k = f.replace(/^produit-/, '');
@@ -122,11 +144,30 @@
         el.style.display = 'none';
       });
     });
+    /* ⚠️ Ne JAMAIS couper le paiement d'un produit DIGITAL au passage.
+       Sur footperf.fr, l'accueil vend à la fois les buts (retirés) et le Guide
+       Coupe du Monde à 4,90 € — qui est livré par token, sans fournisseur, et
+       constitue le seul produit rentable de cette boutique. Son bouton s'appelle
+       « Payer par carte bancaire » : le filtre générique l'aurait masqué, tuant
+       la seule vente possible de la page. On remonte donc quelques niveaux pour
+       reconnaître un bloc digital et l'épargner. */
+    function bosEstDigital(el) {
+      var n = el, i = 0;
+      while (n && i++ < 5) {
+        if (n.getAttribute && n.getAttribute('data-bos-product-id')) return true;
+        var t = (n.textContent || '').toLowerCase();
+        if (/guide|pdf|t[ée]l[ée]charger|ebook|quiz/.test(t) && t.length < 700) return true;
+        n = n.parentElement;
+      }
+      return false;
+    }
+
     // tout bouton dont le texte parle de payer / panier / acheter
     Array.prototype.forEach.call(document.querySelectorAll('button, a'), function (el) {
       var t = (el.textContent || '').toLowerCase();
       if (/payer|ajouter au panier|acheter|commander|paypal/.test(t) &&
           !/retour|continuer mes achats|mentions/.test(t)) {
+        if (bosEstDigital(el)) return;
         if (vus.indexOf(el) === -1) { vus.push(el); el.style.display = 'none'; }
       }
     });
@@ -138,15 +179,24 @@
       box.style.cssText = 'margin:24px 0;padding:18px 20px;border:1px solid #e2c391;' +
         'background:#fdf6e9;border-radius:10px;color:#5b4a2a;font-size:15px;line-height:1.55;max-width:640px';
       var f = location.pathname.replace(/\.html?$/, '').split('/').pop() || '';
+      var acc = bosProduitDAccueil();
       var definitif = BOS_PAGES_RETIREES.indexOf(f) !== -1 ||
-                      BOS_RETIRES.indexOf(f.replace(/^produit-/, '')) !== -1;
+                      BOS_RETIRES.indexOf(f.replace(/^produit-/, '')) !== -1 ||
+                      (acc && BOS_RETIRES.indexOf(acc) !== -1);
       if (definitif) {
+        /* Sur un accueil-produit, « voir le reste de la boutique » renverrait sur
+           la page où l'on se trouve déjà. On propose donc une vraie alternative :
+           chez FootPerf, le guide Coupe du Monde — digital, livré tout de suite. */
+        var suite = acc
+          ? '<a href="coupe-du-monde-2026.html" style="color:#8a6d3b;font-weight:600">' +
+            'Découvrir le Guide &amp; Grand Quiz de la Coupe du Monde 2026 — 4,90 € →</a>'
+          : '<a href="index.html" style="color:#8a6d3b;font-weight:600">' +
+            'Voir le reste de la boutique →</a>';
         box.innerHTML = '<strong style="display:block;margin-bottom:6px;font-size:16px">' +
           "Ce produit n'est plus proposé</strong>" +
           'Nous avons retiré cet article de la boutique : nous ne pouvions plus le proposer ' +
           'au prix annoncé sans rogner sur la qualité ou les délais. Nous préférons vous le ' +
-          'dire franchement plutôt que de vous faire attendre.<br><br>' +
-          '<a href="index.html" style="color:#8a6d3b;font-weight:600">Voir le reste de la boutique →</a>';
+          'dire franchement plutôt que de vous faire attendre.<br><br>' + suite;
         var ancre0 = document.querySelector('h1');
         if (ancre0 && ancre0.parentNode) ancre0.parentNode.insertBefore(box, ancre0.nextSibling);
         else document.body.insertBefore(box, document.body.firstChild);
@@ -189,6 +239,7 @@
   setTimeout(bosVerifierVisibilite, 1200);
   setTimeout(bosVerifierVisibilite, 3000);
   setTimeout(bosVerifierVisibilite, 7000);
+
 
 
 
