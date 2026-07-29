@@ -990,343 +990,112 @@
   }, true);
 
   /* Le panier est souvent rendu par JS après coup : on repasse plusieurs fois. */
-  setTimeout(bosPrecocherCGV, 400);
-  setTimeout(bosPrecocherCGV, 1500);
-  setTimeout(bosPrecocherCGV, 4000);
-  setTimeout(bosPurgerPanier, 900);
-  setTimeout(bosPurgerPanier, 3000);
   /* Après le garde-fou : on n'ajoute PayPal que si l'achat est resté ouvert. */
-  setTimeout(bosAjouterPayPalFiche, 1800);
-  setTimeout(bosAjouterPayPalFiche, 4500);
-  setTimeout(bosAjouterPayPalFiche, 8000);
   /* Après le menu (qui expose le catalogue) et après le garde-fou. */
-  setTimeout(bosEncartAccueil, 1500);
-  setTimeout(bosEncartAccueil, 4000);
-  setTimeout(bosEncartAccueil, 8000);
-  setTimeout(bosCompleterCommande, 3200);
-  setTimeout(bosCompleterCommande, 7000);
-  setTimeout(bosCompleterCommande, 10500);
   document.addEventListener('click', function () {
-    setTimeout(bosPrecocherCGV, 250);
-    setTimeout(bosPurgerPanier, 250);
   }, true);
 
   /* Le panier est souvent rendu par JS après coup : on repasse plusieurs fois. */
-  setTimeout(bosPrecocherCGV, 400);
-  setTimeout(bosPrecocherCGV, 1500);
-  setTimeout(bosPrecocherCGV, 4000);
-  setTimeout(bosPurgerPanier, 900);
-  setTimeout(bosPurgerPanier, 3000);
   /* Après le garde-fou : on n'ajoute PayPal que si l'achat est resté ouvert. */
-  setTimeout(bosAjouterPayPalFiche, 1800);
-  setTimeout(bosAjouterPayPalFiche, 4500);
-  setTimeout(bosAjouterPayPalFiche, 8000);
   /* Après le menu (qui expose le catalogue) et après le garde-fou. */
-  setTimeout(bosEncartAccueil, 1500);
-  setTimeout(bosEncartAccueil, 4000);
-  setTimeout(bosEncartAccueil, 8000);
-  setTimeout(bosCompleterCommande, 3200);
-  setTimeout(bosCompleterCommande, 7000);
-  setTimeout(bosCompleterCommande, 10500);
   document.addEventListener('click', function () {
-    setTimeout(bosPrecocherCGV, 250);
-    setTimeout(bosPurgerPanier, 250);
   }, true);
 
   /* Le panier est souvent rendu par JS après coup : on repasse plusieurs fois. */
-  setTimeout(bosPrecocherCGV, 400);
-  setTimeout(bosPrecocherCGV, 1500);
-  setTimeout(bosPrecocherCGV, 4000);
-  setTimeout(bosPurgerPanier, 900);
-  setTimeout(bosPurgerPanier, 3000);
   /* Après le garde-fou : on n'ajoute PayPal que si l'achat est resté ouvert. */
-  setTimeout(bosAjouterPayPalFiche, 1800);
-  setTimeout(bosAjouterPayPalFiche, 4500);
-  setTimeout(bosAjouterPayPalFiche, 8000);
   /* Après le menu (qui expose le catalogue) et après le garde-fou. */
-  setTimeout(bosEncartAccueil, 1500);
-  setTimeout(bosEncartAccueil, 4000);
-  setTimeout(bosEncartAccueil, 8000);
-  setTimeout(bosCompleterCommande, 3200);
-  setTimeout(bosCompleterCommande, 7000);
-  setTimeout(bosCompleterCommande, 10500);
   document.addEventListener('click', function () {
-    setTimeout(bosPrecocherCGV, 250);
-    setTimeout(bosPurgerPanier, 250);
   }, true);
 
   /* Le panier est souvent rendu par JS après coup : on repasse plusieurs fois. */
-  setTimeout(bosPrecocherCGV, 400);
-  setTimeout(bosPrecocherCGV, 1500);
-  setTimeout(bosPrecocherCGV, 4000);
-  setTimeout(bosPurgerPanier, 900);
-  setTimeout(bosPurgerPanier, 3000);
   /* Après le garde-fou : on n'ajoute PayPal que si l'achat est resté ouvert. */
-  setTimeout(bosAjouterPayPalFiche, 1800);
-  setTimeout(bosAjouterPayPalFiche, 4500);
-  setTimeout(bosAjouterPayPalFiche, 8000);
-  /* Après le menu (qui expose le catalogue) et après le garde-fou. */
-  setTimeout(bosEncartAccueil, 1500);
-  setTimeout(bosEncartAccueil, 4000);
-  setTimeout(bosEncartAccueil, 8000);
-  setTimeout(bosCompleterCommande, 2500);
-  setTimeout(bosCompleterCommande, 6000);
-  setTimeout(bosCompleterCommande, 9500);
-  document.addEventListener('click', function () {
-    setTimeout(bosPrecocherCGV, 250);
-    setTimeout(bosPurgerPanier, 250);
-  }, true);
-
-  /* Le panier est souvent rendu par JS après coup : on repasse plusieurs fois. */
-  setTimeout(bosPrecocherCGV, 400);
-  setTimeout(bosPrecocherCGV, 1500);
-  setTimeout(bosPrecocherCGV, 4000);
-  setTimeout(bosPurgerPanier, 900);
-  setTimeout(bosPurgerPanier, 3000);
-  /* Après le garde-fou : on n'ajoute PayPal que si l'achat est resté ouvert. */
-  setTimeout(bosAjouterPayPalFiche, 1800);
-  setTimeout(bosAjouterPayPalFiche, 4500);
-  setTimeout(bosAjouterPayPalFiche, 8000);
   /* Après le menu (qui expose le catalogue) et après le garde-fou. */
   setTimeout(bosCompleterCommande, 2500);
   setTimeout(bosCompleterCommande, 6000);
   setTimeout(bosCompleterCommande, 9500);
   document.addEventListener('click', function () {
-    setTimeout(bosPrecocherCGV, 250);
-    setTimeout(bosPurgerPanier, 250);
   }, true);
 
   /* Le panier est souvent rendu par JS après coup : on repasse plusieurs fois. */
-  setTimeout(bosPrecocherCGV, 400);
-  setTimeout(bosPrecocherCGV, 1500);
-  setTimeout(bosPrecocherCGV, 4000);
-  setTimeout(bosPurgerPanier, 900);
-  setTimeout(bosPurgerPanier, 3000);
   /* Après le garde-fou : on n'ajoute PayPal que si l'achat est resté ouvert. */
-  setTimeout(bosAjouterPayPalFiche, 1800);
-  setTimeout(bosAjouterPayPalFiche, 4500);
-  setTimeout(bosAjouterPayPalFiche, 8000);
   /* Après le menu (qui expose le catalogue) et après le garde-fou. */
-  setTimeout(bosCompleterCommande, 2500);
-  setTimeout(bosCompleterCommande, 6000);
-  setTimeout(bosCompleterCommande, 9500);
   document.addEventListener('click', function () {
-    setTimeout(bosPrecocherCGV, 250);
-    setTimeout(bosPurgerPanier, 250);
   }, true);
 
   /* Le panier est souvent rendu par JS après coup : on repasse plusieurs fois. */
-  setTimeout(bosPrecocherCGV, 400);
-  setTimeout(bosPrecocherCGV, 1500);
-  setTimeout(bosPrecocherCGV, 4000);
-  setTimeout(bosPurgerPanier, 900);
-  setTimeout(bosPurgerPanier, 3000);
   /* Après le garde-fou : on n'ajoute PayPal que si l'achat est resté ouvert. */
-  setTimeout(bosAjouterPayPalFiche, 1800);
-  setTimeout(bosAjouterPayPalFiche, 4500);
-  setTimeout(bosAjouterPayPalFiche, 8000);
   /* Après le menu (qui expose le catalogue) et après le garde-fou. */
-  setTimeout(bosCompleterCommande, 2500);
-  setTimeout(bosCompleterCommande, 6000);
-  setTimeout(bosCompleterCommande, 9500);
   document.addEventListener('click', function () {
-    setTimeout(bosPrecocherCGV, 250);
-    setTimeout(bosPurgerPanier, 250);
   }, true);
 
   /* Le panier est souvent rendu par JS après coup : on repasse plusieurs fois. */
-  setTimeout(bosPrecocherCGV, 400);
-  setTimeout(bosPrecocherCGV, 1500);
-  setTimeout(bosPrecocherCGV, 4000);
-  setTimeout(bosPurgerPanier, 900);
-  setTimeout(bosPurgerPanier, 3000);
   /* Après le garde-fou : on n'ajoute PayPal que si l'achat est resté ouvert. */
-  setTimeout(bosAjouterPayPalFiche, 1800);
-  setTimeout(bosAjouterPayPalFiche, 4500);
-  setTimeout(bosAjouterPayPalFiche, 8000);
   /* Après le menu (qui expose le catalogue) et après le garde-fou. */
-  setTimeout(bosCompleterCommande, 2500);
-  setTimeout(bosCompleterCommande, 6000);
-  setTimeout(bosCompleterCommande, 9500);
   document.addEventListener('click', function () {
-    setTimeout(bosPrecocherCGV, 250);
-    setTimeout(bosPurgerPanier, 250);
   }, true);
 
   /* Le panier est souvent rendu par JS après coup : on repasse plusieurs fois. */
-  setTimeout(bosPrecocherCGV, 400);
-  setTimeout(bosPrecocherCGV, 1500);
-  setTimeout(bosPrecocherCGV, 4000);
-  setTimeout(bosPurgerPanier, 900);
-  setTimeout(bosPurgerPanier, 3000);
   /* Après le garde-fou : on n'ajoute PayPal que si l'achat est resté ouvert. */
-  setTimeout(bosAjouterPayPalFiche, 1800);
-  setTimeout(bosAjouterPayPalFiche, 4500);
-  setTimeout(bosAjouterPayPalFiche, 8000);
   /* Après le menu (qui expose le catalogue) et après le garde-fou. */
-  setTimeout(bosCompleterCommande, 2500);
-  setTimeout(bosCompleterCommande, 6000);
-  setTimeout(bosCompleterCommande, 9500);
   document.addEventListener('click', function () {
-    setTimeout(bosPrecocherCGV, 250);
-    setTimeout(bosPurgerPanier, 250);
   }, true);
 
   /* Le panier est souvent rendu par JS après coup : on repasse plusieurs fois. */
-  setTimeout(bosPrecocherCGV, 400);
-  setTimeout(bosPrecocherCGV, 1500);
-  setTimeout(bosPrecocherCGV, 4000);
-  setTimeout(bosPurgerPanier, 900);
-  setTimeout(bosPurgerPanier, 3000);
   /* Après le garde-fou : on n'ajoute PayPal que si l'achat est resté ouvert. */
-  setTimeout(bosAjouterPayPalFiche, 1800);
-  setTimeout(bosAjouterPayPalFiche, 4500);
-  setTimeout(bosAjouterPayPalFiche, 8000);
   /* Après le menu (qui expose le catalogue) et après le garde-fou. */
-  setTimeout(bosCompleterCommande, 2500);
-  setTimeout(bosCompleterCommande, 6000);
-  setTimeout(bosCompleterCommande, 9500);
   document.addEventListener('click', function () {
-    setTimeout(bosPrecocherCGV, 250);
-    setTimeout(bosPurgerPanier, 250);
   }, true);
 
   /* Le panier est souvent rendu par JS après coup : on repasse plusieurs fois. */
-  setTimeout(bosPrecocherCGV, 400);
-  setTimeout(bosPrecocherCGV, 1500);
-  setTimeout(bosPrecocherCGV, 4000);
-  setTimeout(bosPurgerPanier, 900);
-  setTimeout(bosPurgerPanier, 3000);
   /* Après le garde-fou : on n'ajoute PayPal que si l'achat est resté ouvert. */
-  setTimeout(bosAjouterPayPalFiche, 1800);
-  setTimeout(bosAjouterPayPalFiche, 4500);
-  setTimeout(bosAjouterPayPalFiche, 8000);
   /* Après le menu (qui expose le catalogue) et après le garde-fou. */
-  setTimeout(bosCompleterCommande, 2500);
-  setTimeout(bosCompleterCommande, 6000);
-  setTimeout(bosCompleterCommande, 9500);
   document.addEventListener('click', function () {
-    setTimeout(bosPrecocherCGV, 250);
-    setTimeout(bosPurgerPanier, 250);
   }, true);
 
   /* Le panier est souvent rendu par JS après coup : on repasse plusieurs fois. */
-  setTimeout(bosPrecocherCGV, 400);
-  setTimeout(bosPrecocherCGV, 1500);
-  setTimeout(bosPrecocherCGV, 4000);
-  setTimeout(bosPurgerPanier, 900);
-  setTimeout(bosPurgerPanier, 3000);
   /* Après le garde-fou : on n'ajoute PayPal que si l'achat est resté ouvert. */
-  setTimeout(bosAjouterPayPalFiche, 1800);
-  setTimeout(bosAjouterPayPalFiche, 4500);
-  setTimeout(bosAjouterPayPalFiche, 8000);
   /* Après le menu (qui expose le catalogue) et après le garde-fou. */
-  setTimeout(bosCompleterCommande, 2500);
-  setTimeout(bosCompleterCommande, 6000);
-  setTimeout(bosCompleterCommande, 9500);
   document.addEventListener('click', function () {
-    setTimeout(bosPrecocherCGV, 250);
-    setTimeout(bosPurgerPanier, 250);
   }, true);
 
   /* Le panier est souvent rendu par JS après coup : on repasse plusieurs fois. */
-  setTimeout(bosPrecocherCGV, 400);
-  setTimeout(bosPrecocherCGV, 1500);
-  setTimeout(bosPrecocherCGV, 4000);
-  setTimeout(bosPurgerPanier, 900);
-  setTimeout(bosPurgerPanier, 3000);
   /* Après le garde-fou : on n'ajoute PayPal que si l'achat est resté ouvert. */
-  setTimeout(bosAjouterPayPalFiche, 1800);
-  setTimeout(bosAjouterPayPalFiche, 4500);
-  setTimeout(bosAjouterPayPalFiche, 8000);
   /* Après le menu (qui expose le catalogue) et après le garde-fou. */
-  setTimeout(bosCompleterCommande, 2500);
-  setTimeout(bosCompleterCommande, 6000);
-  setTimeout(bosCompleterCommande, 9500);
   document.addEventListener('click', function () {
-    setTimeout(bosPrecocherCGV, 250);
-    setTimeout(bosPurgerPanier, 250);
   }, true);
 
   /* Le panier est souvent rendu par JS après coup : on repasse plusieurs fois. */
-  setTimeout(bosPrecocherCGV, 400);
-  setTimeout(bosPrecocherCGV, 1500);
-  setTimeout(bosPrecocherCGV, 4000);
-  setTimeout(bosPurgerPanier, 900);
-  setTimeout(bosPurgerPanier, 3000);
   /* Après le garde-fou : on n'ajoute PayPal que si l'achat est resté ouvert. */
-  setTimeout(bosAjouterPayPalFiche, 1800);
-  setTimeout(bosAjouterPayPalFiche, 4500);
-  setTimeout(bosAjouterPayPalFiche, 8000);
   /* Après le menu (qui expose le catalogue) et après le garde-fou. */
-  setTimeout(bosCompleterCommande, 2500);
-  setTimeout(bosCompleterCommande, 6000);
-  setTimeout(bosCompleterCommande, 9500);
   document.addEventListener('click', function () {
-    setTimeout(bosPrecocherCGV, 250);
-    setTimeout(bosPurgerPanier, 250);
   }, true);
 
   /* Le panier est souvent rendu par JS après coup : on repasse plusieurs fois. */
-  setTimeout(bosPrecocherCGV, 400);
-  setTimeout(bosPrecocherCGV, 1500);
-  setTimeout(bosPrecocherCGV, 4000);
-  setTimeout(bosPurgerPanier, 900);
-  setTimeout(bosPurgerPanier, 3000);
   /* Après le garde-fou : on n'ajoute PayPal que si l'achat est resté ouvert. */
-  setTimeout(bosAjouterPayPalFiche, 1800);
-  setTimeout(bosAjouterPayPalFiche, 4500);
-  setTimeout(bosAjouterPayPalFiche, 8000);
   /* Après le menu (qui expose le catalogue) et après le garde-fou. */
-  setTimeout(bosCompleterCommande, 2500);
-  setTimeout(bosCompleterCommande, 6000);
-  setTimeout(bosCompleterCommande, 9500);
   document.addEventListener('click', function () {
-    setTimeout(bosPrecocherCGV, 250);
-    setTimeout(bosPurgerPanier, 250);
   }, true);
 
   /* Le panier est souvent rendu par JS après coup : on repasse plusieurs fois. */
-  setTimeout(bosPrecocherCGV, 400);
-  setTimeout(bosPrecocherCGV, 1500);
-  setTimeout(bosPrecocherCGV, 4000);
-  setTimeout(bosPurgerPanier, 900);
-  setTimeout(bosPurgerPanier, 3000);
   /* Après le garde-fou : on n'ajoute PayPal que si l'achat est resté ouvert. */
-  setTimeout(bosAjouterPayPalFiche, 1800);
-  setTimeout(bosAjouterPayPalFiche, 4500);
-  setTimeout(bosAjouterPayPalFiche, 8000);
+  /* Après le menu (qui expose le catalogue) et après le garde-fou. */
   document.addEventListener('click', function () {
-    setTimeout(bosPrecocherCGV, 250);
-    setTimeout(bosPurgerPanier, 250);
   }, true);
 
   /* Le panier est souvent rendu par JS après coup : on repasse plusieurs fois. */
-  setTimeout(bosPrecocherCGV, 400);
-  setTimeout(bosPrecocherCGV, 1500);
-  setTimeout(bosPrecocherCGV, 4000);
-  setTimeout(bosPurgerPanier, 900);
-  setTimeout(bosPurgerPanier, 3000);
+  /* Après le garde-fou : on n'ajoute PayPal que si l'achat est resté ouvert. */
   document.addEventListener('click', function () {
-    setTimeout(bosPrecocherCGV, 250);
-    setTimeout(bosPurgerPanier, 250);
   }, true);
 
   /* Le panier est souvent rendu par JS après coup : on repasse plusieurs fois. */
-  setTimeout(bosPrecocherCGV, 400);
-  setTimeout(bosPrecocherCGV, 1500);
-  setTimeout(bosPrecocherCGV, 4000);
-  setTimeout(bosPurgerPanier, 900);
-  setTimeout(bosPurgerPanier, 3000);
   document.addEventListener('click', function () {
-    setTimeout(bosPrecocherCGV, 250);
-    setTimeout(bosPurgerPanier, 250);
   }, true);
 
   /* Le panier est souvent rendu par JS après coup : on repasse plusieurs fois. */
-  setTimeout(bosPrecocherCGV, 400);
-  setTimeout(bosPrecocherCGV, 1500);
-  setTimeout(bosPrecocherCGV, 4000);
+  document.addEventListener('click', function () {
+  }, true);
+
+  /* Le panier est souvent rendu par JS après coup : on repasse plusieurs fois. */
   document.addEventListener('click', function () { setTimeout(bosPrecocherCGV, 250); }, true);
 
 
