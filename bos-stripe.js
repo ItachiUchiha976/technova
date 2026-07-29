@@ -518,7 +518,7 @@
       '<button type="button" id="bos-qte-plus" aria-label="Augmenter la quantité" style="' + bStyle + '">+</button>';
     /* On choisit la quantité AVANT d'ajouter au panier : le sélecteur se place
        donc au-dessus du premier bouton d'action, pas entre deux boutons. */
-    var premier = document.querySelector('#add-to-cart-btn');
+    var premier = bosBoutonPanier();
     var cible = (premier && premier.offsetParent) ? premier : ancre;
     cible.parentNode.insertBefore(box, cible);
 
@@ -549,7 +549,7 @@
       pp.innerHTML = '🅿 Payer avec PayPal — ' + bosEuros(total) +
         (total < prix * qte ? ' <span style="font-weight:600;opacity:.75">(−10 % inclus)</span>' : '');
     }
-    var atc = document.querySelector('#add-to-cart-btn');
+    var atc = bosBoutonPanier();
     if (atc) {
       if (!atc.getAttribute('data-bos-libelle')) {
         atc.setAttribute('data-bos-libelle', atc.textContent || 'Ajouter au panier');
@@ -595,8 +595,9 @@
       var qte = bosQuantite();
       /* Au-delà d'un exemplaire, on passe par le panier : son calcul de remise
          est déjà éprouvé et sert de source unique. Mieux vaut un clic de plus
-         qu'un montant faux. */
-      if (qte > 1) { bosVersPanier(qte); return; }
+         qu'un montant faux. Si le panier n'a pas pu être rempli, on retombe
+         sur l'achat direct d'un exemplaire plutôt que de perdre la vente. */
+      if (qte > 1 && bosVersPanier(qte)) { return; }
       if (typeof window.bosBuyNow === 'function') {
         window.bosBuyNow(String(nom).trim().slice(0, 120), bosTotal(prix, 1), cle);
       } else {
@@ -609,16 +610,19 @@
     if (!cb.getAttribute('data-bos-qte-branche')) {
       cb.setAttribute('data-bos-qte-branche', '1');
       cb.addEventListener('click', function (ev) {
-        if (bosQuantite() > 1) {
-          ev.preventDefault();
-          ev.stopImmediatePropagation();
-          bosVersPanier(bosQuantite());
-        }
+        if (bosQuantite() <= 1) return;
+        /* On n'intercepte QUE si l'on sait remplir le panier. Sinon on laisse
+           le paiement direct suivre son cours : sans ce garde-fou, le client
+           atterrissait sur un panier vide et la vente était perdue. */
+        if (!bosBoutonPanier()) return;
+        ev.preventDefault();
+        ev.stopImmediatePropagation();
+        bosVersPanier(bosQuantite());
       }, true);
     }
 
     /* « Ajouter au panier » doit ajouter la quantité choisie, pas une unité. */
-    var atc = document.querySelector('#add-to-cart-btn');
+    var atc = bosBoutonPanier();
     if (atc && !atc.getAttribute('data-bos-qte-branche')) {
       atc.setAttribute('data-bos-qte-branche', '1');
       atc.addEventListener('click', function () {
@@ -630,24 +634,50 @@
     bosRafraichirMontants(prix);
   }
 
-  /* Ajoute un exemplaire en réutilisant le bouton d'origine de la page : on ne
-     réimplémente pas addToCart, dont la signature varie d'une boutique à l'autre. */
-  function bosAjouterUneFois() {
-    var b = document.querySelector('#add-to-cart-btn');
-    if (!b) return;
-    var id = b.getAttribute('data-product-id');
-    var nom = b.getAttribute('data-product-name');
-    var prix = parseFloat(b.getAttribute('data-product-price'));
-    var img = b.getAttribute('data-img-class') || '';
-    if (typeof window.addToCart === 'function' && id) {
-      window.addToCart(id, nom, prix, img);
+  /* Le bouton « ajouter au panier » de la page, quel que soit son habillage.
+     ⚠️ Les 5 boutiques ne le nomment PAS pareil : FocusLab utilise l'id
+     `#add-to-cart-btn`, SérénLab et TechNova une CLASSE homonyme
+     `.add-to-cart-btn`, Curiosa `.btn-addcart` + `[data-add-cart]`. */
+  function bosBoutonPanier() {
+    var sels = ['#add-to-cart-btn', '.add-to-cart-btn', '.btn-addcart',
+                '[data-add-cart]', '.add-to-cart', '.btn-add-cart'];
+    for (var i = 0; i < sels.length; i++) {
+      var e = document.querySelector(sels[i]);
+      if (e && e.offsetParent) return e;
     }
+    return null;
   }
 
+  /* Ajoute UN exemplaire en CLIQUANT le bouton d'origine.
+     ⚠️ Correctif du 29/07/2026 — régression que j'avais introduite le matin
+     même : la version précédente appelait window.addToCart(id, nom, prix, img)
+     après avoir cherché `#add-to-cart-btn`. Deux défauts, chacun suffisant :
+       1. cet id n'existe que sur FocusLab → sur 24 pages, la fonction sortait
+          aussitôt et le client était renvoyé vers un panier VIDE ;
+       2. la signature d'addToCart diffère par boutique — Curiosa
+          (id,name,price,qty), SérénLab (id,name,price,emoji), TechNova
+          (productId,qty) — donc même avec le bon id, le 4ᵉ argument aurait
+          corrompu la quantité.
+     Cliquer le bouton natif laisse chaque page appliquer SA propre logique :
+     c'est la seule approche qui vaille sur cinq balisages différents. */
+  function bosAjouterUneFois() {
+    var b = bosBoutonPanier();
+    if (!b) return false;
+    b.click();
+    return true;
+  }
+
+  /* ⛔ NE JAMAIS envoyer le client vers un panier qu'on n'a pas réussi à
+     remplir : il croirait avoir tout perdu et partirait. Si l'ajout échoue,
+     on laisse le paiement direct se faire (un exemplaire vaut mieux que zéro)
+     et on le dit au client. */
   function bosVersPanier(qte) {
-    for (var i = 0; i < qte; i++) { bosAjouterUneFois(); }
+    var ajoutes = 0;
+    for (var i = 0; i < qte; i++) { if (bosAjouterUneFois()) ajoutes++; }
+    if (!ajoutes) return false;
     if (typeof window.openCart === 'function') { window.openCart(); }
     else { location.href = 'panier.html'; }
+    return true;
   }
 
   /* bos-paypal.js porte bosBuyNow() ; il n'était chargé que par la page panier.
@@ -738,6 +768,25 @@
   setTimeout(bosVerifierVisibilite, 1200);
   setTimeout(bosVerifierVisibilite, 3000);
   setTimeout(bosVerifierVisibilite, 7000);
+  /* Le panier est souvent rendu par JS après coup : on repasse plusieurs fois. */
+  setTimeout(bosPrecocherCGV, 400);
+  setTimeout(bosPrecocherCGV, 1500);
+  setTimeout(bosPrecocherCGV, 4000);
+  setTimeout(bosPurgerPanier, 900);
+  setTimeout(bosPurgerPanier, 3000);
+  /* Après le garde-fou : on n'ajoute PayPal que si l'achat est resté ouvert. */
+  setTimeout(bosAjouterPayPalFiche, 1800);
+  setTimeout(bosAjouterPayPalFiche, 4500);
+  setTimeout(bosAjouterPayPalFiche, 8000);
+  /* Après le menu (qui expose le catalogue) et après le garde-fou. */
+  setTimeout(bosCompleterCommande, 2500);
+  setTimeout(bosCompleterCommande, 6000);
+  setTimeout(bosCompleterCommande, 9500);
+  document.addEventListener('click', function () {
+    setTimeout(bosPrecocherCGV, 250);
+    setTimeout(bosPurgerPanier, 250);
+  }, true);
+
   /* Le panier est souvent rendu par JS après coup : on repasse plusieurs fois. */
   setTimeout(bosPrecocherCGV, 400);
   setTimeout(bosPrecocherCGV, 1500);
