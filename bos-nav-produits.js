@@ -180,6 +180,7 @@
        catalogue invisible sur téléphone, c'est un catalogue qui n'existe pas.
        On complète donc ce panneau avec les produits manquants, et on en retire
        ceux qui ne sont plus livrables. */
+    function enrichirMenuMobile() {
     var mob = document.querySelector('nav.mobile-menu, .mobile-menu');
     if (mob) {
       var deja = {};
@@ -209,6 +210,30 @@
         });
       });
     }
+    }
+
+    /* Le panneau mobile est reconstruit par le script de la boutique à CHAQUE
+       ouverture (constaté le 29/07 : les liens ajoutés disparaissaient au clic).
+       On ré-applique donc l'enrichissement après chaque ouverture, et on observe
+       le DOM pour couvrir les reconstructions asynchrones. */
+    enrichirMenuMobile();
+    document.addEventListener('click', function (e) {
+      if (e.target.closest && e.target.closest('.hamburger, .nav-burger, [class*=burger]')) {
+        setTimeout(enrichirMenuMobile, 60);
+        setTimeout(enrichirMenuMobile, 350);
+      }
+    }, true);
+    try {
+      var cible = document.querySelector('nav.mobile-menu, .mobile-menu');
+      if (cible && window.MutationObserver) {
+        var obs = new MutationObserver(function () {
+          if (obs._occupe) return;
+          obs._occupe = true;
+          setTimeout(function () { enrichirMenuMobile(); obs._occupe = false; }, 80);
+        });
+        obs.observe(cible, { childList: true });
+      }
+    } catch (e) {}
 
 
     /* La barre était déjà pleine : en y ajoutant « Boutique », les entrées produits
