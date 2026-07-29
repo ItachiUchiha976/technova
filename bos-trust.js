@@ -40,7 +40,7 @@
     });
     grid += '</div>';
     grid += '<div class="bos-tr-pay"><span class="bos-tr-badge">🔒 Commande protégée</span>'
-      + '<span>Expédié sous 2 à 4 jours · <b>Paiement 100% sécurisé</b></span></div>';
+      + '<span><b>Paiement 100% sécurisé</b></span></div>';
     wrap.innerHTML = grid;
     return wrap;
   }
