@@ -439,7 +439,13 @@
     choix.sort(function (a, b) { return a.prix - b.prix; });
     choix = choix.slice(0, 3);
 
-    var anc = document.querySelector('[data-bos-cb][data-bos-price]') ||
+    /* ⚠️ Le bloc se place APRÈS les deux moyens de paiement, jamais entre eux.
+       Constaté en capture le 29/07 : inséré derrière le bouton carte, il
+       séparait « Payer par carte » de « PayPal » — or §12.35 veut les deux
+       côte à côte. Une suggestion d'achat ne doit jamais couper un tunnel. */
+    var anc = document.querySelector('#bos-note-remise') ||
+              document.querySelector('#bos-paypal-fiche') ||
+              document.querySelector('[data-bos-cb][data-bos-price]') ||
               document.querySelector('#add-to-cart-btn');
     if (!anc || !anc.offsetParent) return;
 
@@ -917,6 +923,28 @@
   setTimeout(bosVerifierVisibilite, 1200);
   setTimeout(bosVerifierVisibilite, 3000);
   setTimeout(bosVerifierVisibilite, 7000);
+  /* Le panier est souvent rendu par JS après coup : on repasse plusieurs fois. */
+  setTimeout(bosPrecocherCGV, 400);
+  setTimeout(bosPrecocherCGV, 1500);
+  setTimeout(bosPrecocherCGV, 4000);
+  setTimeout(bosPurgerPanier, 900);
+  setTimeout(bosPurgerPanier, 3000);
+  /* Après le garde-fou : on n'ajoute PayPal que si l'achat est resté ouvert. */
+  setTimeout(bosAjouterPayPalFiche, 1800);
+  setTimeout(bosAjouterPayPalFiche, 4500);
+  setTimeout(bosAjouterPayPalFiche, 8000);
+  /* Après le menu (qui expose le catalogue) et après le garde-fou. */
+  setTimeout(bosEncartAccueil, 1500);
+  setTimeout(bosEncartAccueil, 4000);
+  setTimeout(bosEncartAccueil, 8000);
+  setTimeout(bosCompleterCommande, 3200);
+  setTimeout(bosCompleterCommande, 7000);
+  setTimeout(bosCompleterCommande, 10500);
+  document.addEventListener('click', function () {
+    setTimeout(bosPrecocherCGV, 250);
+    setTimeout(bosPurgerPanier, 250);
+  }, true);
+
   /* Le panier est souvent rendu par JS après coup : on repasse plusieurs fois. */
   setTimeout(bosPrecocherCGV, 400);
   setTimeout(bosPrecocherCGV, 1500);
