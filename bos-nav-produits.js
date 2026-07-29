@@ -54,6 +54,12 @@
         { nom: 'Ventilateur de bureau',    url: 'produit-ventilateur-bureau.html', cle: 'ventilateur-portable', prix: 25 },
         { nom: 'Bundle écran + trépied',   url: 'produit-bundle-ecran-trepied.html', cle: 'bundle-ecran', prix: 24 } ] }
     ],
+    'footperf.fr': [
+      { titre: 'Cadeaux foot', produits: [
+        { nom: 'Lampe photo personnalisée', url: 'produit-lampe-photo-foot.html', cle: 'lampe-photo-foot', prix: 49 } ] },
+      { titre: 'Guides', produits: [
+        { nom: 'Guide & Quiz Coupe du Monde', url: 'coupe-du-monde-2026.html', cle: 'guide-cdm', prix: 4.9 } ] }
+    ],
     'focuslabboutique.fr': [
       { titre: 'Concentration', produits: [
         { nom: 'Minuteur Pomodoro',        url: 'produit-minuteur-pomodoro.html', cle: 'timer-pomodoro', prix: 34 },
