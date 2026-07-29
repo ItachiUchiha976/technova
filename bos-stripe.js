@@ -244,6 +244,41 @@
       if (!retire && BOS_NON_LIVRABLES.indexOf(cle) === -1) return;
       bosNeutraliserBloc(bosConteneurProduit(el), cle, retire);
     });
+    bosRangerGrilleVide();
+  }
+
+  /* Une grille où PLUS AUCUN article n'est achetable ne doit pas rester
+     affichée : sept cartes barrées donnent l'image d'une boutique à l'abandon.
+     On les retire et on laisse un seul message, qui oriente vers ce qui reste
+     réellement en vente. Décision du 29/07/2026 sur FootPerf : les accessoires
+     de foot sont des commodités (Decathlon les vend moins cher et les livre en
+     2 jours) et le fret depuis la Chine mange la marge — 25 % sur l'échelle
+     d'agilité, 40 % sur les gants, calculs faits à l'API. La boutique assume
+     donc son produit rentable : le guide Coupe du Monde. */
+  function bosRangerGrilleVide() {
+    var grilles = document.querySelectorAll('#productsGrid, .products-grid, .product-grid');
+    Array.prototype.forEach.call(grilles, function (g) {
+      if (g.getAttribute('data-bos-range')) return;
+      var cartes = g.querySelectorAll('[id^="card-"]');
+      if (!cartes.length) return;
+      var bloquees = g.querySelectorAll('[id^="card-"][data-bos-bloque]');
+      if (bloquees.length !== cartes.length) return;   // il reste du vendable
+      g.setAttribute('data-bos-range', '1');
+      Array.prototype.forEach.call(cartes, function (c) { c.style.display = 'none'; });
+      var fiche = bosAccueilProduit();
+      var mot = document.createElement('div');
+      mot.className = 'bos-indispo-bloc';
+      mot.style.cssText = 'margin:8px auto;padding:20px 22px;border:1px solid #e2c391;' +
+        'background:#fdf6e9;border-radius:12px;color:#5b4a2a;font-size:15px;' +
+        'line-height:1.6;max-width:680px;text-align:center';
+      mot.innerHTML = '<strong style="display:block;margin-bottom:6px;font-size:17px">' +
+        'Le rayon équipement est fermé pour le moment</strong>' +
+        'Nous ne voulions pas vous vendre du matériel que vous trouvez moins cher et ' +
+        'plus vite ailleurs, ni vous faire attendre deux semaines pour des cônes. ' +
+        'Nous préférons le dire franchement.' +
+        (fiche && fiche.suite ? '<br><br>' + fiche.suite : '');
+      g.parentNode.insertBefore(mot, g);
+    });
   }
 
   /* Une fiche mono-produit peut, elle, être traitée globalement : toute la page
@@ -432,6 +467,17 @@
   setTimeout(bosVerifierVisibilite, 1200);
   setTimeout(bosVerifierVisibilite, 3000);
   setTimeout(bosVerifierVisibilite, 7000);
+  /* Le panier est souvent rendu par JS après coup : on repasse plusieurs fois. */
+  setTimeout(bosPrecocherCGV, 400);
+  setTimeout(bosPrecocherCGV, 1500);
+  setTimeout(bosPrecocherCGV, 4000);
+  setTimeout(bosPurgerPanier, 900);
+  setTimeout(bosPurgerPanier, 3000);
+  document.addEventListener('click', function () {
+    setTimeout(bosPrecocherCGV, 250);
+    setTimeout(bosPurgerPanier, 250);
+  }, true);
+
   /* Le panier est souvent rendu par JS après coup : on repasse plusieurs fois. */
   setTimeout(bosPrecocherCGV, 400);
   setTimeout(bosPrecocherCGV, 1500);
