@@ -73,3 +73,16 @@
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
   else init();
 })();
+
+/* --- Menu catalogue (BOS 29/07/2026) -------------------------------------
+   Chargé depuis ici parce que bos-promo.js est le seul script présent sur
+   TOUTES les pages des boutiques. Le menu doit apparaître partout, y compris
+   sur l'accueil et les pages annexes qui n'ont pas de bouton d'achat. */
+(function () {
+  if (document.getElementById('bos-nav-produits-js')) return;
+  var s = document.createElement('script');
+  s.id = 'bos-nav-produits-js';
+  s.src = 'bos-nav-produits.js?v=20260729b';
+  s.defer = true;
+  (document.head || document.documentElement).appendChild(s);
+})();
