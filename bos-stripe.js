@@ -390,6 +390,64 @@
     }
   }
 
+  /* ═══ PAYPAL SUR LA FICHE PRODUIT ═════════════════════════════════════════
+     Constat du 29/07/2026 : aucune des 23 fiches produit ne proposait PayPal —
+     il n'existait que sur la page panier. Le rail fonctionnait donc, mais il
+     obligeait un détour (fiche → panier → PayPal) alors que PayPal est le
+     moyen qui rassure le plus en France. §12.35 veut les deux côte à côte.
+
+     ⚠️ Le prix n'est JAMAIS lu dans du texte — ce serait le meilleur moyen de
+     facturer un mauvais montant. Il est pris dans `data-bos-price`, l'attribut
+     que le bouton carte utilise déjà, et la remise est calculée par la même
+     fonction (window.BOS_PROMO.discount). Les deux boutons facturent donc, par
+     construction, exactement la même somme. */
+  function bosAjouterPayPalFiche() {
+    var cb = document.querySelector('[data-bos-cb][data-bos-price]');
+    if (!cb || document.querySelector('#bos-paypal-fiche')) return;
+    if (!cb.offsetParent) return;          // produit bloqué : on n'ajoute rien
+    var prix = parseFloat(cb.getAttribute('data-bos-price'));
+    if (!(prix > 0)) return;
+    var cle = cb.getAttribute('data-bos-key') || '';
+    if (BOS_RETIRES.indexOf(cle) !== -1 || BOS_NON_LIVRABLES.indexOf(cle) !== -1) return;
+
+    var montant = prix;
+    if (window.BOS_PROMO && typeof window.BOS_PROMO.discount === 'function') {
+      var d = window.BOS_PROMO.discount([{ price: prix, qty: 1 }]) || 0;
+      montant = Math.round((prix - d) * 100) / 100;
+    }
+    var nom = (document.querySelector('[data-product-name]') || {}).getAttribute
+      ? document.querySelector('[data-product-name]').getAttribute('data-product-name')
+      : (document.querySelector('h1') || {}).textContent || 'Commande';
+
+    var b = document.createElement('button');
+    b.id = 'bos-paypal-fiche';
+    b.type = 'button';
+    b.style.cssText = 'display:block;width:100%;max-width:420px;margin:10px auto 0;' +
+      'padding:14px 16px;background:#ffc439;color:#111;border:none;border-radius:10px;' +
+      'font-size:16px;font-weight:800;cursor:pointer';
+    b.innerHTML = '🅿 Payer avec PayPal — ' +
+      montant.toFixed(2).replace('.', ',') + ' €';
+    b.addEventListener('click', function () {
+      if (typeof window.bosBuyNow === 'function') {
+        window.bosBuyNow(String(nom).trim().slice(0, 120), montant, cle);
+      } else {
+        location.href = 'panier.html';     // repli sûr : jamais de clic mort
+      }
+    });
+    cb.parentNode.insertBefore(b, cb.nextSibling);
+  }
+
+  /* bos-paypal.js porte bosBuyNow() ; il n'était chargé que par la page panier.
+     On le charge ici pour les fiches, sans toucher aux dizaines de pages. */
+  (function () {
+    if (document.querySelector('script[src*="bos-paypal.js"]')) return;
+    if (!document.querySelector('[data-bos-cb][data-bos-price]')) return;
+    var s = document.createElement('script');
+    s.src = 'bos-paypal.js';
+    s.onload = function () { setTimeout(bosAjouterPayPalFiche, 100); };
+    document.head.appendChild(s);
+  })();
+
   /* ═══ PURGE DU PANIER ═════════════════════════════════════════════════════
      Masquer les boutons ne suffit pas : un article ajouté AVANT le retrait
      reste dans le panier du visiteur (localStorage) et demeure payable.
@@ -467,6 +525,21 @@
   setTimeout(bosVerifierVisibilite, 1200);
   setTimeout(bosVerifierVisibilite, 3000);
   setTimeout(bosVerifierVisibilite, 7000);
+  /* Le panier est souvent rendu par JS après coup : on repasse plusieurs fois. */
+  setTimeout(bosPrecocherCGV, 400);
+  setTimeout(bosPrecocherCGV, 1500);
+  setTimeout(bosPrecocherCGV, 4000);
+  setTimeout(bosPurgerPanier, 900);
+  setTimeout(bosPurgerPanier, 3000);
+  /* Après le garde-fou : on n'ajoute PayPal que si l'achat est resté ouvert. */
+  setTimeout(bosAjouterPayPalFiche, 1800);
+  setTimeout(bosAjouterPayPalFiche, 4500);
+  setTimeout(bosAjouterPayPalFiche, 8000);
+  document.addEventListener('click', function () {
+    setTimeout(bosPrecocherCGV, 250);
+    setTimeout(bosPurgerPanier, 250);
+  }, true);
+
   /* Le panier est souvent rendu par JS après coup : on repasse plusieurs fois. */
   setTimeout(bosPrecocherCGV, 400);
   setTimeout(bosPrecocherCGV, 1500);
