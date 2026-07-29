@@ -789,6 +789,57 @@
     (document.head || document.documentElement).appendChild(s);
   })();
 
+  /* ═══ ENCART PRODUIT SUR UN ACCUEIL ════════════════════════════════════════
+     Le rayon équipement de FootPerf est fermé et sa grille est reconstruite en
+     JavaScript — une carte ajoutée dans le HTML y est effacée au chargement
+     (constaté le 29/07/2026 : la page produit existait mais AUCUN lien n'y
+     menait, donc « la boutique n'a pas changé » était exact du point de vue du
+     visiteur). On injecte donc l'encart après coup, juste avant la grille. */
+  var BOS_ENCARTS_ACCUEIL = {
+    'footperf.fr': {
+      cle: 'lampe-photo-foot',
+      url: 'produit-lampe-photo-foot.html',
+      img: 'img/lampe-photo-foot.jpg',
+      titre: 'Lampe Football Personnalisée',
+      prix: '49,00 €',
+      texte: 'Vous envoyez une photo — lui, son équipe, son but décisif — et elle est ' +
+             "gravée dans le verre. Le cadeau qu'on ne trouve pas en magasin."
+    }
+  };
+
+  function bosEncartAccueil() {
+    var f = location.pathname.replace(/\.html?$/, '').split('/').pop() || '';
+    if (f && f !== 'index') return;
+    if (document.querySelector('#bos-encart-produit')) return;
+    var e = BOS_ENCARTS_ACCUEIL[location.hostname.replace(/^www\./, '')];
+    if (!e) return;
+    if (BOS_NON_LIVRABLES.indexOf(e.cle) !== -1 || BOS_RETIRES.indexOf(e.cle) !== -1) return;
+    var g = document.querySelector('#productsGrid, .products-grid') ||
+            document.querySelector('#produits');
+    if (!g) return;
+
+    var d = document.createElement('a');
+    d.id = 'bos-encart-produit';
+    d.href = e.url;
+    d.style.cssText = 'display:block;max-width:520px;margin:14px auto 22px;padding:16px;' +
+      'background:#fff;border:2px solid #c8f000;border-radius:14px;text-decoration:none;' +
+      'color:#0d3b2a;box-shadow:0 4px 20px rgba(0,0,0,.10)';
+    d.innerHTML =
+      '<div style="display:flex;gap:14px;align-items:center">' +
+        '<img src="' + e.img + '" alt="' + e.titre + '" ' +
+             'style="width:96px;height:96px;object-fit:cover;border-radius:10px;flex:none">' +
+        '<div>' +
+          '<span style="display:inline-block;background:#c8f000;color:#0d3b2a;font-weight:800;' +
+                'padding:3px 10px;border-radius:99px;font-size:11.5px">⭐ Cadeau personnalisé</span>' +
+          '<div style="font-weight:800;font-size:17px;margin:6px 0 3px">' + e.titre + '</div>' +
+          '<div style="font-size:13.5px;line-height:1.45;opacity:.88">' + e.texte + '</div>' +
+          '<div style="font-weight:800;margin-top:7px">' + e.prix +
+            ' <span style="font-weight:600;font-size:13px;opacity:.75">— découvrir →</span></div>' +
+        '</div>' +
+      '</div>';
+    g.parentNode.insertBefore(d, g);
+  }
+
   /* ═══ PURGE DU PANIER ═════════════════════════════════════════════════════
      Masquer les boutons ne suffit pas : un article ajouté AVANT le retrait
      reste dans le panier du visiteur (localStorage) et demeure payable.
@@ -866,6 +917,28 @@
   setTimeout(bosVerifierVisibilite, 1200);
   setTimeout(bosVerifierVisibilite, 3000);
   setTimeout(bosVerifierVisibilite, 7000);
+  /* Le panier est souvent rendu par JS après coup : on repasse plusieurs fois. */
+  setTimeout(bosPrecocherCGV, 400);
+  setTimeout(bosPrecocherCGV, 1500);
+  setTimeout(bosPrecocherCGV, 4000);
+  setTimeout(bosPurgerPanier, 900);
+  setTimeout(bosPurgerPanier, 3000);
+  /* Après le garde-fou : on n'ajoute PayPal que si l'achat est resté ouvert. */
+  setTimeout(bosAjouterPayPalFiche, 1800);
+  setTimeout(bosAjouterPayPalFiche, 4500);
+  setTimeout(bosAjouterPayPalFiche, 8000);
+  /* Après le menu (qui expose le catalogue) et après le garde-fou. */
+  setTimeout(bosEncartAccueil, 1500);
+  setTimeout(bosEncartAccueil, 4000);
+  setTimeout(bosEncartAccueil, 8000);
+  setTimeout(bosCompleterCommande, 2500);
+  setTimeout(bosCompleterCommande, 6000);
+  setTimeout(bosCompleterCommande, 9500);
+  document.addEventListener('click', function () {
+    setTimeout(bosPrecocherCGV, 250);
+    setTimeout(bosPurgerPanier, 250);
+  }, true);
+
   /* Le panier est souvent rendu par JS après coup : on repasse plusieurs fois. */
   setTimeout(bosPrecocherCGV, 400);
   setTimeout(bosPrecocherCGV, 1500);
