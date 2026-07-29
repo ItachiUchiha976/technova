@@ -489,6 +489,10 @@
     var t = cb.textContent || '';
     if (!/\d/.test(t)) return;
     var neuf = t.replace(/\d[\d  ]*(?:[.,]\d{1,2})?\s*€/, bosEuros(total));
+    /* Libellé court et identique partout : « Acheter maintenant par carte »
+       passait sur deux lignes sur mobile (69 px de haut) alors que « Payer par
+       carte » tient sur une (49 px). Signalé par Fred le 29/07. */
+    neuf = neuf.replace(/Acheter maintenant par carte/i, 'Payer par carte');
     if (neuf === t) return;
     cb.textContent = neuf;
     /* La remise est dite UNE fois, sous les boutons — pas dans chacun d'eux. */
@@ -799,6 +803,25 @@
   setTimeout(bosVerifierVisibilite, 1200);
   setTimeout(bosVerifierVisibilite, 3000);
   setTimeout(bosVerifierVisibilite, 7000);
+  /* Le panier est souvent rendu par JS après coup : on repasse plusieurs fois. */
+  setTimeout(bosPrecocherCGV, 400);
+  setTimeout(bosPrecocherCGV, 1500);
+  setTimeout(bosPrecocherCGV, 4000);
+  setTimeout(bosPurgerPanier, 900);
+  setTimeout(bosPurgerPanier, 3000);
+  /* Après le garde-fou : on n'ajoute PayPal que si l'achat est resté ouvert. */
+  setTimeout(bosAjouterPayPalFiche, 1800);
+  setTimeout(bosAjouterPayPalFiche, 4500);
+  setTimeout(bosAjouterPayPalFiche, 8000);
+  /* Après le menu (qui expose le catalogue) et après le garde-fou. */
+  setTimeout(bosCompleterCommande, 2500);
+  setTimeout(bosCompleterCommande, 6000);
+  setTimeout(bosCompleterCommande, 9500);
+  document.addEventListener('click', function () {
+    setTimeout(bosPrecocherCGV, 250);
+    setTimeout(bosPurgerPanier, 250);
+  }, true);
+
   /* Le panier est souvent rendu par JS après coup : on repasse plusieurs fois. */
   setTimeout(bosPrecocherCGV, 400);
   setTimeout(bosPrecocherCGV, 1500);
