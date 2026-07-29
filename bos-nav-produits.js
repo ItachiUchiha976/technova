@@ -175,6 +175,25 @@
     li.appendChild(d);
     liste.insertBefore(li, liste.children[1] || null);
 
+    /* La barre était déjà pleine : en y ajoutant « Boutique », les entrées produits
+       individuelles faisaient doublon et débordaient sur deux lignes (constaté en
+       capture le 29/07). Comme le menu contient TOUS les produits, on retire de la
+       barre les liens qui pointent vers une page produit — le menu devient la seule
+       porte d'entrée du catalogue, et la barre respire. */
+    var urlsDuMenu = {};
+    cats.forEach(function (c) { c.produits.forEach(function (p) { urlsDuMenu[p.url] = 1; }); });
+    Array.prototype.slice.call(liste.querySelectorAll('li')).forEach(function (item) {
+      if (item === li) return;
+      var liens = item.querySelectorAll('a');
+      if (!liens.length) return;
+      var tousProduits = true;
+      Array.prototype.forEach.call(liens, function (a) {
+        var href = (a.getAttribute('href') || '').split('/').pop();
+        if (!urlsDuMenu[href]) tousProduits = false;
+      });
+      if (tousProduits) item.style.display = 'none';
+    });
+
     /* fermeture au clic extérieur et à Échap */
     document.addEventListener('click', function (e) { if (!d.contains(e.target)) d.removeAttribute('open'); });
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape') d.removeAttribute('open'); });
