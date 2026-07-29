@@ -56,7 +56,10 @@
     'footperf.fr': {
       cle: 'buts-pop-up',
       nom: 'Le set de 2 buts de foot pop-up',
-      suite: '<a href="#guide" style="color:#8a6d3b;font-weight:600">' +
+      /* #produits : ancre réellement présente dans la page (vérifiée le 29/07).
+         « #guide » n'existe pas — un lien mort dans un message d'excuse est pire
+         que pas de lien du tout. */
+      suite: '<a href="#produits" style="color:#8a6d3b;font-weight:600">' +
              'Le Guide &amp; Grand Quiz de la Coupe du Monde 2026 reste disponible — 4,90 € →</a>'
     }
   };
@@ -260,6 +263,7 @@
   setTimeout(bosVerifierVisibilite, 1200);
   setTimeout(bosVerifierVisibilite, 3000);
   setTimeout(bosVerifierVisibilite, 7000);
+
 
 
 
