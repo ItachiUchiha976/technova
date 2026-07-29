@@ -1574,7 +1574,14 @@
     catch(e){ return []; }
   }
   function fulfillKeys(){
-    return items().map(function(i){ return ID_TO_FULFILL[i.id] || i.id; });
+    /* La quantite voyage collee a la cle : « timer-pomodoro*3 ». Sans elle, un
+       panier de 3 etait facture 3 fois et n'en faisait expedier qu'UN seul
+       (defaut mesure le 29/07/2026). Le serveur relit ce suffixe. */
+    return items().map(function(i){
+      var c = ID_TO_FULFILL[i.id] || i.id;
+      var q = parseInt(i && i.qty, 10);
+      return (q > 1) ? (c + '*' + Math.min(q, 20)) : c;
+    });
   }
   /* Total EXACT affiche au client (remise incluse), expose par le panier. */
   function displayedTotal(){
