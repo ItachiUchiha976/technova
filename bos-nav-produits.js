@@ -51,8 +51,7 @@
       { titre: 'Bureau connecté', produits: [
         { nom: 'Lampe de bureau 3-en-1',   url: 'produit-lampe-bureau-3en1.html', cle: 'lampe-led-bureau', prix: 69 },
         { nom: 'Chargeur sans fil 3-en-1', url: 'produit-chargeur-sans-fil.html', cle: 'chargeur-sans-fil-3-en-1', prix: 29 },
-        { nom: 'Ventilateur de bureau',    url: 'produit-ventilateur-bureau.html', cle: 'ventilateur-portable', prix: 25 },
-        { nom: 'Bundle écran + trépied',   url: 'produit-bundle-ecran-trepied.html', cle: 'bundle-ecran', prix: 24 } ] }
+        { nom: 'Ventilateur de bureau',    url: 'produit-ventilateur-bureau.html', cle: 'ventilateur-portable', prix: 25 } ] }
     ],
     'footperf.fr': [
       { titre: 'Cadeaux foot', produits: [
