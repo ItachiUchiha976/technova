@@ -52,6 +52,12 @@
     'produit-balle-reaction'
   ];
 
+  /* Exposé au reste de la page : le menu catalogue (bos-nav-produits.js) s'en sert
+     pour ne PAS proposer un produit qu'on ne peut pas vendre. Une seule source de
+     vérité, donc aucun risque que le menu et le bouton d'achat se contredisent. */
+  window.BOS_NON_LIVRABLES = BOS_NON_LIVRABLES;
+  window.BOS_PAGES_NON_LIVRABLES = BOS_PAGES_NON_LIVRABLES;
+
   function bosPageNonLivrable() {
     var f = location.pathname.replace(/\.html?$/, '').split('/').pop() || '';
     if (BOS_PAGES_NON_LIVRABLES.indexOf(f) !== -1) return true;
@@ -134,6 +140,7 @@
   setTimeout(bosVerifierVisibilite, 1200);
   setTimeout(bosVerifierVisibilite, 3000);
   setTimeout(bosVerifierVisibilite, 7000);
+
 
 
 
