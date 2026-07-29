@@ -273,13 +273,35 @@
     /* masquage au défilement (repris du site maths) */
     var lastY = window.pageYOffset || 0, ticking = false;
     var ZONE_HAUTE = 60, SEUIL = 6;
+    /* Les bandeaux promo/livraison sont masqués EN MÊME TEMPS que la barre.
+       Raison (remarque de Fred, 29/07) : sur un téléphone, garder le bandeau « -10 % »
+       pendant que le menu réapparaît remplit l'écran et gêne la lecture. En masquant
+       les deux à la descente et en les ramenant ensemble à la remontée, le client a
+       l'écran libre quand il lit, et l'accès complet dès qu'il cherche à naviguer. */
+    var bandeaux = [];
+    Array.prototype.forEach.call(document.querySelectorAll('body > *'), function (el) {
+      if (el === header || el.contains(header)) return;
+      var st = getComputedStyle(el);
+      if ((st.position === 'fixed' || st.position === 'sticky') &&
+          el.getBoundingClientRect().top < 120 && el.offsetHeight < 90) {
+        el.style.transition = 'transform .28s ease';
+        bandeaux.push(el);
+      }
+    });
+    function masquerTout(oui) {
+      header.classList.toggle('nav-hidden', oui);
+      bandeaux.forEach(function (b) {
+        b.style.transform = oui ? 'translateY(-140%)' : '';
+      });
+    }
+
     function update() {
       ticking = false;
       var y = window.pageYOffset || document.documentElement.scrollTop || 0;
-      if (y <= ZONE_HAUTE) { header.classList.remove('nav-hidden'); lastY = y; return; }
+      if (y <= ZONE_HAUTE) { masquerTout(false); lastY = y; return; }
       if (Math.abs(y - lastY) < SEUIL) return;
-      if (y > lastY) { header.classList.add('nav-hidden'); d.removeAttribute('open'); }
-      else header.classList.remove('nav-hidden');
+      if (y > lastY) { masquerTout(true); d.removeAttribute('open'); }
+      else masquerTout(false);
       lastY = y;
     }
     window.addEventListener('scroll', function () {
