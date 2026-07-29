@@ -143,8 +143,119 @@
     return BOS_NON_LIVRABLES.indexOf(k) !== -1;
   }
 
+  /* ═══ CIBLAGE PAR BLOC PRODUIT ═══════════════════════════════════════════
+     Chaque bouton d'ajout porte sa clé : addToCart('buts-pop-up'). C'est
+     l'identifiant le plus fiable disponible, et il est identique sur les
+     5 boutiques. On s'en sert pour neutraliser UNIQUEMENT le bloc concerné.
+
+     ⚠️ Pourquoi ce ciblage est vital — régression réelle du 29/07/2026 :
+     la première version masquait TOUS les boutons de la page dès qu'un produit
+     était bloqué. Sur l'accueil FootPerf, qui présente 8 produits ET un guide,
+     elle a masqué **18 boutons pour 3 à retirer** — les 7 autres articles, le
+     panier et le bouton de paiement du guide. Le site était cassé.
+     Règle : **une page qui présente plusieurs produits ne se traite jamais
+     globalement.** Seule une fiche mono-produit peut l'être. */
+  function bosCleDuBouton(el) {
+    var oc = (el.getAttribute && el.getAttribute('onclick')) || '';
+    var m = oc.match(/addToCart\(\s*['"]([^'"]+)['"]/);
+    return m ? m[1] : null;
+  }
+
+  /* Remonte au conteneur qui représente CE produit (carte de grille, section
+     vedette…), sans jamais dépasser le body. */
+  function bosConteneurProduit(el) {
+    var n = el;
+    for (var i = 0; n && n !== document.body && i < 8; i++) {
+      if (n.id && /^card-/.test(n.id)) return n;
+      if (n.className && typeof n.className === 'string' &&
+          /product-card|fiche-grid/.test(n.className)) return n;
+      if (n.tagName === 'SECTION') return n;
+      n = n.parentElement;
+    }
+    return el.parentElement || el;
+  }
+
+  function bosEstBoutonAchat(el) {
+    var t = (el.textContent || '').toLowerCase();
+    if (/retour|continuer mes achats|mentions|politique|livraison|rétractation/.test(t)) return false;
+    if (bosCleDuBouton(el)) return true;
+    var cl = (el.className && typeof el.className === 'string') ? el.className : '';
+    if (/add-to-cart|buy-now|fiche-add|fiche-paypal|btn-buy|bos-cb-btn/.test(cl)) return true;
+    var oc = (el.getAttribute && el.getAttribute('onclick')) || '';
+    if (/bosProductCB|bosBuyNow|bosPayPalCheckout|ajouterAuPanier/.test(oc)) return true;
+    return /ajouter au panier|acheter maintenant|payer par carte/.test(t);
+  }
+
+  /* Le message, en version pleine page ou compacte (dans une carte de grille). */
+  function bosCreerMessage(cle, definitif, compact) {
+    var box = document.createElement('div');
+    box.className = 'bos-indispo-bloc';
+    box.style.cssText = 'margin:' + (compact ? '10px 0 0' : '24px 0') + ';padding:' +
+      (compact ? '10px 12px' : '18px 20px') + ';border:1px solid #e2c391;background:#fdf6e9;' +
+      'border-radius:10px;color:#5b4a2a;font-size:' + (compact ? '13px' : '15px') +
+      ';line-height:1.5;' + (compact ? '' : 'max-width:640px');
+    var fiche = bosAccueilProduit();
+    var nom = (fiche && fiche.cle === cle && fiche.nom) ? fiche.nom : null;
+    if (definitif) {
+      var titre = nom ? nom + " n'est plus proposé" : "Ce produit n'est plus proposé";
+      var suite = (fiche && fiche.cle === cle && fiche.suite) ? fiche.suite : '';
+      box.innerHTML = '<strong style="display:block;margin-bottom:4px">' + titre + '</strong>' +
+        'Nous avons retiré cet article : nous ne pouvions plus le proposer au prix annoncé ' +
+        'sans rogner sur la qualité ou les délais. Nous préférons vous le dire franchement.' +
+        (suite ? '<br><br>' + suite : '');
+      return box;
+    }
+    /* ⚠️ Formulation honnête : plusieurs de ces articles n'ont JAMAIS eu de
+       fournisseur — parler de « réapprovisionnement » serait faux. */
+    box.innerHTML = '<strong style="display:block;margin-bottom:4px">Bientôt disponible</strong>' +
+      "Cet article n'est pas encore ouvert à la commande : nous préférons attendre un " +
+      'fournisseur qui tienne nos délais plutôt que de vous faire patienter.<br>' +
+      'Écrivez-nous à <a href="mailto:' + bosEmailBoutique() + '" style="color:#8a6d3b">' +
+      bosEmailBoutique() + '</a> pour être prévenu(e).';
+    return box;
+  }
+
+  function bosNeutraliserBloc(bloc, cle, definitif) {
+    if (!bloc || bloc.getAttribute('data-bos-bloque')) return;
+    bloc.setAttribute('data-bos-bloque', cle);
+    var compact = !!(bloc.id && /^card-/.test(bloc.id));
+    var ancre = null;
+    Array.prototype.forEach.call(bloc.querySelectorAll('button, a, .checkout-stripe'),
+      function (el) {
+        if (!bosEstBoutonAchat(el)) return;
+        if (!ancre && el.parentNode) ancre = el;
+        el.style.display = 'none';
+      });
+    var msg = bosCreerMessage(cle, definitif, compact);
+    /* On insère à la place des boutons masqués : le message se trouve donc là
+       où le visiteur cherchait à acheter, pas en haut d'une autre section. */
+    if (ancre && ancre.parentNode) ancre.parentNode.insertBefore(msg, ancre);
+    else bloc.appendChild(msg);
+  }
+
+  /* Traite chaque produit bloqué présent dans la page, un bloc à la fois. */
+  function bosTraiterBlocs() {
+    var boutons = document.querySelectorAll('[onclick*="addToCart"]');
+    Array.prototype.forEach.call(boutons, function (el) {
+      var cle = bosCleDuBouton(el);
+      if (!cle) return;
+      var retire = BOS_RETIRES.indexOf(cle) !== -1;
+      if (!retire && BOS_NON_LIVRABLES.indexOf(cle) === -1) return;
+      bosNeutraliserBloc(bosConteneurProduit(el), cle, retire);
+    });
+  }
+
+  /* Une fiche mono-produit peut, elle, être traitée globalement : toute la page
+     ne parle que de ce produit. */
+  function bosFicheMonoProduit() {
+    var f = location.pathname.replace(/\.html?$/, '').split('/').pop() || '';
+    return /^produit-/.test(f) || BOS_PAGES_NON_LIVRABLES.indexOf(f) !== -1 ||
+           BOS_PAGES_RETIREES.indexOf(f) !== -1;
+  }
+
   function bosBloquerAchat() {
-    if (!bosPageNonLivrable()) return;
+    bosTraiterBlocs();
+    if (!bosPageNonLivrable() || !bosFicheMonoProduit()) return;
 
     // 1) neutraliser tout ce qui déclenche un paiement ou un ajout au panier
     var selecteurs = [
@@ -243,6 +354,27 @@
     }
   }
 
+  /* ═══ CGV PRÉ-COCHÉES — moins de friction au moment de payer ══════════════
+     Demandé par Fred le 29/07/2026. La case reste VISIBLE et le lien vers les
+     CGV reste cliquable : le client peut la décocher et lire les conditions.
+     Seule la coche par défaut change, pour qu'un acheteur pressé ne soit pas
+     arrêté par un « merci d'accepter les CGV » au dernier clic.
+
+     ℹ️ À savoir : la formule la plus sûre juridiquement reste « en validant
+     votre commande, vous acceptez nos CGV » sous le bouton (le clic est alors
+     l'acte positif d'acceptation) — c'est ce que font Amazon et Shopify par
+     défaut. La case pré-cochée est plus fragile en cas de litige. */
+  function bosPrecocherCGV() {
+    var cases = document.querySelectorAll(
+      '#cgv-check, input[type=checkbox][id*="cgv"], input[type=checkbox][name*="cgv"]');
+    Array.prototype.forEach.call(cases, function (c) {
+      if (c.checked || c.getAttribute('data-bos-precoche')) return;
+      c.checked = true;
+      c.setAttribute('data-bos-precoche', '1');
+      try { c.dispatchEvent(new Event('change', { bubbles: true })); } catch (e) {}
+    });
+  }
+
   /* Filet de sécurité : si un autre script masque le conteneur du message
      après coup, on le déplace dans le premier parent réellement visible. */
   function bosVerifierVisibilite() {
@@ -264,6 +396,12 @@
   setTimeout(bosVerifierVisibilite, 1200);
   setTimeout(bosVerifierVisibilite, 3000);
   setTimeout(bosVerifierVisibilite, 7000);
+  /* Le panier est souvent rendu par JS après coup : on repasse plusieurs fois. */
+  setTimeout(bosPrecocherCGV, 400);
+  setTimeout(bosPrecocherCGV, 1500);
+  setTimeout(bosPrecocherCGV, 4000);
+  document.addEventListener('click', function () { setTimeout(bosPrecocherCGV, 250); }, true);
+
 
 
 
