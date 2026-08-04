@@ -47,6 +47,11 @@
 
   function mount() {
     if (document.querySelector('.bos-tr')) return;
+    // Anti-doublon (04/08/2026) : ne pas s'insérer si la page a déjà sa propre
+    // réassurance (accueil + pages produit des boutiques). Évite la redondance
+    // « livraison / retours » répétée plusieurs fois sur la même page.
+    var hasOwn = document.querySelector('.trust-bar, .bos-reassurance-list, .delivery-note, [class*="reassurance"], [class*="trust-bar"]');
+    if (hasOwn) return;
     var st = document.createElement('style'); st.textContent = CSS; document.head.appendChild(st);
     var el = build();
     var target = document.getElementById('bos-trust-mount');

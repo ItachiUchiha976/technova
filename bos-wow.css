@@ -1,66 +1,103 @@
 /* ============================================================
-   bos-wow.css — Couche WOW additive BOS (04/08/2026)
-   Micro-interactions premium : hover cartes, shine boutons,
-   reveal generique (sites sans bos-reveal.js), scroll doux.
-   100 % additive : aucune couleur de marque modifiee, aucun
-   layout change, aucun impact panier/checkout. Respecte
-   prefers-reduced-motion. Ne JAMAIS supprimer de regle existante.
+   bos-wow.css — Couche WOW additive BOS (v2, amplifiée 04/08/2026)
+   HERO ENTRY en cascade à l'ouverture (desktop + mobile), hovers
+   cartes marqués, shine + halo boutons, reveal générique renforcé,
+   stagger des grilles, scroll doux.
+   100 % additive : aucune couleur de marque modifiée, aucun layout
+   change, aucun impact panier/checkout. Respecte
+   prefers-reduced-motion. Aucun contenu jamais masqué > ~1,3 s.
+   Ne JAMAIS supprimer de règle existante.
    ============================================================ */
 
 html { scroll-behavior: smooth; }
 [id] { scroll-margin-top: 92px; }
 ::selection { background: #6366f1; color: #fff; }
 
-/* --- Cartes : elevation au survol --- */
+/* --- Cartes : élévation au survol (amplifiée) --- */
 .product-card, .feature-card, .why-card, .promise-card, .hub-card,
 .card-level, .review-card, .stat-card, .product-info, .faq-item {
-  transition: transform .35s cubic-bezier(.22,.8,.26,1),
-              box-shadow .35s cubic-bezier(.22,.8,.26,1),
-              border-color .35s ease;
+  transition: transform .38s cubic-bezier(.22,.8,.26,1),
+              box-shadow .38s cubic-bezier(.22,.8,.26,1),
+              border-color .38s ease;
 }
 @media (hover:hover) and (prefers-reduced-motion: no-preference) {
   .product-card:hover, .feature-card:hover, .why-card:hover,
   .promise-card:hover, .hub-card:hover, .card-level:hover,
   .review-card:hover, .stat-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 22px 44px -16px rgba(15,23,42,.28);
+    transform: translateY(-8px);
+    box-shadow: 0 32px 60px -18px rgba(15,23,42,.38);
+    border-color: rgba(99,102,241,.35);
   }
-  .faq-item:hover { border-color: rgba(99,102,241,.45); }
-  /* Zoom doux de l'image produit dans sa carte */
+  .faq-item:hover { border-color: rgba(99,102,241,.55); }
+  /* Zoom doux de l'image produit dans sa carte (amplifié) */
   .product-card__img { overflow: hidden; }
-  .product-card__img img { transition: transform .6s cubic-bezier(.22,.8,.26,1); }
-  .product-card:hover .product-card__img img { transform: scale(1.06); }
+  .product-card__img img { transition: transform .7s cubic-bezier(.22,.8,.26,1); }
+  .product-card:hover .product-card__img img { transform: scale(1.10); }
 }
 
-/* --- Boutons : reflet lumineux au survol --- */
+/* --- Boutons : reflet lumineux + halo au survol --- */
 .btn-card, .btn--primary, .btn-primary, .cta-main, .hero-cta {
   position: relative;
   overflow: hidden;
+  transition: box-shadow .3s ease, transform .3s ease, filter .3s ease;
 }
 .btn-card::after, .btn--primary::after, .btn-primary::after,
 .cta-main::after, .hero-cta::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,.38) 50%, transparent 60%);
+  background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,.45) 50%, transparent 60%);
   transform: translateX(-130%);
   transition: transform .75s ease;
   pointer-events: none;
 }
-@media (hover:hover) {
+@media (hover:hover) and (prefers-reduced-motion: no-preference) {
   .btn-card:hover::after, .btn--primary:hover::after, .btn-primary:hover::after,
   .cta-main:hover::after, .hero-cta:hover::after { transform: translateX(130%); }
+  .btn-card:hover, .btn--primary:hover, .btn-primary:hover,
+  .cta-main:hover, .hero-cta:hover {
+    box-shadow: 0 14px 30px -8px rgba(99,102,241,.5);
+    transform: translateY(-1px);
+    filter: brightness(1.04);
+  }
 }
 
-/* --- Reveal generique (applique par bos-wow.js aux sites sans bos-reveal) --- */
+/* --- HERO ENTRY : la page s'ouvre avec une cascade (desktop + mobile) ---
+   Cible les enfants du hero SANS data-reveal (aucun conflit bos-reveal).
+   animation-fill-mode both + durée courte = jamais de contenu masqué. */
+@media (prefers-reduced-motion: no-preference) {
+  .hero-content > *:not([data-reveal]),
+  .hero-visual:not([data-reveal]) {
+    animation: bosHeroUp .7s cubic-bezier(.22,.8,.26,1) both;
+  }
+  .hero-content > *:not([data-reveal]):nth-child(1) { animation-delay: .08s; }
+  .hero-content > *:not([data-reveal]):nth-child(2) { animation-delay: .20s; }
+  .hero-content > *:not([data-reveal]):nth-child(3) { animation-delay: .32s; }
+  .hero-content > *:not([data-reveal]):nth-child(4) { animation-delay: .44s; }
+  .hero-content > *:not([data-reveal]):nth-child(5) { animation-delay: .56s; }
+  .hero-visual:not([data-reveal]) { animation-delay: .28s; }
+}
+@keyframes bosHeroUp {
+  from { opacity: 0; transform: translateY(26px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* --- Reveal générique (sites sans bos-reveal.js) : renforcé --- */
 .wow-in {
   opacity: 0;
-  transform: translateY(18px);
-  transition: opacity .55s ease, transform .55s cubic-bezier(.22,.8,.26,1);
+  transform: translateY(22px);
+  transition: opacity .6s ease, transform .6s cubic-bezier(.22,.8,.26,1);
 }
 .wow-in.is-wow { opacity: 1; transform: none; }
 
-/* --- Focus clavier premium (accessibilite) --- */
+/* --- Stagger des grilles (sites sans bos-reveal.js) --- */
+.product-grid .wow-in:nth-child(2), .bundle-cards .wow-in:nth-child(2) { transition-delay: .07s; }
+.product-grid .wow-in:nth-child(3), .bundle-cards .wow-in:nth-child(3) { transition-delay: .14s; }
+.product-grid .wow-in:nth-child(4), .bundle-cards .wow-in:nth-child(4) { transition-delay: .21s; }
+.product-grid .wow-in:nth-child(5), .bundle-cards .wow-in:nth-child(5) { transition-delay: .28s; }
+.product-grid .wow-in:nth-child(6), .bundle-cards .wow-in:nth-child(6) { transition-delay: .35s; }
+
+/* --- Focus clavier premium (accessibilité) --- */
 a:focus-visible, button:focus-visible {
   outline: 3px solid rgba(99,102,241,.55);
   outline-offset: 2px;
@@ -70,9 +107,11 @@ a:focus-visible, button:focus-visible {
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .wow-in { opacity: 1; transform: none; transition: none; }
+  .hero-content > *, .hero-visual { animation: none !important; }
   .product-card, .feature-card, .why-card, .promise-card, .hub-card,
   .card-level, .review-card, .stat-card, .product-info, .faq-item,
-  .product-card__img img { transition: none; }
+  .product-card__img img, .btn-card, .btn--primary, .btn-primary,
+  .cta-main, .hero-cta { transition: none; }
   .btn-card::after, .btn--primary::after, .btn-primary::after,
   .cta-main::after, .hero-cta::after { display: none; }
 }
