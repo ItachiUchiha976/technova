@@ -1,0 +1,78 @@
+/* ============================================================
+   bos-wow.css — Couche WOW additive BOS (04/08/2026)
+   Micro-interactions premium : hover cartes, shine boutons,
+   reveal generique (sites sans bos-reveal.js), scroll doux.
+   100 % additive : aucune couleur de marque modifiee, aucun
+   layout change, aucun impact panier/checkout. Respecte
+   prefers-reduced-motion. Ne JAMAIS supprimer de regle existante.
+   ============================================================ */
+
+html { scroll-behavior: smooth; }
+[id] { scroll-margin-top: 92px; }
+::selection { background: #6366f1; color: #fff; }
+
+/* --- Cartes : elevation au survol --- */
+.product-card, .feature-card, .why-card, .promise-card, .hub-card,
+.card-level, .review-card, .stat-card, .product-info, .faq-item {
+  transition: transform .35s cubic-bezier(.22,.8,.26,1),
+              box-shadow .35s cubic-bezier(.22,.8,.26,1),
+              border-color .35s ease;
+}
+@media (hover:hover) and (prefers-reduced-motion: no-preference) {
+  .product-card:hover, .feature-card:hover, .why-card:hover,
+  .promise-card:hover, .hub-card:hover, .card-level:hover,
+  .review-card:hover, .stat-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 22px 44px -16px rgba(15,23,42,.28);
+  }
+  .faq-item:hover { border-color: rgba(99,102,241,.45); }
+  /* Zoom doux de l'image produit dans sa carte */
+  .product-card__img { overflow: hidden; }
+  .product-card__img img { transition: transform .6s cubic-bezier(.22,.8,.26,1); }
+  .product-card:hover .product-card__img img { transform: scale(1.06); }
+}
+
+/* --- Boutons : reflet lumineux au survol --- */
+.btn-card, .btn--primary, .btn-primary, .cta-main, .hero-cta {
+  position: relative;
+  overflow: hidden;
+}
+.btn-card::after, .btn--primary::after, .btn-primary::after,
+.cta-main::after, .hero-cta::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,.38) 50%, transparent 60%);
+  transform: translateX(-130%);
+  transition: transform .75s ease;
+  pointer-events: none;
+}
+@media (hover:hover) {
+  .btn-card:hover::after, .btn--primary:hover::after, .btn-primary:hover::after,
+  .cta-main:hover::after, .hero-cta:hover::after { transform: translateX(130%); }
+}
+
+/* --- Reveal generique (applique par bos-wow.js aux sites sans bos-reveal) --- */
+.wow-in {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity .55s ease, transform .55s cubic-bezier(.22,.8,.26,1);
+}
+.wow-in.is-wow { opacity: 1; transform: none; }
+
+/* --- Focus clavier premium (accessibilite) --- */
+a:focus-visible, button:focus-visible {
+  outline: 3px solid rgba(99,102,241,.55);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .wow-in { opacity: 1; transform: none; transition: none; }
+  .product-card, .feature-card, .why-card, .promise-card, .hub-card,
+  .card-level, .review-card, .stat-card, .product-info, .faq-item,
+  .product-card__img img { transition: none; }
+  .btn-card::after, .btn--primary::after, .btn-primary::after,
+  .cta-main::after, .hero-cta::after { display: none; }
+}
