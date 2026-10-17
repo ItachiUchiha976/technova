@@ -83,7 +83,7 @@
     function add(n,v){ var i=document.createElement('input'); i.type='hidden'; i.name=n; i.value=v; f.appendChild(i); }
     add('cmd','_cart'); add('upload','1'); add('business',BUSINESS);
     add('currency_code','EUR'); add('lc','FR'); add('no_note','1'); add('rm','2');
-    add('return',merciUrl()); add('cancel_return',location.href);
+    add('return',merciUrl()); add('cancel_return',location.href); if(window._bosEagerToken && !window._bosMerciPage){ add('custom',window._bosEagerToken); add('notify_url','https://api.tonargentexplique.fr/paypal-ipn'); }
     lines.forEach(function(it,idx){
       var n=idx+1;
       add('item_name_'+n,(it.name||('Article '+n)).toString().slice(0,120));
@@ -100,7 +100,7 @@
     f.method='POST'; f.action='https://www.paypal.com/cgi-bin/webscr'; f.style.display='none'; f.target='_top';
     function add(n,v){ var i=document.createElement('input'); i.type='hidden'; i.name=n; i.value=v; f.appendChild(i); }
     add('cmd','_xclick'); add('business',BUSINESS); add('currency_code','EUR'); add('lc','FR');
-    add('no_note','1'); add('rm','2'); add('return',merciUrl()); add('cancel_return',location.href);
+    add('no_note','1'); add('rm','2'); add('return',merciUrl()); add('cancel_return',location.href); if(window._bosEagerToken && !window._bosMerciPage){ add('custom',window._bosEagerToken); add('notify_url','https://api.tonargentexplique.fr/paypal-ipn'); }
     add('item_name',(name||'Commande').toString().slice(0,120)); add('amount',Number(price||0).toFixed(2));
     if(id) add('item_number',String(id));
     document.body.appendChild(f); f.submit();
